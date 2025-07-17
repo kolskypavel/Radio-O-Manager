@@ -23,5 +23,5 @@ interface FormatProcessor {
         format: DataFormat,
         dataProcessor: DataProcessor,
         raceId: UUID
-    ): Boolean
+    ):Boolean
 }

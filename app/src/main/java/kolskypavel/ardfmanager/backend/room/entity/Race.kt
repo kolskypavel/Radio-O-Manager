@@ -26,4 +26,15 @@ data class Race(
     @ColumnInfo(name = "race_level") var raceLevel: RaceLevel,
     @ColumnInfo(name = "race_band") var raceBand: RaceBand,
     @ColumnInfo(name = "time_limit") var timeLimit: Duration
-) : Serializable
+) : Serializable {
+    constructor() : this(
+        UUID.randomUUID(),
+        "",
+        null,
+        LocalDateTime.now(),
+        RaceType.CLASSICS,
+        RaceLevel.TRAINING,
+        RaceBand.M80,
+        Duration.ZERO
+    )
+}

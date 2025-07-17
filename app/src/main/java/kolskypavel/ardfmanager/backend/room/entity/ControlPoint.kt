@@ -40,17 +40,15 @@ data class ControlPoint(
         return "${siCode}${type}"
     }
 
-    companion object {
-        fun getTestControlPoint(): ControlPoint {
-            return ControlPoint(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                31,
-                ControlPointType.CONTROL,
-                0
-            )
-        }
+    constructor() : this(
+        UUID.randomUUID(),
+        UUID.randomUUID(),
+        UUID.randomUUID(),
+        31,
+        ControlPointType.CONTROL,
+        0
+    )
+
 
 //        @Throws(java.lang.IllegalArgumentException::class)
 //        fun parseControlPoint(string: String, raceId: UUID, categoryId: UUID): ControlPoint {
@@ -74,5 +72,4 @@ data class ControlPoint(
 //                throw IllegalArgumentException("Invalid control point format")
 //            }
 //        }
-    }
 }

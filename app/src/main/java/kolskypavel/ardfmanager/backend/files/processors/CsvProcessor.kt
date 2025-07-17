@@ -28,14 +28,6 @@ import java.time.Duration
 import java.time.LocalTime
 import java.util.UUID
 
-/**
- * Exports/Import result in CSV format
- * Category format: Name; Gender (0 = woman, 1 = man); Max age; *Length; *Climb; *Order in results; *Race type (); Time limit in minutes; Start source (0 = drawn, 1 = start control; 2 = first control); Finish source (0 = finish control, 1 = last control); Number of control points; Control points
- * Control points format: Code,
- * Competitor format: SI, Name, Last Name, Category, Gender, Birth year, Callsign (not used), Club;;;Start no, Index
- * Competitor starts format:
- * Result format:
- */
 object CsvProcessor : FormatProcessor {
 
     override suspend fun importData(
@@ -68,7 +60,7 @@ object CsvProcessor : FormatProcessor {
         format: DataFormat,
         dataProcessor: DataProcessor,
         raceId: UUID
-    ): Boolean {
+    ): Boolean{
         try {
 
             when (dataType) {
@@ -90,7 +82,7 @@ object CsvProcessor : FormatProcessor {
                     dataProcessor.getCurrentRace()
                 )
 
-                DataType.RESULTS_SIMPLE, DataType.RESULTS_SPLITS -> exportsResults(
+                DataType.RESULTS_SIMPLE, DataType.RESULTS_SPLITS -> exportResults(
                     outStream,
                     dataProcessor.getResultWrapperFlowByRace(raceId).first()
                 )
@@ -115,6 +107,7 @@ object CsvProcessor : FormatProcessor {
         return CsvReader(context)
     }
 
+    //TODO: Finish
     @Throws(IOException::class)
     suspend fun importCategories(
         inStream: InputStream,
@@ -384,7 +377,7 @@ object CsvProcessor : FormatProcessor {
     }
 
     @Throws(IOException::class)
-    suspend fun exportsResults(outStream: OutputStream, results: List<ResultWrapper>) {
+    suspend fun exportResults(outStream: OutputStream, results: List<ResultWrapper>) {
         val writer = outStream.bufferedWriter()
         withContext(Dispatchers.IO) {
             for (res in results) {

@@ -8,10 +8,12 @@ import kolskypavel.ardfmanager.backend.room.enums.ControlPointType
 import kolskypavel.ardfmanager.backend.room.enums.PunchStatus
 import kolskypavel.ardfmanager.backend.room.enums.RaceStatus
 import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
+import kolskypavel.ardfmanager.backend.sportident.SIConstants
 import kolskypavel.ardfmanager.backend.sportident.SITime
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Duration
+import java.time.LocalDateTime
 import java.util.Random
 import java.util.UUID
 
@@ -28,10 +30,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -43,9 +55,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
             controlPoints.add(
@@ -55,8 +68,7 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     30 + i,
                     ControlPointType.CONTROL,
-                    i,
-                    0
+                    i
                 )
             )
         }
@@ -78,10 +90,20 @@ class ResultsEvaluationUnitTests {
                 UUID.randomUUID(),
                 null,
                 null,
+                123,
+                SIConstants.SI_CARD5,
+                SITime(),
+                SITime(),
+                SITime(),
+                SITime(),
+                SITime(),
+                SITime(),
+                LocalDateTime.now(),
                 true,
-                RaceStatus.NOT_PROCESSED,
+                RaceStatus.NO_RANKING,
                 0,
-                Duration.ZERO
+                Duration.ZERO,
+                false
             )
             val punches = ArrayList<Punch>()
             val controlPoints = ArrayList<ControlPoint>()
@@ -99,9 +121,10 @@ class ResultsEvaluationUnitTests {
                         UUID.randomUUID(),
                         null,
                         null,
-                        null,
-                        randCode,
-                        SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                        30 + i,
+                        SITime(),
+                        SITime(),
+                        SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                     )
                 )
                 controlPoints.add(
@@ -111,8 +134,7 @@ class ResultsEvaluationUnitTests {
                         UUID.randomUUID(),
                         randCode,
                         ControlPointType.CONTROL,
-                        i,
-                        0
+                        i
                     )
                 )
             }
@@ -131,10 +153,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -146,9 +178,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
             controlPoints.add(
@@ -158,8 +191,7 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     30 + i,
                     ControlPointType.CONTROL,
-                    i,
-                    0
+                    i
                 )
             )
         }
@@ -171,9 +203,10 @@ class ResultsEvaluationUnitTests {
                 UUID.randomUUID(),
                 null,
                 null,
-                null,
                 36,
-                SITime(), SITime(), SIRecordType.CONTROL, 19, PunchStatus.UNKNOWN, Duration.ZERO
+                SITime(),
+                SITime(),
+                SIRecordType.CONTROL, 19, PunchStatus.UNKNOWN, Duration.ZERO
             )
         )
 
@@ -192,10 +225,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -208,8 +251,7 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     30 + i,
                     ControlPointType.CONTROL,
-                    i,
-                    0
+                    i
                 )
             )
         }
@@ -223,9 +265,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
         }
@@ -237,9 +280,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
         }
@@ -258,10 +302,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -274,9 +328,10 @@ class ResultsEvaluationUnitTests {
                 UUID.randomUUID(),
                 null,
                 null,
-                null,
                 31,
-                SITime(), SITime(), SIRecordType.CONTROL, 0, PunchStatus.UNKNOWN, Duration.ZERO
+                SITime(),
+                SITime(),
+                SIRecordType.CONTROL, 0, PunchStatus.UNKNOWN, Duration.ZERO
             )
         )
         controlPoints.add(
@@ -286,7 +341,6 @@ class ResultsEvaluationUnitTests {
                 UUID.randomUUID(),
                 31,
                 ControlPointType.CONTROL,
-                0,
                 0
             )
         )
@@ -298,9 +352,10 @@ class ResultsEvaluationUnitTests {
                 UUID.randomUUID(),
                 null,
                 null,
-                null,
                 32,
-                SITime(), SITime(), SIRecordType.CONTROL, 0, PunchStatus.UNKNOWN, Duration.ZERO
+                SITime(),
+                SITime(),
+                SIRecordType.CONTROL, 1, PunchStatus.UNKNOWN, Duration.ZERO
             )
         )
         controlPoints.add(
@@ -310,7 +365,6 @@ class ResultsEvaluationUnitTests {
                 UUID.randomUUID(),
                 32,
                 ControlPointType.CONTROL,
-                0,
                 0
             )
         )
@@ -325,10 +379,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -340,9 +404,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
             controlPoints.add(
@@ -352,8 +417,7 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     30 + i,
                     ControlPointType.CONTROL,
-                    i,
-                    0
+                    i
                 )
             )
         }
@@ -369,10 +433,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -384,9 +458,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
             controlPoints.add(
@@ -396,31 +471,33 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     30 + i,
                     ControlPointType.CONTROL,
-                    i,
-                    0
+                    i
                 )
             )
         }
         punches.add(
-            2, Punch(
+            2,  Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                null,
                 null,
                 null,
                 62,
-                SITime(), SITime(), SIRecordType.CONTROL, 0, PunchStatus.UNKNOWN, Duration.ZERO
+                SITime(),
+                SITime(),
+                SIRecordType.CONTROL, 0, PunchStatus.UNKNOWN, Duration.ZERO
             )
         )
         punches.add(
-            4, Punch(
+            4,  Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                null,
                 null,
                 null,
                 64,
-                SITime(), SITime(), SIRecordType.CONTROL, 0, PunchStatus.UNKNOWN, Duration.ZERO
+                SITime(),
+                SITime(),
+                SIRecordType.CONTROL, 5, PunchStatus.UNKNOWN, Duration.ZERO
+
             )
         )
         ResultsProcessor.evaluateOrienteering(punches, controlPoints, result)
@@ -437,10 +514,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -452,9 +539,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
             controlPoints.add(
@@ -464,8 +552,7 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     30 + i,
                     ControlPointType.CONTROL,
-                    i,
-                    0
+                    i
                 )
             )
         }
@@ -481,10 +568,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -498,9 +595,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
             controlPoints.add(
@@ -510,8 +608,7 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     30 + i,
                     ControlPointType.CONTROL,
-                    i,
-                    0
+                    i
                 )
             )
         }
@@ -528,26 +625,28 @@ class ResultsEvaluationUnitTests {
 
         //Add some random invalid data
         punches.add(
-            5, Punch(
+            5,  Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                null,
                 null,
                 null,
                 99,
-                SITime(), SITime(), SIRecordType.CONTROL, 15, PunchStatus.UNKNOWN, Duration.ZERO
+                SITime(),
+                SITime(),
+                SIRecordType.CONTROL, 15, PunchStatus.UNKNOWN, Duration.ZERO
             )
         )
 
         punches.add(
-            9, Punch(
+            9,  Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                null,
                 null,
                 null,
                 67,
-                SITime(), SITime(), SIRecordType.CONTROL, 15, PunchStatus.UNKNOWN, Duration.ZERO
+                SITime(),
+                SITime(),
+                SIRecordType.CONTROL, 15, PunchStatus.UNKNOWN, Duration.ZERO
             )
         )
         ResultsProcessor.evaluateSprint(punches, controlPoints, result)
@@ -565,10 +664,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -582,9 +691,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
             controlPoints.add(
@@ -594,8 +704,7 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     30 + i,
                     ControlPointType.CONTROL,
-                    i,
-                    0
+                    i
                 )
             )
         }
@@ -605,14 +714,15 @@ class ResultsEvaluationUnitTests {
         controlPoints.last().type = ControlPointType.BEACON
 
         punches.add(
-            3, Punch(
+            3,  Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                null,
                 null,
                 null,
                 34,
-                SITime(), SITime(), SIRecordType.CONTROL, 15, PunchStatus.UNKNOWN, Duration.ZERO
+                SITime(),
+                SITime(),
+                SIRecordType.CONTROL, 15, PunchStatus.UNKNOWN, Duration.ZERO
             )
         )
 
@@ -622,9 +732,10 @@ class ResultsEvaluationUnitTests {
                 UUID.randomUUID(),
                 null,
                 null,
-                null,
                 37,
-                SITime(), SITime(), SIRecordType.CONTROL, 15, PunchStatus.UNKNOWN, Duration.ZERO
+                SITime(),
+                SITime(),
+                SIRecordType.CONTROL, 15, PunchStatus.UNKNOWN, Duration.ZERO
             )
         )
         for (pun in punches.withIndex()) {
@@ -645,10 +756,20 @@ class ResultsEvaluationUnitTests {
             UUID.randomUUID(),
             null,
             null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
             true,
-            RaceStatus.NOT_PROCESSED,
+            RaceStatus.NO_RANKING,
             0,
-            Duration.ZERO
+            Duration.ZERO,
+            false
         )
         val punches = ArrayList<Punch>()
         val controlPoints = ArrayList<ControlPoint>()
@@ -660,9 +781,10 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     null,
                     null,
-                    null,
                     30 + i,
-                    SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                 )
             )
             controlPoints.add(
@@ -672,8 +794,7 @@ class ResultsEvaluationUnitTests {
                     UUID.randomUUID(),
                     30 + i,
                     ControlPointType.CONTROL,
-                    i,
-                    0
+                    i
                 )
             )
         }
@@ -694,10 +815,20 @@ class ResultsEvaluationUnitTests {
                 UUID.randomUUID(),
                 null,
                 null,
+                123,
+                SIConstants.SI_CARD5,
+                SITime(),
+                SITime(),
+                SITime(),
+                SITime(),
+                SITime(),
+                SITime(),
+                LocalDateTime.now(),
                 true,
-                RaceStatus.NOT_PROCESSED,
+                RaceStatus.NO_RANKING,
                 0,
-                Duration.ZERO
+                Duration.ZERO,
+                false
             )
             val punches = ArrayList<Punch>()
             val controlPoints = ArrayList<ControlPoint>()
@@ -715,9 +846,10 @@ class ResultsEvaluationUnitTests {
                         UUID.randomUUID(),
                         null,
                         null,
-                        null,
-                        randCode,
-                        SITime(), SITime(), SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                        30 + i,
+                        SITime(),
+                        SITime(),
+                        SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
                     )
                 )
                 controlPoints.add(
@@ -727,8 +859,7 @@ class ResultsEvaluationUnitTests {
                         UUID.randomUUID(),
                         randCode,
                         ControlPointType.CONTROL,
-                        i,
-                        0
+                        i
                     )
                 )
             }

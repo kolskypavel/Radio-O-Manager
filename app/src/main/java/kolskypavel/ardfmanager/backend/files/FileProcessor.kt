@@ -11,6 +11,7 @@ import kolskypavel.ardfmanager.backend.files.processors.FormatProcessorFactory
 import kolskypavel.ardfmanager.backend.files.wrappers.DataImportWrapper
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Race
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
 import kolskypavel.ardfmanager.backend.room.enums.StandardCategoryType
 import java.io.InputStream
 import java.io.OutputStream
@@ -55,6 +56,20 @@ class FileProcessor(appContext: WeakReference<Context>) {
         return null
     }
 
+    suspend fun importRaceData(uri: Uri): RaceData? {
+        val inStream = openInputStream(uri)
+        if (inStream != null) {
+
+        }
+        return null
+    }
+
+    suspend fun importStandardCategories(
+        type: StandardCategoryType,
+        race: Race
+    ): List<Category> =
+        CsvProcessor.importStandardCategories(type, race, dataProcessor)
+
     suspend fun exportData(
         uri: Uri,
         type: DataType,
@@ -77,9 +92,8 @@ class FileProcessor(appContext: WeakReference<Context>) {
         return false
     }
 
-    suspend fun importStandardCategories(
-        type: StandardCategoryType,
-        race: Race
-    ): List<Category> =
-        CsvProcessor.importStandardCategories(type, race, dataProcessor)
+    suspend fun exportRaceData(uri: Uri, raceData: RaceData) {
+
+    }
+
 }

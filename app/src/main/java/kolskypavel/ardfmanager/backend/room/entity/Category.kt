@@ -46,23 +46,19 @@ data class Category(
         return "$name;${isMan.compareTo(false)};${maxAge ?: 0};${length};${climb};${order};${raceType?.value ?: ""};${timeLimit?.toMinutes() ?: ""}}"
     }
 
-    companion object {
-        fun getTestCategory(): Category {
-            return Category(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                "TEST",
-                true,
-                null,
-                0F,
-                0F,
-                0,
-                false,
-                null,
-                null,
-                null,
-                ""
-            )
-        }
-    }
+    constructor() : this(
+        UUID.randomUUID(),
+        UUID.randomUUID(),
+        "TEST",
+        true,
+        null,
+        0F,
+        0F,
+        0,
+        false,
+        null,
+        null,
+        null,
+        ""
+    )
 }

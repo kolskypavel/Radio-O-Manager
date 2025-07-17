@@ -23,6 +23,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.Punch
 import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
 import kolskypavel.ardfmanager.backend.room.enums.RaceBand
 import kolskypavel.ardfmanager.backend.room.enums.RaceLevel
 import kolskypavel.ardfmanager.backend.room.enums.RaceType
@@ -106,7 +107,6 @@ class DataProcessor private constructor(context: Context) {
 
     suspend fun createRace(race: Race) = ardfRepository.createRace(race)
 
-
     suspend fun updateRace(race: Race) {
         ardfRepository.updateRace(race)
         updateResults(race.id)
@@ -115,6 +115,17 @@ class DataProcessor private constructor(context: Context) {
     suspend fun deleteRace(id: UUID) {
         ardfRepository.deleteRace(id)
     }
+
+    //RACE DATA
+    suspend fun getRaceData(raceId: UUID):RaceData{
+        TODO();
+    }
+
+    suspend fun importRaceData(){
+
+    }
+
+    suspend fun exportRaceData(){}
 
     //CATEGORIES
     fun getCategoryDataFlowForRace(raceId: UUID) =

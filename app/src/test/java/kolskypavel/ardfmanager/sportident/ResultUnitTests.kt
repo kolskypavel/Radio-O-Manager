@@ -3,12 +3,14 @@ package kolskypavel.ardfmanager.sportident
 import junit.framework.TestCase.assertEquals
 import kolskypavel.ardfmanager.backend.results.ResultsProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Result
+import kolskypavel.ardfmanager.backend.room.enums.RaceStatus
 import kolskypavel.ardfmanager.backend.sportident.SIConstants
 import kolskypavel.ardfmanager.backend.sportident.SIPort
 import kolskypavel.ardfmanager.backend.sportident.SIPort.CardData
 import kolskypavel.ardfmanager.backend.sportident.SITime
 import org.junit.Test
 import org.mockito.Mockito.mock
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.UUID
@@ -19,8 +21,8 @@ class ResultUnitTests {
     @Test
     fun testSI5DataAdjustment() {
 
-        val checkTime = SITime(LocalTime.of(10, 5,0))
-        val startTime = SITime(LocalTime.of(10, 10,0))
+        val checkTime = SITime(LocalTime.of(10, 5, 0))
+        val startTime = SITime(LocalTime.of(10, 10, 0))
 
         val punchData = arrayListOf(
             SIPort.PunchData(1, SITime(LocalTime.of(10, 20, 0))),
@@ -36,19 +38,21 @@ class ResultUnitTests {
             SIPort.PunchData(10, SITime(LocalTime.of(9, 17, 10))),
         )
 
-        val finishTime = SITime(LocalTime.of(9, 43,0))
+        val finishTime = SITime(LocalTime.of(9, 43, 0))
 
         var zeroTimeBase = LocalTime.of(10, 0)
-        val cardData = CardData(SIConstants.SI_CARD5, 12345, checkTime, startTime, finishTime, punchData)
+        val cardData =
+            CardData(SIConstants.SI_CARD5, 12345, checkTime, startTime, finishTime, punchData)
         val mockResultsProcessor = ResultsProcessor(mock())
 
         var result =
             Result(
                 UUID.randomUUID(),
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                UUID.randomUUID(),
                 cardData.siNumber,
                 cardData.cardType,
-                UUID.randomUUID(),
-                UUID.randomUUID(),
                 cardData.checkTime,
                 cardData.checkTime,
                 cardData.startTime,
@@ -56,10 +60,19 @@ class ResultUnitTests {
                 cardData.finishTime,
                 cardData.finishTime,
                 LocalDateTime.now(),
+                false,
+                RaceStatus.NO_RANKING,
+                0,
+                Duration.ZERO,
                 false
             )
 
-        val resultPunches = mockResultsProcessor.processCardPunches(cardData, UUID.randomUUID(), result, zeroTimeBase, UUID.randomUUID())
+        val resultPunches = mockResultsProcessor.processCardPunches(
+            cardData,
+            UUID.randomUUID(),
+            result,
+            zeroTimeBase
+        )
 
 
         assertEquals("10:05:00,0,0", cardData.checkTime.toString())
@@ -99,10 +112,11 @@ class ResultUnitTests {
         result =
             Result(
                 UUID.randomUUID(),
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                UUID.randomUUID(),
                 cardData.siNumber,
                 cardData.cardType,
-                UUID.randomUUID(),
-                UUID.randomUUID(),
                 cardData.checkTime,
                 cardData.checkTime,
                 cardData.startTime,
@@ -110,10 +124,19 @@ class ResultUnitTests {
                 cardData.finishTime,
                 cardData.finishTime,
                 LocalDateTime.now(),
+                false,
+                RaceStatus.NO_RANKING,
+                0,
+                Duration.ZERO,
                 false
             )
 
-        mockResultsProcessor.processCardPunches(cardData, UUID.randomUUID(), result, zeroTimeBase, UUID.randomUUID())
+        mockResultsProcessor.processCardPunches(
+            cardData,
+            UUID.randomUUID(),
+            result,
+            zeroTimeBase
+        )
 
         assertEquals("14:33:33,0,0", result.finishTime.toString())
     }
