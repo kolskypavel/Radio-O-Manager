@@ -252,7 +252,7 @@
                   "type": "string",
                   "description": "Competitor's club / country"
                 },
-                "competitor_category": {
+                "category_name": {
                   "type": "string",
                   "required": [],
                   "description": "Competitor's category in the race"
@@ -361,21 +361,14 @@
                         "description": "One punch of a control point",
                         "properties": {
                           "code": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "maximum": 255,
-                            "required": [],
-                            "description": "Code of the control point"
-                          },
-                          "alias": {
                             "type": "string",
-                            "description": "Alias of the control point - e. g. F1"
+                            "description": "Alias or code of the control point"
                           },
                           "split_time": {
                             "type": "string",
                             "format": "duration",
                             "required": [],
-                            "description": "Split from the last control"
+                            "description": "Split from the last control, format MM:ss"
                           },
                           "punch_status": {
                             "type": "string",
@@ -383,10 +376,10 @@
                               "OK",
                               "MP",
                               "DP",
-                              "AD"
+                              "AP"
                             ],
                             "required": [],
-                            "description": "Status of the punch: OK - valid, MP - misspunch, DP - duplicate punch, AD - additional punch (unknown SI code)"
+                            "description": "Status of the punch: OK - valid, MP - misspunch, DP - duplicate punch, AP - additional punch (unknown SI code)"
                           }
                         }
                       }
