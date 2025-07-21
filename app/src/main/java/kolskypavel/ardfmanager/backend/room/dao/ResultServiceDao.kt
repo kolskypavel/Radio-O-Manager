@@ -1,5 +1,6 @@
 package kolskypavel.ardfmanager.backend.room.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
@@ -12,7 +13,7 @@ interface ResultServiceDao {
     suspend fun getResultService(id: UUID): ResultService
 
     @Query("SELECT * FROM result_service WHERE race_id=(:raceId) LIMIT 1")
-    suspend fun getResultServiceByRaceId(raceId: UUID): ResultService?
+    fun getResultServiceLiveDataByRaceId(raceId: UUID): LiveData<ResultService?>
 
     @Upsert
     suspend fun createOrUpdateResultService(resultService: ResultService)

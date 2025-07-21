@@ -1,10 +1,14 @@
 package kolskypavel.ardfmanager.backend.results
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.processors.JsonProcessor
 import kolskypavel.ardfmanager.backend.results.ResultsConstants.JSON
 import kolskypavel.ardfmanager.backend.results.ResultsConstants.RESULTS_LOG_TAG
+import kolskypavel.ardfmanager.backend.results.ResultsConstants.ROBIS_API_HEADER
 import kolskypavel.ardfmanager.backend.room.entity.ResultService
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kolskypavel.ardfmanager.backend.room.enums.ResultServiceStatus
@@ -21,16 +25,28 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 
+
 object ResultServiceWorker {
 
     fun resultServiceJob(
         resultService: ResultService,
         dataProcessor: DataProcessor,
+        context: Context
     ): Job {
         return CoroutineScope(Dispatchers.IO).launch {
             val httpClient = OkHttpClient.Builder().build()
             while (true) {
-                delay(ResultsConstants.RESULT_DELAY)
+
+                //Test connection before sending - TODO: fix
+                if (!isNetworkConnected(context)) {
+                    resultService.status = ResultServiceStatus.NO_NETWORK
+                    updateResultService(dataProcessor, resultService)
+                    continue
+                } else {
+                    resultService.status = ResultServiceStatus.RUNNING
+                    updateResultService(dataProcessor, resultService)
+                }
+
                 when (resultService.serviceType) {
                     ResultServiceType.ROBIS -> exportResultsRobis(
                         dataProcessor,
@@ -38,6 +54,7 @@ object ResultServiceWorker {
                         httpClient
                     )
                 }
+                delay(ResultsConstants.RESULT_DELAY)
             }
         }
     }
@@ -65,10 +82,11 @@ object ResultServiceWorker {
         // Send the results to the ROBIS API
         val request: Request = Request.Builder()
             .url(ResultsConstants.ROBIS_API_URL)
-            .addHeader("Race-Api-Key", resultService.apiKey)
+            .addHeader(ROBIS_API_HEADER, resultService.apiKey)
             .put(body)
             .build()
 
+        //TODO: Handle loging
         httpClient.newCall(request).execute().use { response ->
             when (response.code) {
                 in 200..299 -> {
@@ -81,6 +99,8 @@ object ResultServiceWorker {
                 401 -> {
                     // Handle unauthorized response
                     resultService.status = ResultServiceStatus.UNAUTHORIZED
+                    resultService.errorText = response.message
+
                     Log.e(
                         RESULTS_LOG_TAG,
                         "Error ${response.code} sending results to ROBis: ${response.message}"
@@ -90,6 +110,7 @@ object ResultServiceWorker {
                 else -> {
                     // Handle error response and log it
                     resultService.status = ResultServiceStatus.ERROR
+                    resultService.errorText = response.message
                     Log.e(
                         RESULTS_LOG_TAG,
                         "Error ${response.code} sending results to ROBis: ${response.message}"
@@ -98,6 +119,16 @@ object ResultServiceWorker {
             }
             updateResultService(dataProcessor, resultService)
         }
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val network = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(network) ?: return false
+        // Require both that the network advertises internet and that the system validated it.
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
     // Filter the results by sent

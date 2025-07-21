@@ -28,6 +28,7 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
 import kolskypavel.ardfmanager.backend.room.enums.RaceBand
 import kolskypavel.ardfmanager.backend.room.enums.RaceLevel
 import kolskypavel.ardfmanager.backend.room.enums.RaceType
+import kolskypavel.ardfmanager.backend.room.enums.ResultServiceStatus
 import kolskypavel.ardfmanager.backend.room.enums.ResultServiceType
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.room.enums.StandardCategoryType
@@ -101,16 +102,6 @@ class DataProcessor private constructor(context: Context) {
 
     fun removeCurrentRace() {
         currentState.postValue(currentState.value?.let { AppState(null, it.siReaderState, null) })
-    }
-
-    fun setResultServiceJob(job: Job) {
-        currentState.postValue(currentState.value?.let { AppState(it.currentRace, it.siReaderState, job) })
-        currentState.value?.resultServiceJob?.start()
-    }
-
-    fun removeResultServiceJob() {
-        currentState.value?.resultServiceJob?.cancel()
-        currentState.postValue(currentState.value?.let { AppState(it.currentRace, it.siReaderState, null) })
     }
 
     //METHODS TO HANDLE RACES
@@ -419,12 +410,34 @@ class DataProcessor private constructor(context: Context) {
         )
 
     //RESULT SERVICE
-    suspend fun getResultServiceByRaceId(raceId: UUID) =
-        ardfRepository.getResultServiceByRaceId(raceId)
+    fun getResultServiceLiveDataByRaceId(raceId: UUID) =
+        ardfRepository.getResultServiceLiveDataByRaceId(raceId)
 
     suspend fun createOrUpdateResultService(resultService: ResultService) =
         ardfRepository.createOrUpdateResultService(resultService)
 
+
+    fun setResultServiceJob(job: Job) {
+        currentState.postValue(currentState.value?.let {
+            AppState(
+                it.currentRace,
+                it.siReaderState,
+                job
+            )
+        })
+        currentState.value?.resultServiceJob?.start()
+    }
+
+    fun removeResultServiceJob() {
+        currentState.value?.resultServiceJob?.cancel()
+        currentState.postValue(currentState.value?.let {
+            AppState(
+                it.currentRace,
+                it.siReaderState,
+                null
+            )
+        })
+    }
     //DATA IMPORT/EXPORT
     suspend fun importData(
         uri: Uri,
@@ -545,9 +558,15 @@ class DataProcessor private constructor(context: Context) {
     }
 
     fun resultServiceTypeToString(resultServiceType: ResultServiceType): String {
-        val raceStatusStrings =
+        val resultServiceTypes =
             appContext.get()?.resources?.getStringArray(R.array.result_service_types)!!
-        return raceStatusStrings[resultServiceType.value]
+        return resultServiceTypes[resultServiceType.value]
+    }
+
+    fun resultServiceStatusToString(status: ResultServiceStatus): CharSequence? {
+        val resultServiceStatus =
+            appContext.get()?.resources?.getStringArray(R.array.result_service_status)!!
+        return resultServiceStatus[status.value]
     }
 
     /**

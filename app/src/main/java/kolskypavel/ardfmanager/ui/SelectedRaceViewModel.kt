@@ -15,6 +15,7 @@ import kolskypavel.ardfmanager.backend.room.entity.ControlPoint
 import kolskypavel.ardfmanager.backend.room.entity.Punch
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.Result
+import kolskypavel.ardfmanager.backend.room.entity.ResultService
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
@@ -56,6 +57,8 @@ class SelectedRaceViewModel : ViewModel() {
         MutableStateFlow(emptyList())
     val resultData: StateFlow<List<ResultWrapper>> get() = _resultData.asStateFlow()
 
+    var resultService: LiveData<ResultService?> = MutableLiveData(null)
+
     @Throws(IllegalStateException::class)
     fun getCurrentRace(): Race {
         if (race.value != null) {
@@ -71,6 +74,8 @@ class SelectedRaceViewModel : ViewModel() {
         CoroutineScope(Dispatchers.IO).launch {
             val race = dataProcessor.setCurrentRace(id)
             _race.postValue(race)
+
+            resultService = dataProcessor.getResultServiceLiveDataByRaceId(id)
 
             launch {
                 dataProcessor.getCategoryDataFlowForRace(id).collect {
@@ -264,6 +269,17 @@ class SelectedRaceViewModel : ViewModel() {
             }
         }
 
+    //RESULT SERVICE
+    fun disableResultService() {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (resultService.value != null) {
+                val rs = resultService.value!!
+                dataProcessor.removeResultServiceJob()
+                resultService.value!!.enabled = false
+                dataProcessor.createOrUpdateResultService(rs)
+            }
+        }
+    }
 
     //DATA IMPORT/EXPORT
     fun importData(

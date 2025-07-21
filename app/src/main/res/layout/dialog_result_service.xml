@@ -48,6 +48,7 @@
             style="@style/dialog_textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:enabled="false"
             android:hint="@string/race_api_key">
 
@@ -64,6 +65,8 @@
             style="@style/dialog_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/result_service_enable" />
 
         <TextView
@@ -76,7 +79,20 @@
             android:id="@+id/results_service_dialog_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/general_ok" />
+            android:text="@string/general_disabled" />
+
+        <TextView
+            android:id="@+id/results_service_dialog_error"
+            style="@style/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/results_service_dialog_send_again"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="@string/result_service_send_again" />
 
         <Button
             android:id="@+id/results_service_dialog_close"

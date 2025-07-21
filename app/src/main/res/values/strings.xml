@@ -24,6 +24,7 @@
     <string name="general_close">Close</string>
     <string name="general_required">Required</string>
     <string name="general_invalid">Invalid</string>
+    <string name="general_disabled">Disabled</string>
     <string name="general_preview">Preview</string>
     <string name="general_share">Share</string>
     <string name="general_duplicate">Duplicate</string>
@@ -226,9 +227,10 @@
     <string name="data_format_html" translatable="false">HTML</string>
 
     <!-- Result service -->
-    <string name="result_service_type_robis" translatable="false">ROBis</string>
     <string name="result_service_enable">Enable results service</string>
-    <string name="result_service_api_key_missing">API key must be present for ROBis</string>
+    <string name="result_service_send_again">Send results again</string>
+    <string name="result_service_api_key_missing">API key must be set in race for ROBis</string>
+    <string name="result_service_status_text">%1$s, sent %2$d/%3$d</string>
 
     <!--    Preferences    -->
     <string name="global_settings">Global settings</string>
@@ -280,11 +282,21 @@
     <string name="preferences_results_time_format_hours">hh:mm:ss</string>
     <string name="preferences_results_use_aliases">Use aliases</string>
     <string name="preferences_results_use_aliases_hint">Use defined aliases for control points instead of SI codes</string>
+    <string name="preferences_results_result_service">Result service sending</string>
+    <string name="preferences_results_result_service_hint">Select when to send the results with the result service\n[%1$s]</string>
+    <string name="preferences_results_result_service_matched">When competitor matched</string>
+    <string name="preferences_results_result_service_no_match">Even without match</string>
 
     <string-array name="preferences_results_time_format_options">
-        <item>@string/preferences_results_time_format_minutes</item>
-        <item>@string/preferences_results_time_format_hours</item>
+        <item>@string/preferences_results_result_service_matched</item>
+        <item>@string/preferences_results_result_service_no_match</item>
     </string-array>
+
+    <string-array name="preferences_result_service_options">
+        <item>@string/preferences_results_result_service_matched</item>
+        <item>@string/preferences_results_result_service_no_match</item>
+    </string-array>
+
 
     <!--Preferences:files-->
     <string name="preferences_files_invalid_stops_import">Stop import on invalid record</string>
@@ -304,7 +316,6 @@
     <string name="preferences_changelog">Changelog</string>
 
     <!--Preference values -->
-
     <string name="lang_en" translatable="false">English</string>
     <string name="lang_cz" translatable="false">Čeština</string>
 
@@ -357,6 +368,14 @@
     <string name="data_type_results">Results</string>
     <string name="data_type_results_splits">Results with splits</string>
     <string name="data_type_readout_data">SI Readout data</string>
+
+    <string name="result_service_type_robis" translatable="false">ROBis</string>
+
+    <string name="result_service_status_running">Running</string>
+    <string name="result_service_status_ok">OK</string>
+    <string name="result_service_status_no_network">No network</string>
+    <string name="result_service_status_unauthorized">Unauthorized</string>
+    <string name="result_service_status_error">Error</string>
 
     <string-array name="race_types_array">
         <item>@string/race_type_classics</item>
@@ -465,5 +484,13 @@
 
     <string-array name="result_service_types">
         <item>@string/result_service_type_robis</item>
+    </string-array>
+
+    <string-array name="result_service_status">
+        <item>@string/result_service_status_running</item>
+        <item>@string/result_service_status_ok</item>
+        <item>@string/result_service_status_no_network</item>
+        <item>@string/result_service_status_unauthorized</item>
+        <item>@string/result_service_status_error</item>
     </string-array>
 </resources>

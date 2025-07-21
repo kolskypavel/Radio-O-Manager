@@ -364,6 +364,7 @@ class CompetitorFragment : Fragment() {
             builder.setMessage(message)
 
             builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
+                selectedRaceViewModel.disableResultService()
                 dataProcessor.removeCurrentRace()
                 findNavController().navigate(CompetitorFragmentDirections.closeRace())
             }

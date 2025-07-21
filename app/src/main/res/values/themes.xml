@@ -91,6 +91,10 @@
         <item name="background">@color/yellow_warning</item>
     </style>
 
+    <style name="error_text">
+        <item name="android:textColor">@color/red_error</item>
+    </style>
+
     <!-- Customised App Theme with the Toolbar-->
     <style name="SettingsTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>

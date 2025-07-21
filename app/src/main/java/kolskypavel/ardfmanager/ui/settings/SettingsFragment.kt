@@ -104,6 +104,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
+
+
         findPreference<CheckBoxPreference>(requireContext().getString(R.string.key_files_prefer_app_start_time))
             ?.setOnPreferenceChangeListener { _, keepOpen ->
 

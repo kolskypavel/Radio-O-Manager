@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -40,6 +41,7 @@ class ResultsFragment : Fragment() {
     private val dataProcessor = DataProcessor.get()
     private lateinit var resultsToolbar: Toolbar
     private lateinit var resultsRecyclerView: RecyclerView
+    private lateinit var resultsServiceMenuItem: MenuItem
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,13 +66,34 @@ class ResultsFragment : Fragment() {
         resultsToolbar = view.findViewById(R.id.results_toolbar)
         resultsRecyclerView = view.findViewById(R.id.results_recycler_view)
         resultsToolbar.inflateMenu(R.menu.fragment_menu_result)
+        resultsServiceMenuItem = resultsToolbar.menu.findItem(R.id.result_menu_results_service)
         resultsToolbar.setOnMenuItemClickListener {
             return@setOnMenuItemClickListener setFragmentMenuActions(it)
         }
 
+        // Set the toolbar as the action bar
         selectedRaceViewModel.race.observe(viewLifecycleOwner) { race ->
             resultsToolbar.title = race.name
             resultsToolbar.subtitle = dataProcessor.raceTypeToString(race.raceType)
+        }
+
+        // Set results service icon
+        selectedRaceViewModel.resultService.observe(viewLifecycleOwner) { resultService ->
+            if (resultService != null && resultService.enabled) {
+                resultsServiceMenuItem.icon =
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_result_service_running,
+                        null
+                    )
+            } else {
+                resultsServiceMenuItem.icon =
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_result_service_stopped,
+                        null
+                    )
+            }
         }
 
         setResultListener()
@@ -85,7 +108,7 @@ class ResultsFragment : Fragment() {
                 findNavController().navigate(ResultsFragmentDirections.exportResults())
             }
 
-            R.id.result_menu_results_service->{
+            R.id.result_menu_results_service -> {
                 findNavController().navigate(ResultsFragmentDirections.openResultService())
             }
 
@@ -132,6 +155,7 @@ class ResultsFragment : Fragment() {
             builder.setMessage(message)
 
             builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
+                selectedRaceViewModel.disableResultService()
                 dataProcessor.removeCurrentRace()
                 findNavController().navigate(ResultsFragmentDirections.closeRace())
             }

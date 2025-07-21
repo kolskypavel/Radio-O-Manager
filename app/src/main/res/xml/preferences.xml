@@ -32,14 +32,14 @@
             app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
+
     <PreferenceCategory
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/general_categories"
         app:iconSpaceReserved="false">
-
-
     </PreferenceCategory>
+
     <PreferenceCategory
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -94,6 +94,16 @@
             android:title="@string/preferences_results_use_aliases"
             app:iconSpaceReserved="false"
             app:summary="@string/preferences_results_use_aliases_hint" />
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="@string/preferences_results_time_format_minutes"
+            android:entries="@array/preferences_result_service_options"
+            android:entryValues="@array/preferences_result_service_options"
+            android:key="@string/key_result_service"
+            android:summary="@string/preferences_results_result_service_hint"
+            android:title="@string/preferences_results_result_service"
+            app:iconSpaceReserved="false" />
 
 
     </PreferenceCategory>

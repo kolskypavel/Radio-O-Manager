@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
@@ -17,16 +18,22 @@ import com.google.android.material.textfield.TextInputLayout
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.results.ResultServiceWorker
+import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.ResultService
 import kolskypavel.ardfmanager.backend.room.enums.ResultServiceType
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kolskypavel.ardfmanager.ui.readouts.ReadoutEditDialogFragmentArgs
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class ResultServiceDialogFragment : DialogFragment() {
 
     private val args: ReadoutEditDialogFragmentArgs by navArgs()
     private lateinit var selectedRaceViewModel: SelectedRaceViewModel
+    private lateinit var currRace: Race
+
     private val dataProcessor = DataProcessor.get()
 
     private lateinit var resultService: ResultService
@@ -37,7 +44,8 @@ class ResultServiceDialogFragment : DialogFragment() {
     private lateinit var urlInput: TextInputEditText
     private lateinit var apiKeyLayout: TextInputLayout
     private lateinit var apiKeyInput: TextInputEditText
-
+    private lateinit var statusView: TextView
+    private lateinit var errorTextView: TextView
     private lateinit var closeButton: Button
 
     override fun onCreateView(
@@ -63,6 +71,7 @@ class ResultServiceDialogFragment : DialogFragment() {
 
         val sl: SelectedRaceViewModel by activityViewModels()
         selectedRaceViewModel = sl
+        currRace = selectedRaceViewModel.getCurrentRace()
 
         enableSwitch = view.findViewById(R.id.result_service_dialog_enable)
         typePicker = view.findViewById(R.id.result_service_dialog_type)
@@ -70,6 +79,8 @@ class ResultServiceDialogFragment : DialogFragment() {
         urlInput = view.findViewById(R.id.results_service_dialog_url)
         apiKeyLayout = view.findViewById(R.id.results_service_dialog_api_key_layout)
         apiKeyInput = view.findViewById(R.id.results_service_dialog_api_key)
+        statusView = view.findViewById(R.id.results_service_dialog_status)
+        errorTextView = view.findViewById(R.id.results_service_dialog_error)
         closeButton = view.findViewById(R.id.results_service_dialog_close)
 
         populateFields()
@@ -78,12 +89,9 @@ class ResultServiceDialogFragment : DialogFragment() {
 
     private fun populateFields() {
         dialog?.setTitle(R.string.results_service)
-        val currRace = selectedRaceViewModel.getCurrentRace()
 
         runBlocking {
-            resultService =
-                dataProcessor.getResultServiceByRaceId(currRace.id)
-                    ?: ResultService()
+            resultService = selectedRaceViewModel.resultService.value ?: ResultService(currRace.id)
         }
         enableSwitch.isChecked = resultService.enabled
         typePicker.setText(
@@ -92,21 +100,31 @@ class ResultServiceDialogFragment : DialogFragment() {
         )
         urlInput.setText(resultService.url)
         apiKeyInput.setText(currRace.apiKey)
+
+        // Result service observer
+        dataProcessor.getResultServiceLiveDataByRaceId(currRace.id)
+            .observe(viewLifecycleOwner) { service ->
+                if (service != null) {
+                    statusView.text = getString(
+                        R.string.result_service_status_text,
+                        dataProcessor.resultServiceStatusToString(resultService.status),
+                        service.sent,
+                        100 // TODO: Replace with actual sent count
+                    )
+                    errorTextView.text = resultService.errorText
+                }
+            }
     }
 
     private fun setButtons() {
         typePicker.onItemSelectedListener
 
-        enableSwitch.setOnClickListener {
-            if (validateFields()) {
-                if (!resultService.enabled) {
-                    enableResultService()
-                } else {
-                    disableResultService()
-                }
-
+        enableSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (!isChecked) {
+                selectedRaceViewModel.disableResultService()
+            } else if (validateFields()) {
+                enableResultService()
             } else {
-                enableSwitch.isEnabled = false
                 enableSwitch.isChecked = false
             }
         }
@@ -138,23 +156,21 @@ class ResultServiceDialogFragment : DialogFragment() {
     }
 
     private fun enableResultService() {
-        runBlocking {
+
+        // Copy the fields
+        resultService.enabled = true
+        resultService.url = urlInput.text.toString()
+        resultService.apiKey = currRace.apiKey
+
+        CoroutineScope(Dispatchers.IO).launch {
+            dataProcessor.createOrUpdateResultService(resultService)
             dataProcessor.setResultServiceJob(
                 ResultServiceWorker.resultServiceJob(
                     resultService,
-                    dataProcessor
+                    dataProcessor,
+                    requireContext()
                 )
             )
-            resultService.enabled = true
-            dataProcessor.createOrUpdateResultService(resultService)
-        }
-    }
-
-    private fun disableResultService() {
-        runBlocking {
-            dataProcessor.removeResultServiceJob()
-            resultService.enabled = false
-            dataProcessor.createOrUpdateResultService(resultService)
         }
     }
 }

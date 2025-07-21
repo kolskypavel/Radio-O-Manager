@@ -188,13 +188,12 @@ class ARDFRepository private constructor(context: Context) {
 
 
     //Result service
-    suspend fun getResultService(id: UUID) =
-        eventDatabase.resultServiceDao().getResultService(id)
 
-    suspend fun getResultServiceByRaceId(raceId: UUID) =
-        eventDatabase.resultServiceDao().getResultServiceByRaceId(raceId)
+    fun getResultServiceLiveDataByRaceId(raceId: UUID) =
+        eventDatabase.resultServiceDao().getResultServiceLiveDataByRaceId(raceId)
 
-    suspend fun createOrUpdateResultService(resultService: ResultService)=eventDatabase.resultServiceDao().createOrUpdateResultService(resultService)
+    suspend fun createOrUpdateResultService(resultService: ResultService) =
+        eventDatabase.resultServiceDao().createOrUpdateResultService(resultService)
 
     //Singleton instantiation
     companion object {

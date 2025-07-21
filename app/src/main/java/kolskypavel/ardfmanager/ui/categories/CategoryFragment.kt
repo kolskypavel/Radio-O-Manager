@@ -219,6 +219,7 @@ class CategoryFragment : Fragment() {
             builder.setMessage(message)
 
             builder.setPositiveButton(R.string.general_ok) { _, _ ->
+                selectedRaceViewModel.disableResultService()
                 dataProcessor.removeCurrentRace()
                 findNavController().navigate(CategoryFragmentDirections.closeRace())
             }

@@ -286,6 +286,7 @@ class ReadoutFragment : Fragment() {
             builder.setMessage(message)
 
             builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
+                selectedRaceViewModel.disableResultService()
                 selectedRaceViewModel.removeReaderRace()
                 statsJob?.cancel()
 
