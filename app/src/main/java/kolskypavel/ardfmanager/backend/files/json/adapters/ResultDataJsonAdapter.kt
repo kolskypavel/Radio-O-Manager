@@ -8,6 +8,7 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 class ResultDataJsonAdapter {
     @ToJson
     fun toJson(resultData: ResultData): ResultDataJson {
+        //TODO: add competitors
         return ResultDataJson(
             run_time = TimeProcessor.durationToMinuteString(resultData.result.runTime),
             place = resultData.result.place,
