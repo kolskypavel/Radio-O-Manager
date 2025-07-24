@@ -318,4 +318,12 @@ class SelectedRaceViewModel : ViewModel() {
             )
         }
     }
+
+    fun saveDataImportWrapper(
+        dataImportWrapper: DataImportWrapper
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dataProcessor.saveDataImportWrapper(dataImportWrapper)
+        }
+    }
 }

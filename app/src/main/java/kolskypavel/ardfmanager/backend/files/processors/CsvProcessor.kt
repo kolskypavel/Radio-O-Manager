@@ -9,6 +9,7 @@ import kolskypavel.ardfmanager.backend.files.constants.DataFormat
 import kolskypavel.ardfmanager.backend.files.constants.DataType
 import kolskypavel.ardfmanager.backend.files.constants.FileConstants
 import kolskypavel.ardfmanager.backend.files.wrappers.DataImportWrapper
+import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.Race
@@ -60,7 +61,7 @@ object CsvProcessor : FormatProcessor {
         format: DataFormat,
         dataProcessor: DataProcessor,
         raceId: UUID
-    ): Boolean{
+    ): Boolean {
         try {
 
             when (dataType) {
@@ -213,65 +214,74 @@ object CsvProcessor : FormatProcessor {
         val competitors = ArrayList<CompetitorCategory>()
 
         for (row in csvReader) {
+            try {
+                var category: CategoryData? = null
 
-            if (row.size == FileConstants.OCM_COMPETITOR_CSV_COLUMNS) {
-                try {
-                    var category: CategoryData? = null
-
-                    //Check if category exists
-                    if (row[3].isNotEmpty()) {
-                        val catName = row[3]
-                        val origCat = categories.find { it.category.name == catName }
-                        if (origCat != null) {
-                            category = origCat
-                        } else {
-                            category = CategoryData(
-                                Category(
-                                    UUID.randomUUID(),
-                                    race.id,
-                                    row[3],
-                                    false,
-                                    null,
-                                    0F,
-                                    0F,
-                                    0,
-                                    false,
-                                    race.raceType,
-                                    race.raceBand,
-                                    race.timeLimit,
-                                    ""
-                                ), emptyList(), emptyList()
-                            )
-                            categories.add(category)
-                        }
-                    }
-
-                    val competitor =
-                        Competitor(
-                            UUID.randomUUID(),
-                            race.id,
-                            category?.category?.id,
-                            row[1],
-                            row[2],
-                            row[7],
-                            row[10],
-                            row[4].toInt() == 0,
-                            row[5].toInt(),
-                            row[0].toInt(),
-                            false,
-                            row[9].toInt(),
-                            null
+                //Check if category exists
+                if (row[4].isNotEmpty()) {
+                    val catName = row[4]
+                    val origCat = categories.find { it.category.name == catName }
+                    if (origCat != null) {
+                        category = origCat
+                    } else {
+                        category = CategoryData(
+                            Category(
+                                UUID.randomUUID(),
+                                race.id,
+                                row[4],
+                                false,
+                                null,
+                                0F,
+                                0F,
+                                0,
+                                false,
+                                race.raceType,
+                                race.raceBand,
+                                race.timeLimit,
+                                ""
+                            ), emptyList(), emptyList()
                         )
-                    if (category != null) {
-                        competitors.add(CompetitorCategory(competitor, category.category))
+                        categories.add(category)
                     }
-                } catch (e: Exception) {
-                    Log.e(
-                        "CSV import",
-                        "Failed to import competitor \n\" " + e.stackTraceToString()
-                    )
-                    //TODO: Add break based on option
                 }
+
+                val categoryId = category?.category?.id
+                val startNumber = row[1].toInt()
+                val firstName = row[2]
+                val lastName = row[3]
+                val isMan = row[5].toIntOrNull() == 0
+                val birthYear = if (row.size > 6) row[6].toIntOrNull() else null
+                val club = if (row.size > 7) row[7] else ""
+                val index = if (row.size > 8) row[8] else ""
+                val siNumber = row[0].toIntOrNull()
+                val drawnRelativeStartTime: Duration? = if (row.size > 9 && row[9].isNotEmpty()) {
+                    TimeProcessor.minuteStringToDuration(row[9])
+                } else null
+
+                val competitor = Competitor(
+                    UUID.randomUUID(),
+                    race.id,
+                    categoryId,
+                    firstName,
+                    lastName,
+                    club,
+                    index,
+                    isMan,
+                    birthYear,
+                    siNumber,
+                    false,
+                    startNumber,
+                    drawnRelativeStartTime
+                )
+                if (category != null) {
+                    competitors.add(CompetitorCategory(competitor, category.category))
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    "CSV import",
+                    "Failed to import competitor \n\" " + e.stackTraceToString()
+                )
+                //TODO: Add break based on option
             }
         }
         return DataImportWrapper(competitors, categories.toList())

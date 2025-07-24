@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
@@ -41,7 +41,7 @@ class DataImportDialogFragment : DialogFragment() {
 
     private lateinit var dataTypePicker: MaterialAutoCompleteTextView
     private lateinit var dataFormatPicker: MaterialAutoCompleteTextView
-    private lateinit var dataPreviewLayout: LinearLayout
+    private lateinit var dataPreviewLayout: ScrollView
     private lateinit var dataPreviewRecyclerView: RecyclerView
     private lateinit var errorView: TextView
     private lateinit var importButton: Button
@@ -162,17 +162,7 @@ class DataImportDialogFragment : DialogFragment() {
                 }
 
                 DataType.C0MPETITORS -> {
-                    //Upsert categories
-                    for (catData in data!!.categories) {
-                        selectedRaceViewModel.createOrUpdateCategory(
-                            catData.category,
-                            catData.controlPoints
-                        )
-                    }
-                    //Create competitors - TODO: ADD duplicates check
-                    for (compData in data!!.competitorCategories) {
-                        selectedRaceViewModel.createOrUpdateCompetitor(compData.competitor)
-                    }
+                    selectedRaceViewModel.saveDataImportWrapper(data!!)
                 }
 
                 DataType.COMPETITOR_STARTS_TIME -> {

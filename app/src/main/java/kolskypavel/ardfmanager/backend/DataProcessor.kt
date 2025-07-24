@@ -476,6 +476,21 @@ class DataProcessor private constructor(context: Context) {
         ) ?: false
     }
 
+    suspend fun saveDataImportWrapper(
+        data: DataImportWrapper
+    ) {
+        //Upsert categories
+        for (catData in data.categories) {
+            createOrUpdateCategory(
+                catData.category,
+                catData.controlPoints
+            )
+        }
+        //Create competitors - TODO: ADD duplicates check
+        for (compData in data.competitorCategories) {
+            createOrUpdateCompetitor(compData.competitor)
+        }
+    }
 
     //SportIdent manipulation
     fun connectDevice(usbDevice: UsbDevice) {
