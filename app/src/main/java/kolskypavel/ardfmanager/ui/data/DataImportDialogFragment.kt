@@ -22,6 +22,7 @@ import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
 import kolskypavel.ardfmanager.backend.files.constants.DataType
 import kolskypavel.ardfmanager.backend.files.wrappers.DataImportWrapper
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -168,14 +169,7 @@ class DataImportDialogFragment : DialogFragment() {
         if (data != null) {
             val currType = getCurrentType()
             when (currType) {
-                DataType.CATEGORIES -> {
-                    for (catData in data!!.categories) {
-                        selectedRaceViewModel.createOrUpdateCategory(
-                            catData.category,
-                            catData.controlPoints
-                        )
-                    }
-                }
+                DataType.CATEGORIES -> importCategories(data!!.categories)
 
                 DataType.COMPETITORS -> {
                     selectedRaceViewModel.saveDataImportWrapper(data!!)
@@ -190,6 +184,23 @@ class DataImportDialogFragment : DialogFragment() {
 
                 else -> {}
             }
+        }
+    }
+
+    private fun importCategories(categories: List<CategoryData>) {
+        for (cd in categories) {
+
+            //Check if category already exists - if it does, update it
+            val existingCategory = selectedRaceViewModel.getCategoryByName(cd.category.name)
+            if (existingCategory != null) {
+                cd.category.id = existingCategory.id
+
+                for (cp in cd.controlPoints) {
+                    cp.categoryId = existingCategory.id
+                }
+            }
+
+            selectedRaceViewModel.createOrUpdateCategory(cd.category, cd.controlPoints)
         }
     }
 }

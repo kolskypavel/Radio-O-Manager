@@ -18,6 +18,7 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorCategory
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
+import kolskypavel.ardfmanager.backend.room.enums.RaceType
 import kolskypavel.ardfmanager.backend.room.enums.StandardCategoryType
 import kolskypavel.ardfmanager.backend.wrappers.ResultWrapper
 import kotlinx.coroutines.Dispatchers
@@ -154,11 +155,11 @@ object CsvProcessor : FormatProcessor {
 
                         // Parse the category specific fields
                         if (!followRacePresets) {
-                            val raceType =
-                                dataProcessor.raceTypeStringToEnum(row[7])
+                            val raceType = RaceType.valueOf(row[7])
                             val timeLimit = row[8].toLong()
                             val band = row[9]
 
+                            category.differentProperties = true
                             category.raceType = raceType
                             category.timeLimit = Duration.ofMinutes(timeLimit)
                             category.categoryBand = dataProcessor.raceBandStringToEnum(band)
@@ -171,6 +172,7 @@ object CsvProcessor : FormatProcessor {
                             category.raceType ?: race.raceType,
                             dataProcessor.getContext()
                         )
+                        category.controlPointsString = controlPointString
 
                         categories.add(
                             CategoryData(

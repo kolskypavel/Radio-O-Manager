@@ -226,14 +226,18 @@ object ControlPointsHelper {
     fun getStringFromControlPoints(controlPoints: List<ControlPoint>): String {
         var codes = ""
 
-        for (cp in controlPoints) {
-            codes += cp.siCode
+        for (cp in controlPoints.withIndex()) {
+            codes += cp.value.siCode
 
-            if (cp.type == ControlPointType.BEACON) {
+            if (cp.value.type == ControlPointType.BEACON) {
                 codes += "B"
             }
-            if (cp.type == ControlPointType.SEPARATOR) {
+            if (cp.value.type == ControlPointType.SEPARATOR) {
                 codes += "!"
+            }
+
+            if (cp.index < controlPoints.size - 1) {
+                codes += " "
             }
         }
         return codes
