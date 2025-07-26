@@ -271,7 +271,10 @@ class ResultsProcessor(
             competitor = dataProcessor.getCompetitor(result.competitorID!!)
         } else if (result.siNumber != null) {
             competitor = dataProcessor.getCompetitorBySINumber(result.siNumber!!, result.raceId)
-            result.competitorID = competitor!!.id
+
+            if (competitor != null) {
+                result.competitorID = competitor.id
+            }
         }
 
         val category = if (competitor?.categoryId != null) {

@@ -90,10 +90,13 @@ object CsvProcessor : FormatProcessor {
                     dataProcessor.getResultWrapperFlowByRace(raceId).first()
                 )
 
-                DataType.READOUT_DATA -> {}
-//                exportReadoutData( outStream,
-//                    dataProcessor.getResultDataFlowByRace(raceId).first()
-//                )
+                DataType.READOUT_DATA -> {
+                    exportReadoutData(
+                        outStream,
+                        dataProcessor.getResultDataFlowByRace(raceId).first()
+                    )
+                }
+
             }
             return true
         } catch (e: Exception) {
@@ -440,7 +443,7 @@ object CsvProcessor : FormatProcessor {
         val writer = outStream.bufferedWriter()
         withContext(Dispatchers.IO) {
             for (rd in readoutData) {
-
+                writer.write(rd.toReadoutCSVString())
                 writer.newLine()
             }
             writer.flush()

@@ -6,7 +6,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Punch
 import kolskypavel.ardfmanager.backend.room.entity.Result
 
 // Contains the result and punches for a readout
-data class ReadoutData (
+data class ReadoutData(
     @Embedded var result: Result,
 
     @Relation(
@@ -15,5 +15,4 @@ data class ReadoutData (
         entity = Punch::class
     )
     var punches: List<AliasPunch>,
-){
-}
+) {}
