@@ -47,7 +47,7 @@ object JsonProcessor : FormatProcessor {
         when (dataType) {
             DataType.CATEGORIES -> TODO()
             DataType.COMPETITORS -> TODO()
-            DataType.RESULTS_SIMPLE -> exportResults(
+            DataType.RESULTS -> exportResults(
                 outStream,
                 dataProcessor.getResultDataFlowByRace(raceId).first()
             )

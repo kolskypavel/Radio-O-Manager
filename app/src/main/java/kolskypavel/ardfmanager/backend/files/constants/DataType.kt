@@ -6,7 +6,7 @@ enum class DataType(var value: Int) {
     COMPETITOR_STARTS_TIME(2),
     COMPETITOR_STARTS_CATEGORIES(3),
     COMPETITOR_STARTS_CLUBS(4),
-    RESULTS_SIMPLE(5),
+    RESULTS(5),
     READOUT_DATA(6);
 
     companion object {

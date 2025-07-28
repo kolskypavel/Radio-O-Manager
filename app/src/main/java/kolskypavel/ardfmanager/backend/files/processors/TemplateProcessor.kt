@@ -1,6 +1,7 @@
 package kolskypavel.ardfmanager.backend.files.processors;
 
 import android.content.Context
+import kolskypavel.ardfmanager.backend.files.constants.FileConstants
 import java.io.IOException
 
 object TemplateProcessor {
@@ -17,6 +18,8 @@ object TemplateProcessor {
         for (par in params) {
             output = output.replace(par.key, par.value)
         }
+        // Replace TAB as the last parameter
+        output = output.replace(FileConstants.KEY_TAB, "\t")
 
         return output
     }

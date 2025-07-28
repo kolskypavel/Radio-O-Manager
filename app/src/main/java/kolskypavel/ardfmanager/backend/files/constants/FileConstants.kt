@@ -4,9 +4,10 @@ object FileConstants {
     const val OCM_START_CSV_COLUMNS = 3
     const val CATEGORY_CSV_COLUMNS = 11
 
-    const val TEMPLATE_TEXT = "templates/textResultsTemplate.tmpl"
+    const val TEMPLATE_TEXT_RESULTS = "templates/textResultsTemplate.tmpl"
     const val TEMPLATE_TEXT_CATEGORY = "templates/textResCatHeader.tmpl"
-    const val TEMPLATE_TEXT_COMPETITOR = "templates/textResComp.tmpl"
+    const val TEMPLATE_TEXT_COMPETITOR = "templates/textResCompSimple.tmpl"
+    const val TEMPLATE_TEXT_COMPETITOR_SPLITS = "templates/textResCompSplits.tmpl"
     const val TEMPLATE_HTML = "templates/htmlResultTtemplate.tmpl"
 
     const val KEY_TAB = "{{TAB}}"
@@ -49,8 +50,11 @@ object FileConstants {
     const val KEY_COMP_RUN_TIME = "{{comp_run_time}}"
     const val KEY_COMP_POINTS = "{{comp_points}}"
     const val KEY_COMP_CONTROLS = "{{comp_controls}}"
+    const val KEY_COMP_SPLITS= "{{comp_splits}}"
 
-    const val KEY_TITLE_GENERATED_WITH = "{{title_generated_with}}"
     const val KEY_GENERATED_WITH = "{{generated_with}}"
     const val KEY_VERSION = "{{software_version}}"
+
+    const val KEY_TITLE_RESULTS_SPLITS = "{{title_results_splits}}"
+    const val KEY_RACE_RESULTS_SPLITS = "{{race_results_splits}}"
 }

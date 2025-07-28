@@ -137,7 +137,7 @@ class ResultsExportDialogFragment : DialogFragment() {
             )
         ) {
             try {
-                errorText.error = ""
+                errorText.error = null
                 val intent = Intent()
                 intent.setAction(Intent.ACTION_VIEW)
                 intent.setData(uri)
@@ -162,7 +162,7 @@ class ResultsExportDialogFragment : DialogFragment() {
             DataType.COMPETITOR_STARTS_TIME -> TODO()
             DataType.COMPETITOR_STARTS_CATEGORIES -> TODO()
             DataType.COMPETITOR_STARTS_CLUBS -> TODO()
-            DataType.RESULTS_SIMPLE -> TODO()
+            DataType.RESULTS -> TODO()
             DataType.READOUT_DATA -> TODO()
         }
     }
