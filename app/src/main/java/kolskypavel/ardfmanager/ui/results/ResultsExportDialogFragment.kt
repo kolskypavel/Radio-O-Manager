@@ -70,7 +70,7 @@ class ResultsExportDialogFragment : DialogFragment() {
 
     private fun setButtons() {
         dataTypePicker.setText(getString(R.string.data_type_results), false)
-        dataFormatPicker.setText(getText(R.string.data_format_csv), false)
+        dataFormatPicker.setText(getText(R.string.data_format_txt), false)
         previewButton.setOnClickListener {
 
         }

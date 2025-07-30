@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="{{language}}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{race_name}} - {{title_results}}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1, h2 { margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .footer { margin-top: 40px; font-size: 0.9em; color: #666; }
+    </style>
+</head>
+<body>
+<h1>{{title_results}}</h1>
+<h2>{{race_name}}</h2>
+<p>
+    {{title_race_date}}: {{race_date}}<br>
+    {{title_race_start_time}}: {{race_start_time}}<br>
+    {{title_race_level}}: {{race_level}}<br>
+    {{title_race_band}}: {{race_band}}
+</p>
+
+<table>
+    {{race_results}}
+</table>
+
+<div class="footer">
+    {{generated_with}} <a href="https://github.com/kolskypavel/ARDF-Manager">ARDF Manager</a>
+    {{software_version}}
+</div>
+</body>
+</html>

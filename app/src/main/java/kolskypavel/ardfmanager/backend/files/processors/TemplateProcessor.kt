@@ -12,7 +12,7 @@ object TemplateProcessor {
         return inputStream.bufferedReader().use { it.readText() }
     }
 
-    fun processTemplate(template: String, params: HashMap<String, String>): String {
+    fun processTemplate(template: String, params: Map<String, String>): String {
         var output = template
 
         for (par in params) {

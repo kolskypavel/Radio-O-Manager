@@ -289,7 +289,9 @@ object ResultsProcessor {
             null
         }
 
-        result.modified = true //Mark the result punches were modified
+        //  Mark the result punches were modified and need to be sent again
+        result.modified = true
+        result.sent = false
 
         punches.forEachIndexed { order, punch ->
             punch.resultId = result.id

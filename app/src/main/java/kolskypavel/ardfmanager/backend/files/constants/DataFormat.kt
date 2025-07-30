@@ -2,10 +2,10 @@ package kolskypavel.ardfmanager.backend.files.constants
 
 enum class DataFormat(var value: Int) {
     TXT(0),
-    CSV(1),
+    HTML(1),
     JSON(2),
-    IOF_XML(3),
-    HTML(4);
+    CSV(3),
+    IOF_XML(4);
 
     companion object {
         fun getByValue(value: Int) = DataFormat.entries.firstOrNull { it.value == value }

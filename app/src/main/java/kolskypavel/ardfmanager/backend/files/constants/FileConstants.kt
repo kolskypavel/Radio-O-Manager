@@ -8,7 +8,10 @@ object FileConstants {
     const val TEMPLATE_TEXT_CATEGORY = "templates/textResCatHeader.tmpl"
     const val TEMPLATE_TEXT_COMPETITOR = "templates/textResCompSimple.tmpl"
     const val TEMPLATE_TEXT_COMPETITOR_SPLITS = "templates/textResCompSplits.tmpl"
-    const val TEMPLATE_HTML = "templates/htmlResultTtemplate.tmpl"
+    const val TEMPLATE_HTML_RESULTS = "templates/htmlResultsTemplate.tmpl"
+    const val TEMPLATE_HTML_CATEGORY = "templates/htmlResCatHeader.tmpl"
+    const val TEMPLATE_HTML_COMPETITOR = "templates/htmlResComp.tmpl"
+    const val TEMPLATE_HTML_SPLIT = "templates/htmlResSplit.tmpl"
 
     const val KEY_TAB = "{{TAB}}"
 
@@ -50,11 +53,28 @@ object FileConstants {
     const val KEY_COMP_RUN_TIME = "{{comp_run_time}}"
     const val KEY_COMP_POINTS = "{{comp_points}}"
     const val KEY_COMP_CONTROLS = "{{comp_controls}}"
-    const val KEY_COMP_SPLITS= "{{comp_splits}}"
+    const val KEY_COMP_SPLITS = "{{comp_splits}}"
+
+    const val KEY_COMP_SPLITS_CODES = "{{comp_splits_codes}}"
+    const val KEY_COMP_SPLITS_TIMES = "{{comp_splits_times}}"
+
+    const val KEY_COMP_SPLIT_CODE = "{{comp_split_code}}"
+    const val KEY_COMP_SPLIT_TIME = "{{comp_split_time}}"
 
     const val KEY_GENERATED_WITH = "{{generated_with}}"
     const val KEY_VERSION = "{{software_version}}"
 
     const val KEY_TITLE_RESULTS_SPLITS = "{{title_results_splits}}"
     const val KEY_RACE_RESULTS_SPLITS = "{{race_results_splits}}"
+
+    // HTML CONSTANTS
+    const val HTML_TABLE_START = "<table>"
+    const val HTML_TABLE_END = "</table>"
+    const val HTML_EMPTY_ROW = "<tr><td></td></tr>"
+    const val HTML_DOUBLE_BREAK = "<br/><br/>"
+
+    const val HTML_SPLITS_CODE = "<td class=\"split_code\">{{comp_split_code}}</td>"
+    const val HTML_SPLITS_TIME = "<td class=\"split_time\">{{comp_split_time}}</td>"
+
+    const val HTML_MAX_SPLIT_COLUMNS = 10
 }

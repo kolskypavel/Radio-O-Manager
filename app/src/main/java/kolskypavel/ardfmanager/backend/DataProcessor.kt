@@ -257,6 +257,7 @@ class DataProcessor private constructor(context: Context) {
     suspend fun getStatisticsByRace(raceId: UUID): StatisticsWrapper {
         val competitors = ardfRepository.getCompetitorDataFlowByRace(raceId).first()
         val statistics = StatisticsWrapper(competitors.size, 0, 0, 0)
+        val race = getRace(raceId)
 
         for (cd in competitors) {
             val competitor = cd.competitorCategory.competitor
@@ -266,7 +267,7 @@ class DataProcessor private constructor(context: Context) {
                 if (competitor.drawnRelativeStartTime != null) {
                     //Count started
                     if (TimeProcessor.hasStarted(
-                            getCurrentRace().startDateTime,
+                            race.startDateTime,
                             competitor.drawnRelativeStartTime!!,
                             LocalDateTime.now()
                         )
@@ -274,9 +275,9 @@ class DataProcessor private constructor(context: Context) {
                         statistics.startedCompetitors++
                     }
 
-                    val limit = category?.timeLimit ?: getCurrentRace().timeLimit
+                    val limit = category?.timeLimit ?: race.timeLimit
                     if (TimeProcessor.isInLimit(
-                            getCurrentRace().startDateTime,
+                            race.startDateTime,
                             competitor.drawnRelativeStartTime!!,
                             limit, LocalDateTime.now()
                         )

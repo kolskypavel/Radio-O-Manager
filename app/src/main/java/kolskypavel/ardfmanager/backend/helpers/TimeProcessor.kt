@@ -11,6 +11,10 @@ object TimeProcessor {
         return DateTimeFormatter.ofPattern("HH:mm").format(time).toString()
     }
 
+    fun formatLocalDateTime(time: LocalDateTime): String {
+        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(time).toString()
+    }
+
     fun formatLocalDate(time: LocalDate): String {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(time).toString()
     }
