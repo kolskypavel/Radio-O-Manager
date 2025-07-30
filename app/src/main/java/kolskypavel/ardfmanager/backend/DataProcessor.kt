@@ -26,6 +26,7 @@ import kolskypavel.ardfmanager.backend.room.entity.ResultService
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
+import kolskypavel.ardfmanager.backend.room.enums.PunchStatus
 import kolskypavel.ardfmanager.backend.room.enums.RaceBand
 import kolskypavel.ardfmanager.backend.room.enums.RaceLevel
 import kolskypavel.ardfmanager.backend.room.enums.RaceType
@@ -588,6 +589,11 @@ class DataProcessor private constructor(context: Context) {
         val resultServiceStatus =
             appContext.get()?.resources?.getStringArray(R.array.result_service_status)!!
         return resultServiceStatus[status.value]
+    }
+
+    fun punchStatusToShortString(punchStatus: PunchStatus): String {
+        val arr = getContext().resources.getStringArray(R.array.punch_status_array_short)
+        return arr[punchStatus.ordinal]
     }
 
     /**

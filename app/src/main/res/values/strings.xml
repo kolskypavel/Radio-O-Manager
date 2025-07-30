@@ -210,7 +210,7 @@
 
     <string name="race_status_valid_short" translatable="false">OK</string>
     <string name="race_status_mispunched_short" translatable="false">MP</string>
-    <string name="race_status_no_ranking_short" translatable="false">NRA</string>
+    <string name="race_status_no_ranking_short" translatable="false">NR</string>
     <string name="race_status_disqualified_short" translatable="false">DSQ</string>
     <string name="race_status_did_not_start_short" translatable="false">DNS</string>
     <string name="race_status_did_not_finish_short" translatable="false">DNF</string>
@@ -229,6 +229,12 @@
     <string name="data_format_xml" translatable="false">XML</string>
     <string name="data_format_pdf" translatable="false">PDF</string>
     <string name="data_format_html" translatable="false">HTML</string>
+
+    <!-- Punch status -->
+    <string name="punch_status_valid_short" translatable="false">OK</string>
+    <string name="punch_status_invalid_short" translatable="false">MP</string>
+    <string name="punch_status_duplicate_short" translatable="false">DP</string>
+    <string name="punch_status_unknown_short" translatable="false">AP</string>
 
     <!-- Result service -->
     <string name="result_service_enable">Enable results service</string>
@@ -505,4 +511,12 @@
         <item>@string/result_service_status_unauthorized</item>
         <item>@string/result_service_status_error</item>
     </string-array>
+
+    <string-array name="punch_status_array_short">
+        <item>@string/punch_status_valid_short</item>
+        <item>@string/punch_status_invalid_short</item>
+        <item>@string/punch_status_duplicate_short</item>
+        <item>@string/punch_status_unknown_short</item>
+    </string-array>
+
 </resources>

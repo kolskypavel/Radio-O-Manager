@@ -19,7 +19,8 @@ import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.UUID
-
+import com.squareup.moshi.Types
+import kolskypavel.ardfmanager.backend.files.json.temps.ResultCompetitorJson
 
 @OptIn(ExperimentalStdlibApi::class)
 object JsonProcessor : FormatProcessor {
@@ -71,14 +72,32 @@ object JsonProcessor : FormatProcessor {
                 .add(ResultDataJsonAdapter())
                 .add(KotlinJsonAdapterFactory())
                 .build()
-            val adapter = moshi.adapter<List<ResultData>>()
 
-            val json = adapter.toJson(results);
-            outStream.write(json.toByteArray())
+            val type = Types.newParameterizedType(List::class.java, ResultCompetitorJson::class.java)
+            val adapter = moshi.adapter<List<ResultCompetitorJson>>(type)
 
+            val exportList = results.mapNotNull { rd ->
+                val compCat = rd.competitorCategory ?: return@mapNotNull null
+                val competitor = compCat.competitor
+                val category   = compCat.category   ?: return@mapNotNull null
+
+                ResultCompetitorJson(
+                    competitor_index = competitor.index,
+                    si_number = competitor.siNumber ?: 0,
+                    last_name = competitor.lastName,
+                    first_name = competitor.firstName,
+                    category_name = category.name,
+                    result = ResultDataJsonAdapter().toJson(rd)
+                )
+            }
+
+
+            val json = adapter.toJson(exportList)
+            outStream.write(json.toByteArray(Charsets.UTF_8))
             outStream.flush()
         }
     }
+
 
     suspend fun exportRaceData(
         outStream: OutputStream,

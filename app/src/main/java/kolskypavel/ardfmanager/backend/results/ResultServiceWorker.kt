@@ -67,6 +67,7 @@ object ResultServiceWorker {
         resultService: ResultService,
         httpClient: OkHttpClient
     ) {
+        Log.i(RESULTS_LOG_TAG, ">> exportResultsRobis START")
         // Fetch results and convert them to JSON
         val filteredResults = filterResultDataBySent(
             dataProcessor.getResultDataFlowByRace(resultService.raceId).first()
@@ -74,12 +75,14 @@ object ResultServiceWorker {
 
         // If there are no results to send, return early
         if (filteredResults.isEmpty()) {
+            Log.i(RESULTS_LOG_TAG, "  nothing to send, exiting")
             return
         }
 
         val outStream = ByteArrayOutputStream()
         JsonProcessor.exportResults(outStream, filteredResults)
         val resultString = outStream.toString("UTF-8")
+        Log.i(RESULTS_LOG_TAG, "Export JSON payload:\n$resultString")
         val body: RequestBody = resultString.toRequestBody(JSON)
 
         // Send the results to the ROBIS API
@@ -93,6 +96,11 @@ object ResultServiceWorker {
         try {
             //TODO: Handle loging
             httpClient.newCall(request).execute().use { response ->
+
+                val bodyString = response.body.string() ?: ""
+
+                Log.i(RESULTS_LOG_TAG, "ROBIS response code=${response.code}, body=$bodyString")
+
                 when (response.code) {
                     in 200..299 -> {
                         // If the response is successful, mark the results as sent
@@ -130,6 +138,8 @@ object ResultServiceWorker {
             Log.e(RESULTS_LOG_TAG, "Exception sending results to ROBis: ${exception.message}")
         }
         updateResultService(dataProcessor, resultService)
+
+
     }
 
     private fun isNetworkConnected(context: Context): Boolean {

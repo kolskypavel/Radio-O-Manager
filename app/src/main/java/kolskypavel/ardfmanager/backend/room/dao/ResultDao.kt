@@ -2,6 +2,7 @@ package kolskypavel.ardfmanager.backend.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData

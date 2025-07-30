@@ -22,6 +22,7 @@ data class ResultData(
         entityColumn = "id",
         entity = Competitor::class
     ) var competitorCategory: CompetitorCategory?
+
 ) : Serializable {
     fun getPunchList(): List<Punch> {
         return punches.map { p -> p.punch }
