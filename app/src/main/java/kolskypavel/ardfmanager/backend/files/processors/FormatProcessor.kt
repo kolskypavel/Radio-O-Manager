@@ -14,7 +14,8 @@ interface FormatProcessor {
         inStream: InputStream,
         dataType: DataType,
         race: Race,
-        dataProcessor: DataProcessor
+        dataProcessor: DataProcessor,
+        stopOnInvalid: Boolean      // Stop import on invalid line - based on preferences
     ): DataImportWrapper
 
     suspend fun exportData(

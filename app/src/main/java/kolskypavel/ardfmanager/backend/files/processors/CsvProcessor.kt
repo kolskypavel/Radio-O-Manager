@@ -40,20 +40,31 @@ object CsvProcessor : FormatProcessor {
         inStream: InputStream,
         dataType: DataType,
         race: Race,
-        dataProcessor: DataProcessor
+        dataProcessor: DataProcessor,
+        stopOnInvalid: Boolean
     ): DataImportWrapper {
         return when (dataType) {
-            DataType.CATEGORIES -> return importCategories(inStream, race, dataProcessor)
+            DataType.CATEGORIES -> return importCategories(
+                inStream,
+                race,
+                stopOnInvalid,
+                dataProcessor,
+                dataProcessor.getContext()
+            )
+
             DataType.COMPETITORS -> return importCompetitorData(
                 inStream,
                 race,
                 dataProcessor.getCategoryDataFlowForRace(race.id).first().toHashSet(),
+                stopOnInvalid,
+                dataProcessor,
                 dataProcessor.getContext()
             )
 
             DataType.COMPETITOR_STARTS_TIME -> return importCompetitorStarts(
                 inStream,
                 dataProcessor.getCompetitorDataFlowByRace(race.id).first().toHashSet(),
+                stopOnInvalid,
                 dataProcessor.getContext()
             )
 
@@ -117,32 +128,38 @@ object CsvProcessor : FormatProcessor {
         return CsvReader(context)
     }
 
-    //TODO: Finish
     private fun importCategories(
         inStream: InputStream,
         race: Race,
-        dataProcessor: DataProcessor
+        stopOnInvalid: Boolean,
+        dataProcessor: DataProcessor,
+        context: Context
     ): DataImportWrapper {
         val readData = getReader().readAll(inStream)
         val categories = ArrayList<CategoryData>()
 
+
         if (readData.isNotEmpty()) {
 
-            for (row in readData) {
+            for (csvRow in readData.withIndex()) {
+                val row = csvRow.value
                 if (row.size == FileConstants.CATEGORY_CSV_COLUMNS) {
 
                     try {
 
-                        val categoryName = row[0]
-                        val isMan = row[1] == "1"
-                        val maxAge = row[2].toInt()
-                        val length = row[3].toFloat() ?: 0f
-                        val climb = row[4].toFloat() ?: 0f
-                        val orderInResults = row[5].toInt() ?: 0
-                        val followRacePresets = row[6] == "1"
+                        val categoryName = row[0].trim()
+                        val isMan = row[1].trim() == "1"
+                        val maxAge = row[2].trim().toInt()
+                        val length = if (row[3].isNotBlank()) {
+                            row[3].trim().toFloat()
+                        } else 0f
+                        val climb = if (row[4].isNotBlank()) {
+                            row[4].trim().toFloat()
+                        } else 0f
+                        val followRacePresets = row[5].trim() == "1"
 
                         //Check validity
-                        if (categoryName.isEmpty() || maxAge <= 0 || length <= 0 || climb < 0 || orderInResults < 0) {
+                        if (categoryName.isEmpty() || maxAge <= 0 || length <= 0 || climb < 0) {
                             throw IllegalArgumentException("Invalid category data: $row")
                         }
 
@@ -154,7 +171,7 @@ object CsvProcessor : FormatProcessor {
                             maxAge,
                             length,
                             climb,
-                            orderInResults,
+                            0,
                             false,
                             race.raceType,
                             race.raceBand,
@@ -164,9 +181,9 @@ object CsvProcessor : FormatProcessor {
 
                         // Parse the category specific fields
                         if (!followRacePresets) {
-                            val raceType = RaceType.valueOf(row[7])
-                            val timeLimit = row[8].toLong()
-                            val band = row[9]
+                            val raceType = RaceType.valueOf(row[6].trim())
+                            val timeLimit = row[7].trim().toLong()
+                            val band = row[8].trim()
 
                             category.differentProperties = true
                             category.raceType = raceType
@@ -174,7 +191,7 @@ object CsvProcessor : FormatProcessor {
                             category.categoryBand = dataProcessor.raceBandStringToEnum(band)
                         }
 
-                        val controlPointString = row[10]
+                        val controlPointString = row[9].trim()
                         val controlPoints = ControlPointsHelper.getControlPointsFromString(
                             controlPointString,
                             category.id,
@@ -191,11 +208,19 @@ object CsvProcessor : FormatProcessor {
                             )
                         )
                     } catch (e: Exception) {
-                        //TODO: Add break based on option
                         Log.w(
                             "CSV import",
                             "Failed to import category: ${row.joinToString(", ")}\n" + e.stackTraceToString()
                         )
+
+                        if (stopOnInvalid) {
+                            throw IllegalArgumentException(
+                                context.getString(
+                                    R.string.data_import_invalid_line,
+                                    csvRow.index
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -222,14 +247,14 @@ object CsvProcessor : FormatProcessor {
         for (line in categoryString.withIndex()) {
             val split = line.value.split(";")
             if (split.size == 3 &&
-                dataProcessor.getCategoryByName(split[0], race.id) == null
+                dataProcessor.getCategoryByName(split[0].trim(), race.id) == null
             ) {
                 val cat = Category(
                     UUID.randomUUID(),
                     race.id,
-                    split[0],
-                    split[1] == "1",
-                    split[2].toInt(),
+                    split[0].trim(),
+                    split[1].trim() == "1",
+                    split[2].trim().toInt(),
                     0F,
                     0F,
                     line.index,
@@ -245,6 +270,198 @@ object CsvProcessor : FormatProcessor {
 
         return categories.toList()
     }
+
+    private suspend fun importCompetitorData(
+        inStream: InputStream,
+        race: Race,
+        categories: HashSet<CategoryData>,
+        stopOnInvalid: Boolean,
+        dataProcessor: DataProcessor,
+        context: Context
+    ): DataImportWrapper {
+
+        val csvReader = getReader().readAll(inStream)
+        val competitors = ArrayList<CompetitorCategory>()
+        var currOrder =
+            dataProcessor.getHighestCategoryOrder(race.id) + 1    // Used to keep order of categories correct
+
+        for (csvRow in csvReader.withIndex()) {
+            try {
+                val row = csvRow.value
+                var category: CategoryData? = null
+
+                //Check if category exists
+                if (row[4].isNotEmpty()) {
+                    val catName = row[4].trim()
+                    val origCat = categories.find { it.category.name == catName }
+                    if (origCat != null) {
+                        category = origCat
+                    } else {
+                        category = CategoryData(
+                            Category(
+                                UUID.randomUUID(),
+                                race.id,
+                                row[4].trim(),
+                                false,
+                                null,
+                                0F,
+                                0F,
+                                currOrder,
+                                false,
+                                null,
+                                null,
+                                null,
+                                ""
+                            ), emptyList(), emptyList()
+                        )
+                        currOrder++
+                        categories.add(category)
+                    }
+                }
+
+                val categoryId = category?.category?.id
+                val startNumber = row[1].trim().toInt()
+                val firstName = row[2].trim()
+                val lastName = row[3].trim()
+                val isMan = row[5].trim().toIntOrNull() == 0
+                val birthYear = if (row.size > 6) row[6].trim().toIntOrNull() else null
+                val club = if (row.size > 7) row[7].trim() else ""
+                val index = if (row.size > 8) row[8].trim() else ""
+                val siNumber = row[0].trim().toIntOrNull()
+
+                // Validate SI number
+                if (siNumber != null && !SIConstants.isSINumberValid(siNumber)) {
+                    throw IllegalArgumentException(
+                        context.getString(
+                            R.string.data_import_competitor_invalid_si,
+                            csvRow.index
+                        )
+                    )
+                }
+
+                val drawnRelativeStartTime: Duration? =
+                    if (row.size > 9 && row[9].isNotEmpty()) {
+                        TimeProcessor.minuteStringToDuration(row[9].trim())
+                    } else null
+
+                // Validate first name and last name
+                if (firstName.isEmpty() || lastName.isEmpty()) {
+                    throw IllegalArgumentException(
+                        context.getString(
+                            R.string.data_import_competitor_blank_name,
+                            csvRow.index
+                        )
+                    )
+                }
+
+                val siRent = if (row.size > 10) {
+                    row[10].trim().toInt() == 1
+                } else false
+
+                val competitor = Competitor(
+                    UUID.randomUUID(),
+                    race.id,
+                    categoryId,
+                    firstName,
+                    lastName,
+                    club,
+                    index,
+                    isMan,
+                    birthYear,
+                    siNumber,
+                    siRent,
+                    startNumber,
+                    drawnRelativeStartTime
+                )
+                if (category != null) {
+                    competitors.add(CompetitorCategory(competitor, category.category))
+                }
+            } catch (e: Exception) {
+                Log.w(
+                    "CSV import",
+                    "Failed to import competitor \n\" " + e.stackTraceToString()
+                )
+
+                //TODO: Add detailed information to exception
+                if (stopOnInvalid) {
+                    throw IllegalArgumentException(
+                        context.getString(
+                            R.string.data_import_invalid_line,
+                            csvRow.index
+                        )
+                    )
+                }
+            }
+        }
+        return DataImportWrapper(competitors, categories.toList())
+    }
+
+    private fun importCompetitorStarts(
+        inStream: InputStream,
+        competitors: HashSet<CompetitorData>,
+        stopOnInvalid: Boolean,
+        context: Context
+    ): DataImportWrapper {
+        val csvReader = getReader().readAll(inStream)
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val preferAppStartTime =
+            sharedPref.getBoolean(
+                context.getString(R.string.key_files_prefer_app_start_time),
+                false
+            )
+
+        for (csvRow in csvReader.withIndex()) {
+            val row = csvRow.value
+            if (row.size == FileConstants.OCM_START_CSV_COLUMNS) {
+                try {
+                    val startNumber = row[0].trim().toInt()
+                    val relativeTime = TimeProcessor.minuteStringToDuration(row[1].trim())
+                    val siNumber = row[2].trim().toIntOrNull()
+
+                    // Validate SI number
+                    if (siNumber != null && !SIConstants.isSINumberValid(siNumber)) {
+                        throw IllegalArgumentException(
+                            context.getString(
+                                R.string.data_import_competitor_invalid_si,
+                                csvRow.index
+                            )
+                        )
+                    }
+
+                    val match =
+                        competitors.find { it.competitorCategory.competitor.startNumber == startNumber }
+
+                    if (match != null && !preferAppStartTime) {
+                        match.competitorCategory.competitor.drawnRelativeStartTime =
+                            relativeTime
+
+                        if (siNumber != null) {
+                            match.competitorCategory.competitor.siNumber = siNumber
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e(
+                        "CSV import",
+                        "Failed to import competitor start: \n" + e.stackTraceToString()
+                    )
+                    //TODO: Add detailed information to exception
+                    if (stopOnInvalid) {
+                        throw IllegalArgumentException(
+                            context.getString(
+                                R.string.data_import_invalid_line,
+                                csvRow.index
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        return DataImportWrapper(competitors.map { it.competitorCategory }, emptyList())
+    }
+
+
+    // ------------- TODO: To be finished - non priority exports
 
     @Throws(IOException::class)
     suspend fun exportCategories(outStream: OutputStream, categories: List<CategoryData>) {
@@ -273,117 +490,6 @@ object CsvProcessor : FormatProcessor {
         }
     }
 
-    private fun importCompetitorData(
-        inStream: InputStream,
-        race: Race,
-        categories: HashSet<CategoryData>,
-        context: Context
-    ): DataImportWrapper {
-
-        val csvReader = getReader().readAll(inStream)
-        val competitors = ArrayList<CompetitorCategory>()
-
-        for (csvRow in csvReader.withIndex()) {
-            try {
-                val row = csvRow.value
-                var category: CategoryData? = null
-
-                //Check if category exists
-                if (row[4].isNotEmpty()) {
-                    val catName = row[4]
-                    val origCat = categories.find { it.category.name == catName }
-                    if (origCat != null) {
-                        category = origCat
-                    } else {
-                        category = CategoryData(
-                            Category(
-                                UUID.randomUUID(),
-                                race.id,
-                                row[4],
-                                false,
-                                null,
-                                0F,
-                                0F,
-                                0,
-                                false,
-                                race.raceType,
-                                race.raceBand,
-                                race.timeLimit,
-                                ""
-                            ), emptyList(), emptyList()
-                        )
-                        categories.add(category)
-                    }
-                }
-
-                val categoryId = category?.category?.id
-                val startNumber = row[1].toInt()
-                val firstName = row[2]
-                val lastName = row[3]
-                val isMan = row[5].toIntOrNull() == 0
-                val birthYear = if (row.size > 6) row[6].toIntOrNull() else null
-                val club = if (row.size > 7) row[7] else ""
-                val index = if (row.size > 8) row[8] else ""
-                val siNumber = row[0].toIntOrNull()
-
-                // Validate SI number
-                if (siNumber != null && !SIConstants.isSINumberValid(siNumber)) {
-                    throw IllegalArgumentException(
-                        context.getString(
-                            R.string.data_import_competitor_invalid_si,
-                            csvRow.index
-                        )
-                    )
-                }
-
-                val drawnRelativeStartTime: Duration? =
-                    if (row.size > 9 && row[9].isNotEmpty()) {
-                        TimeProcessor.minuteStringToDuration(row[9])
-                    } else null
-
-                // Validate first name and last name
-                if (firstName.isEmpty() || lastName.isEmpty()) {
-                    throw IllegalArgumentException(
-                        context.getString(
-                            R.string.data_import_competitor_blank_name,
-                            csvRow.index
-                        )
-                    )
-                }
-
-                val siRent = if (row.size > 10) {
-                    row[10].toInt() == 1
-                } else false
-
-                val competitor = Competitor(
-                    UUID.randomUUID(),
-                    race.id,
-                    categoryId,
-                    firstName,
-                    lastName,
-                    club,
-                    index,
-                    isMan,
-                    birthYear,
-                    siNumber,
-                    siRent,
-                    startNumber,
-                    drawnRelativeStartTime
-                )
-                if (category != null) {
-                    competitors.add(CompetitorCategory(competitor, category.category))
-                }
-            } catch (e: Exception) {
-                Log.w(
-                    "CSV import",
-                    "Failed to import competitor \n\" " + e.stackTraceToString()
-                )
-                //TODO: Add break based on option
-            }
-        }
-        return DataImportWrapper(competitors, categories.toList())
-    }
-
     @Throws(IOException::class)
     suspend fun exportCompetitors(
         outStream: OutputStream,
@@ -402,61 +508,6 @@ object CsvProcessor : FormatProcessor {
             }
             writer.flush()
         }
-    }
-
-    private fun importCompetitorStarts(
-        inStream: InputStream,
-        competitors: HashSet<CompetitorData>,
-        context: Context
-    ): DataImportWrapper {
-        val csvReader = getReader().readAll(inStream)
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val preferAppStartTime =
-            sharedPref.getBoolean(
-                context.getString(R.string.key_files_prefer_app_start_time),
-                false
-            )
-
-        for (csvRow in csvReader.withIndex()) {
-            val row = csvRow.value
-            if (row.size == FileConstants.OCM_START_CSV_COLUMNS) {
-                try {
-                    val startNumber = row[0].toInt()
-                    val relativeTime = TimeProcessor.minuteStringToDuration(row[1])
-                    val siNumber = row[2].toIntOrNull()
-
-                    // Validate SI number
-                    if (siNumber != null && !SIConstants.isSINumberValid(siNumber)) {
-                        throw IllegalArgumentException(
-                            context.getString(
-                                R.string.data_import_competitor_invalid_si,
-                                csvRow.index
-                            )
-                        )
-                    }
-
-                    val match =
-                        competitors.find { it.competitorCategory.competitor.startNumber == startNumber }
-
-                    if (match != null && !preferAppStartTime) {
-                        match.competitorCategory.competitor.drawnRelativeStartTime =
-                            relativeTime
-
-                        if (siNumber != null) {
-                            match.competitorCategory.competitor.siNumber = siNumber
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e(
-                        "CSV import",
-                        "Failed to import competitor start: \n" + e.stackTraceToString()
-                    )
-                    //TODO: Add break based on option
-                }
-            }
-        }
-
-        return DataImportWrapper(competitors.map { it.competitorCategory }, emptyList())
     }
 
     @Throws(IOException::class)

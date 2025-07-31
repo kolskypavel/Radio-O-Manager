@@ -66,6 +66,7 @@
     <string name="data_import_preview_info">Number of records: %1$d</string>
     <string name="data_import_file_error">Error when opening file!</string>
     <string name="data_import_format_not_supported">Given datatype is not supported for import</string>
+    <string name="data_import_invalid_line">Invalid data at line %1$d</string>
     <string name="data_import_category_blank_name">Category name must not be blank!</string>
     <string name="data_import_category_duplicate">Duplicate category names: %1$s</string>
 

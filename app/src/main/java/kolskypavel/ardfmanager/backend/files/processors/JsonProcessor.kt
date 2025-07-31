@@ -28,7 +28,8 @@ object JsonProcessor : FormatProcessor {
         inStream: InputStream,
         dataType: DataType,
         race: Race,
-        dataProcessor: DataProcessor
+        dataProcessor: DataProcessor,
+        stopOnInvalid: Boolean
     ): DataImportWrapper {
         when (dataType) {
             DataType.CATEGORIES -> TODO()

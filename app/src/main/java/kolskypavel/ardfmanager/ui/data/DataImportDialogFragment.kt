@@ -107,6 +107,7 @@ class DataImportDialogFragment : DialogFragment() {
         }
     }
 
+    // TODO: finish
     private fun setFlags(intent: Intent, dataFormat: DataFormat) {
         intent.type = "text/*"
 //        when (dataFormat) {
@@ -168,7 +169,6 @@ class DataImportDialogFragment : DialogFragment() {
         }
     }
 
-
     //Import data after confirmation
     private fun confirmImport() {
         if (data != null) {
@@ -203,6 +203,11 @@ class DataImportDialogFragment : DialogFragment() {
                 for (cp in cd.controlPoints) {
                     cp.categoryId = existingCategory.id
                 }
+            }
+            // Update the order for non existent category
+            else {
+                cd.category.order =
+                    selectedRaceViewModel.getHighestCategoryOrder(selectedRaceViewModel.getCurrentRace().id) + 1
             }
 
             selectedRaceViewModel.createOrUpdateCategory(cd.category, cd.controlPoints)

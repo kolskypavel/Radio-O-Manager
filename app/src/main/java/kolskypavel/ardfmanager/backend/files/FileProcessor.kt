@@ -3,6 +3,7 @@ package kolskypavel.ardfmanager.backend.files
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.preference.PreferenceManager
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
@@ -50,9 +51,18 @@ class FileProcessor(appContext: WeakReference<Context>) {
     ): DataImportWrapper {
         val inStream = openInputStream(uri)
         if (inStream != null) {
+
+            // Get the preference for stopping import
+            val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+            val stopOnInvalid =
+                sharedPref.getBoolean(
+                    context.getString(R.string.key_files_invalid_stops_import),
+                    false
+                )
+
             val formatProcessorFactory = FormatProcessorFactory()
             val proc = formatProcessorFactory.getFormatProcessor(format)
-            return proc.importData(inStream, type, race, dataProcessor)
+            return proc.importData(inStream, type, race, dataProcessor, stopOnInvalid)
         }
         throw RuntimeException(context.getString(R.string.data_import_file_error))
     }

@@ -161,7 +161,6 @@ class CategoryCreateDialogFragment : DialogFragment() {
                 climbEditText.setText(category.climb.toString())
             }
 
-
             // Custom properties
             if (category.differentProperties) {
                 samePropertiesCheckBox.isChecked = false

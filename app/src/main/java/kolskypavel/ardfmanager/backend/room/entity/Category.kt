@@ -30,7 +30,7 @@ data class Category(
     @PrimaryKey var id: UUID,
     @ColumnInfo(name = "race_id") var raceId: UUID,
     @ColumnInfo(name = "name") var name: String,
-    @ColumnInfo(name = "is_woman") var isMan: Boolean,
+    @ColumnInfo(name = "is_man") var isMan: Boolean,
     @ColumnInfo(name = "max_age") var maxAge: Int?,
     @ColumnInfo(name = "length") var length: Float,
     @ColumnInfo(name = "climb") var climb: Float,

@@ -434,7 +434,6 @@ class DataProcessor private constructor(context: Context) {
             fileProcessor?.importData(uri, dataType, dataFormat, getRace(raceId), getContext())
 
         validateDataImport(data!!, raceId, dataType, getContext())
-
         return data
     }
 

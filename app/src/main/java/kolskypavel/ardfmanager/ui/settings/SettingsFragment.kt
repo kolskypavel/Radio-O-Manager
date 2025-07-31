@@ -171,6 +171,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
         // Files and imports
+        findPreference<CheckBoxPreference>(requireContext().getString(R.string.key_files_invalid_stops_import))
+            ?.setOnPreferenceChangeListener { _, keepOpen ->
+
+                editor.putBoolean(
+                    requireContext().getString(R.string.key_files_invalid_stops_import),
+                    keepOpen as Boolean
+                )
+                editor.apply()
+                true
+            }
+
         findPreference<CheckBoxPreference>(requireContext().getString(R.string.key_files_prefer_app_start_time))
             ?.setOnPreferenceChangeListener { _, keepOpen ->
 
