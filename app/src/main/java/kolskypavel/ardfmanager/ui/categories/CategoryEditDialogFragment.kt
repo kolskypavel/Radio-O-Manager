@@ -28,9 +28,9 @@ import java.time.Duration
 import java.util.UUID
 
 
-class CategoryCreateDialogFragment : DialogFragment() {
+class CategoryEditDialogFragment : DialogFragment() {
 
-    private val args: CategoryCreateDialogFragmentArgs by navArgs()
+    private val args: CategoryEditDialogFragmentArgs by navArgs()
     private lateinit var selectedRaceViewModel: SelectedRaceViewModel
     private val dataProcessor = DataProcessor.get()
     private lateinit var category: Category

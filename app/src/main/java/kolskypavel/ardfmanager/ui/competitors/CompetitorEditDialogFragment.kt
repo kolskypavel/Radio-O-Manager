@@ -29,8 +29,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-class CompetitorCreateDialogFragment : DialogFragment() {
-    private val args: CompetitorCreateDialogFragmentArgs by navArgs()
+class CompetitorEditDialogFragment : DialogFragment() {
+    private val args: CompetitorEditDialogFragmentArgs by navArgs()
     private lateinit var selectedRaceViewModel: SelectedRaceViewModel
     private val dataProcessor = DataProcessor.get()
 
@@ -144,14 +144,6 @@ class CompetitorCreateDialogFragment : DialogFragment() {
             }
             startNumberTextView.setText(competitor.startNumber.toString())
 
-            //Auto insertion of the last card read
-            siNumberLayout.setEndIconOnClickListener {
-                val last = selectedRaceViewModel.getLastReadCard()
-                if (last != null) {
-                    siNumberTextView.setText(last.toString())
-                }
-            }
-
             //Preset gender
             if (competitor.isMan) {
                 womanCheckBox.isChecked = true
@@ -190,6 +182,14 @@ class CompetitorCreateDialogFragment : DialogFragment() {
 
         womanCheckBox.setOnCheckedChangeListener { _, checked ->
             competitor.isMan = checked
+        }
+
+        //Auto insertion of the last card read
+        siNumberLayout.setEndIconOnClickListener {
+            val last = selectedRaceViewModel.getLastReadCard()
+            if (last != null) {
+                siNumberTextView.setText(last.toString())
+            }
         }
 
         //Set startTime

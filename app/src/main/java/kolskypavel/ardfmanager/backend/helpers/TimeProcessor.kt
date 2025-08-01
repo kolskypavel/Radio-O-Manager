@@ -18,6 +18,7 @@ object TimeProcessor {
     fun formatLocalDate(time: LocalDate): String {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd").format(time).toString()
     }
+
     fun formatLocalTime(time: LocalTime): String {
         return DateTimeFormatter.ofPattern("HH:mm:ss").format(time).toString()
     }
@@ -84,13 +85,19 @@ object TimeProcessor {
         return null
     }
 
+    // Calculates the duration from competitor's start till now and returns it as a string
     fun runDurationFromStartString(
         startDateTime: LocalDateTime,
         relativeStartTime: Duration
     ): String {
         //Check if the competitor started
         if (hasStarted(startDateTime, relativeStartTime, LocalDateTime.now())) {
-            return durationToMinuteString(Duration.between(startDateTime, LocalDateTime.now()))
+            return durationToMinuteString(
+                Duration.between(
+                    startDateTime + relativeStartTime,
+                    LocalDateTime.now()
+                )
+            )
         }
         return ""
     }

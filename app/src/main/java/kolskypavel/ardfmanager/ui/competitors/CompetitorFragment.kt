@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -32,7 +33,7 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.enums.CompetitorTableDisplayType
 import kolskypavel.ardfmanager.databinding.FragmentCompetitorsBinding
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
-import kolskypavel.ardfmanager.ui.races.RaceCreateDialogFragment
+import kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment
 import kotlinx.coroutines.launch
 
 
@@ -332,6 +333,13 @@ class CompetitorFragment : Fragment() {
         builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
             selectedRaceViewModel.addCategoriesAutomatically()
             dialog.dismiss()
+
+            Toast.makeText(
+                requireContext(),
+                requireContext().getText(R.string.competitor_add_categories_toast),
+                Toast.LENGTH_LONG
+            )
+                .show()
         }
 
         builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
@@ -377,8 +385,8 @@ class CompetitorFragment : Fragment() {
     }
 
     private fun setResultListener() {
-        setFragmentResultListener(CompetitorCreateDialogFragment.REQUEST_COMPETITOR_MODIFICATION) { _, bundle ->
-            val create = bundle.getBoolean(CompetitorCreateDialogFragment.BUNDLE_KEY_CREATE)
+        setFragmentResultListener(CompetitorEditDialogFragment.REQUEST_COMPETITOR_MODIFICATION) { _, bundle ->
+            val create = bundle.getBoolean(CompetitorEditDialogFragment.BUNDLE_KEY_CREATE)
 
             if (!create) {
                 competitorTableView.dataAdapter.notifyDataSetChanged()
@@ -386,14 +394,14 @@ class CompetitorFragment : Fragment() {
         }
 
         //Enable race modification from menu
-        setFragmentResultListener(RaceCreateDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
+        setFragmentResultListener(RaceEditDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
             val race: Race = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getSerializable(
-                    RaceCreateDialogFragment.BUNDLE_KEY_RACE,
+                    RaceEditDialogFragment.BUNDLE_KEY_RACE,
                     Race::class.java
                 )!!
             } else {
-                bundle.getSerializable(RaceCreateDialogFragment.BUNDLE_KEY_RACE) as Race
+                bundle.getSerializable(RaceEditDialogFragment.BUNDLE_KEY_RACE) as Race
             }
             selectedRaceViewModel.updateRace(race)
         }

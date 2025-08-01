@@ -16,6 +16,7 @@ import kolskypavel.ardfmanager.backend.wrappers.ResultWrapper
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -56,6 +57,7 @@ class ResultsFragmentRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val dataList = values[position]
+
         if (dataList.isChild == 0) {
             holder as CategoryViewHolder
             holder.apply {
@@ -114,31 +116,39 @@ class ResultsFragmentRecyclerViewAdapter(
                     compName += " *"
                 }
 
+                // Cancel previous timer job if exists
+                holder.timerJob?.cancel()
+
                 competitorName.text = compName
                 competitorClub.text =
                     singleResult.competitorCategory.competitor.club.ifEmpty {
                         "-"
                     }
+
+                // Set the competitor time
+                val competitor = singleResult.competitorCategory.competitor
+                val startDateTime = selectedRaceViewModel.getCurrentRace().startDateTime
+                val drawnStartTime = competitor.drawnRelativeStartTime
+
                 if (singleResult.readoutData != null) {
-                    competitorTime.text =
-                        TimeProcessor.durationToMinuteString(singleResult.readoutData!!.result.runTime)
-                }
-
-                // TODO: fix when collapsing results
-                else if (singleResult.competitorCategory.competitor.drawnRelativeStartTime != null) {
-
-                    CoroutineScope(Dispatchers.Main).launch {
+                    holder.competitorTime.text = TimeProcessor.durationToMinuteString(
+                        singleResult.readoutData!!.result.runTime
+                    )
+                } else if (drawnStartTime != null) {
+                    holder.timerJob = CoroutineScope(Dispatchers.Main).launch {
                         while (true) {
-                            competitorTime.text = TimeProcessor.runDurationFromStartString(
-                                selectedRaceViewModel.getCurrentRace().startDateTime,
-                                singleResult.competitorCategory.competitor.drawnRelativeStartTime!!
+                            holder.competitorTime.text = TimeProcessor.runDurationFromStartString(
+                                startDateTime,
+                                drawnStartTime
                             )
                             delay(1000)
                         }
                     }
                 } else {
-                    competitorTime.text = "-"
+                    holder.competitorTime.text = "-"
                 }
+
+                //Set points
                 competitorPoints.text = if (singleResult.readoutData?.result?.points != null) {
                     singleResult.readoutData?.result?.points.toString()
                 } else {
@@ -157,6 +167,14 @@ class ResultsFragmentRecyclerViewAdapter(
                     holder.itemView.setBackgroundResource(R.color.white)
                 }
             }
+        }
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        if (holder is CompetitorViewHolder) {
+            holder.timerJob?.cancel()
+            holder.timerJob = null
         }
     }
 
@@ -223,5 +241,7 @@ class ResultsFragmentRecyclerViewAdapter(
         val competitorClub: TextView = row.findViewById(R.id.result_competitor_club)
         val competitorTime: TextView = row.findViewById(R.id.result_competitor_time)
         val competitorPoints: TextView = row.findViewById(R.id.result_competitor_points)
+
+        var timerJob: Job? = null
     }
 }

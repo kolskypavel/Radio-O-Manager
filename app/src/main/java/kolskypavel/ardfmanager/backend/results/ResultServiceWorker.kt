@@ -138,8 +138,6 @@ object ResultServiceWorker {
             Log.e(RESULTS_LOG_TAG, "Exception sending results to ROBis: ${exception.message}")
         }
         updateResultService(dataProcessor, resultService)
-
-
     }
 
     private fun isNetworkConnected(context: Context): Boolean {

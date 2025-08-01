@@ -77,7 +77,7 @@
                 android:id="@+id/readout_title_start_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="96dp"
+                android:layout_marginEnd="80dp"
                 android:layout_marginBottom="4dp"
                 android:text="@string/general_start_time"
                 android:textStyle="bold"

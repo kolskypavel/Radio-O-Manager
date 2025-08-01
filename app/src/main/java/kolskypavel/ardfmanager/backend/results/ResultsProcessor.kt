@@ -101,6 +101,17 @@ object ResultsProcessor {
         }
     }
 
+    private fun removeStartAndFinishPunch(result: Result, punches: ArrayList<Punch>) {
+        if (punches.first().punchType == SIRecordType.START) {
+            result.startTime = punches.first().siTime
+            punches.removeAt(0)
+        }
+        if (punches.last().punchType == SIRecordType.FINISH) {
+            result.finishTime = punches.last().siTime
+            punches.removeAt(punches.lastIndex)
+        }
+    }
+
     /**
      * Processes the punches - converts PunchData to Punch entity
      */
@@ -184,7 +195,6 @@ object ResultsProcessor {
                     false,
                     false
                 )
-
 
             //TODO: Based on options, set start time to the predefined value
             if (competitor != null) {
@@ -299,14 +309,7 @@ object ResultsProcessor {
         }
 
         //Modify the start and finish times
-        if (punches.first().punchType == SIRecordType.START) {
-            result.startTime = punches.first().siTime
-            punches.removeAt(0)
-        }
-        if (punches.last().punchType == SIRecordType.FINISH) {
-            result.finishTime = punches.last().siTime
-            punches.removeAt(punches.lastIndex)
-        }
+        removeStartAndFinishPunch(result, punches)
 
         calculateResult(
             result,
@@ -338,7 +341,7 @@ object ResultsProcessor {
         }
 
         // Add back start and finish - TODO: finish double start and finish punch bug
-        if (punches[0].punchType != SIRecordType.START && result.startTime != null) {
+        if (result.startTime != null) {
 
             punches.add(
                 0,
@@ -359,7 +362,7 @@ object ResultsProcessor {
         }
 
         //Add finish punch
-        if (punches.last.punchType != SIRecordType.FINISH && result.finishTime != null) {
+        if (result.finishTime != null) {
             punches.add(
                 Punch(
                     UUID.randomUUID(),
@@ -485,6 +488,8 @@ object ResultsProcessor {
             if (category == null) {
                 clearEvaluation(punches, result)
             }
+
+            removeStartAndFinishPunch(result, punches)  // Remove start and finish punches before calculation
             calculateResult(result, category, punches, null, dataProcessor)
         }
     }

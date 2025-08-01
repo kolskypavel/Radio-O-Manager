@@ -29,7 +29,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kolskypavel.ardfmanager.databinding.FragmentReadoutsBinding
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
-import kolskypavel.ardfmanager.ui.races.RaceCreateDialogFragment
+import kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -165,14 +165,14 @@ class ReadoutFragment : Fragment() {
 
     private fun setResultListener() {
         //Enable race modification from menu
-        setFragmentResultListener(RaceCreateDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
+        setFragmentResultListener(RaceEditDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
             val race: Race = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getSerializable(
-                    RaceCreateDialogFragment.BUNDLE_KEY_RACE,
+                    RaceEditDialogFragment.BUNDLE_KEY_RACE,
                     Race::class.java
                 )!!
             } else {
-                bundle.getSerializable(RaceCreateDialogFragment.BUNDLE_KEY_RACE) as Race
+                bundle.getSerializable(RaceEditDialogFragment.BUNDLE_KEY_RACE) as Race
             }
             selectedRaceViewModel.updateRace(race)
         }

@@ -124,7 +124,7 @@
     <string name="readout_detail_status">Status</string>
     <string name="readout_si_exists">Čip už byl vyčtený!</string>
     <string name="readout_competitor_exists">Tento závodník si už vyčetl!</string>
-    <string name="unknown_competitor">Neznámý SI čip!</string>
+    <string name="unknown_competitor">Neznámý závodník</string>
     <string name="general_points">Body</string>
     <string name="general_place">Umístění</string>
     <string name="readout_edit_readout">Upravit vyčítání</string>
@@ -194,8 +194,9 @@
     <string name="general_status">Status</string>
     <string name="general_type">Typ</string>
     <string name="competitor_start_number_header" translatable="false">Start #</string>
-    <string name="competitor_add_categories_automatically">Přidat kategorie automaticky</string>
+    <string name="competitor_add_categories_automatically">Přiřadit kategorie automaticky</string>
     <string name="competitor_add_categories_automatically_confirmation">Opravdu chcete automaticky přiřadit kategorie závodníkům (podle věku)? Pouze závodníci bez kategorie budou upraveni.</string>
+    <string name="competitor_add_categories_toast">Automatické kategorie úspěšně přiřazeny.</string>
     <string name="competitor_hint_day">D</string>
     <string name="competitor_hint_week" translatable="false">T</string>
     <string name="preferences_results_time_format">Formát času</string>

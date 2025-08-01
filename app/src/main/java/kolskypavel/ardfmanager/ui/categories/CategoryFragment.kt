@@ -27,7 +27,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
 import kolskypavel.ardfmanager.databinding.FragmentCategoriesBinding
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
-import kolskypavel.ardfmanager.ui.races.RaceCreateDialogFragment
+import kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment
 import kotlinx.coroutines.launch
 
 class CategoryFragment : Fragment() {
@@ -131,9 +131,9 @@ class CategoryFragment : Fragment() {
 
 
     private fun setFragmentListener() {
-        setFragmentResultListener(CategoryCreateDialogFragment.REQUEST_CATEGORY_MODIFICATION) { _, bundle ->
-            val create = bundle.getBoolean(CategoryCreateDialogFragment.BUNDLE_KEY_CREATE)
-            val position = bundle.getInt(CategoryCreateDialogFragment.BUNDLE_KEY_POSITION)
+        setFragmentResultListener(CategoryEditDialogFragment.REQUEST_CATEGORY_MODIFICATION) { _, bundle ->
+            val create = bundle.getBoolean(CategoryEditDialogFragment.BUNDLE_KEY_CREATE)
+            val position = bundle.getInt(CategoryEditDialogFragment.BUNDLE_KEY_POSITION)
 
             if (!create) {
                 categoryRecyclerView.adapter?.notifyItemChanged(position)
@@ -141,14 +141,14 @@ class CategoryFragment : Fragment() {
         }
 
         //Enable race modification from menu
-        setFragmentResultListener(RaceCreateDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
+        setFragmentResultListener(RaceEditDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
             val race: Race = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getSerializable(
-                    RaceCreateDialogFragment.BUNDLE_KEY_RACE,
+                    RaceEditDialogFragment.BUNDLE_KEY_RACE,
                     Race::class.java
                 )!!
             } else {
-                bundle.getSerializable(RaceCreateDialogFragment.BUNDLE_KEY_RACE) as Race
+                bundle.getSerializable(RaceEditDialogFragment.BUNDLE_KEY_RACE) as Race
             }
             selectedRaceViewModel.updateRace(race)
         }

@@ -137,6 +137,7 @@
     <string name="competitor_delete_all">Delete all competitors</string>
     <string name="competitor_add_categories_automatically">Add categories automatically</string>
     <string name="competitor_add_categories_automatically_confirmation">Do you really want to add categories to competitors automatically (based on age)? Only the competitors without category and will be modified.</string>
+    <string name="competitor_add_categories_toast">Automatic categories assigned successfully.</string>
     <string name="competitor_delete_confirmation">Do you really want to delete this competitor?</string>
     <string name="competitor_delete_all_confirmation">Do you really want to delete all competitors? This action CAN\'T be undone!</string>
     <string name="competitor_rent_chip">Rent chip</string>

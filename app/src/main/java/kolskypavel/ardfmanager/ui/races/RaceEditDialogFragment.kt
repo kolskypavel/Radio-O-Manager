@@ -28,8 +28,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.UUID
 
-class RaceCreateDialogFragment : DialogFragment() {
-    private val args: RaceCreateDialogFragmentArgs by navArgs()
+class RaceEditDialogFragment : DialogFragment() {
+    private val args: RaceEditDialogFragmentArgs by navArgs()
     private val dataProcessor = DataProcessor.get()
 
     private lateinit var nameEditText: TextInputEditText
@@ -85,7 +85,7 @@ class RaceCreateDialogFragment : DialogFragment() {
      */
     private fun setPickers() {
         dateView.setOnClickListener {
-            findNavController().navigate(RaceCreateDialogFragmentDirections.selectDate(race.startDateTime.toLocalDate()))
+            findNavController().navigate(RaceEditDialogFragmentDirections.selectDate(race.startDateTime.toLocalDate()))
         }
         setFragmentResultListener(
             DatePickerFragment.REQUEST_KEY_DATE
@@ -101,7 +101,7 @@ class RaceCreateDialogFragment : DialogFragment() {
         }
 
         startTimeView.setOnClickListener {
-            findNavController().navigate(RaceCreateDialogFragmentDirections.selectTime(race.startDateTime.toLocalTime()))
+            findNavController().navigate(RaceEditDialogFragmentDirections.selectTime(race.startDateTime.toLocalTime()))
         }
         setFragmentResultListener(TimePickerFragment.REQUEST_KEY_TIME) { _, bundle ->
             race.startDateTime = race.startDateTime.with(

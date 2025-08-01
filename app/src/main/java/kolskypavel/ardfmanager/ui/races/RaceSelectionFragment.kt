@@ -89,17 +89,17 @@ class RaceSelectionFragment : Fragment() {
     }
 
     private fun setFragmentListener() {
-        setFragmentResultListener(RaceCreateDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
-            val create = bundle.getBoolean(RaceCreateDialogFragment.BUNDLE_KEY_CREATE)
-            val position = bundle.getInt(RaceCreateDialogFragment.BUNDLE_KEY_POSITION)
+        setFragmentResultListener(RaceEditDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
+            val create = bundle.getBoolean(RaceEditDialogFragment.BUNDLE_KEY_CREATE)
+            val position = bundle.getInt(RaceEditDialogFragment.BUNDLE_KEY_POSITION)
 
             val race: Race = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getSerializable(
-                    RaceCreateDialogFragment.BUNDLE_KEY_RACE,
+                    RaceEditDialogFragment.BUNDLE_KEY_RACE,
                     Race::class.java
                 )!!
             } else {
-                bundle.getSerializable(RaceCreateDialogFragment.BUNDLE_KEY_RACE) as Race
+                bundle.getSerializable(RaceEditDialogFragment.BUNDLE_KEY_RACE) as Race
             }
 
             //create new race

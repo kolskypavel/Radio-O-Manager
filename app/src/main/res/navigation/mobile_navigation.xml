@@ -57,7 +57,7 @@
             android:label="ResultsExportDialogFragment" />
         <dialog
             android:id="@+id/competitorEditDialogFragment"
-            android:name="kolskypavel.ardfmanager.ui.competitors.CompetitorCreateDialogFragment"
+            android:name="kolskypavel.ardfmanager.ui.competitors.CompetitorEditDialogFragment"
             android:label="CompetitorCreateDialogFragment">
             <argument
                 android:name="create"
@@ -153,7 +153,7 @@
 
         <dialog
             android:id="@+id/categoryEditDialogFragment"
-            android:name="kolskypavel.ardfmanager.ui.categories.CategoryCreateDialogFragment"
+            android:name="kolskypavel.ardfmanager.ui.categories.CategoryEditDialogFragment"
             android:label="CategoryCreateDialogFragment">
             <argument
                 android:name="create"
@@ -198,7 +198,7 @@
 
     <dialog
         android:id="@+id/RaceCreateDialogFragment"
-        android:name="kolskypavel.ardfmanager.ui.races.RaceCreateDialogFragment"
+        android:name="kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment"
         android:label="RaceCreateDialogFragment">
         <argument
             android:name="create"
