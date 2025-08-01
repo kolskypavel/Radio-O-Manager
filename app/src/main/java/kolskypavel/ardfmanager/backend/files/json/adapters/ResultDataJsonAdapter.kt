@@ -8,13 +8,13 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 
 class ResultDataJsonAdapter {
     @ToJson
-    fun toJson(resultData: ResultData): ResultDataJson {
+    fun toJson(resultData: ResultData, dataProcessor: DataProcessor): ResultDataJson {
 
         return ResultDataJson(
             run_time = TimeProcessor.durationToMinuteString(resultData.result.runTime),
             place = resultData.result.place,
             controls_num = resultData.result.points,
-            result_status = DataProcessor.get().resultStatusToShortString(resultData.result.resultStatus),
+            result_status = dataProcessor.resultStatusToShortString(resultData.result.resultStatus),
             punches = resultData.punches
                 .filter { ap -> ap.punch.punchType.name != "START" }
                 .map { ap ->
@@ -25,7 +25,7 @@ class ResultDataJsonAdapter {
                     ResultPunchJson(
                         code = code,
                         control_type = ap.punch.punchType.name,
-                        punch_status = DataProcessor.get().punchStatusToShortString(ap.punch.punchStatus),
+                        punch_status = dataProcessor.punchStatusToShortString(ap.punch.punchStatus),
                         split_time = TimeProcessor.durationToMinuteString(ap.punch.split)
                     )
                     }

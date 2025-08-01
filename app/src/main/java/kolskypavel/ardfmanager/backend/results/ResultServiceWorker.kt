@@ -80,7 +80,7 @@ object ResultServiceWorker {
         }
 
         val outStream = ByteArrayOutputStream()
-        JsonProcessor.exportResults(outStream, filteredResults)
+        JsonProcessor.exportResults(outStream, filteredResults, dataProcessor)
         val resultString = outStream.toString("UTF-8")
         Log.i(RESULTS_LOG_TAG, "Export JSON payload:\n$resultString")
         val body: RequestBody = resultString.toRequestBody(JSON)
@@ -103,10 +103,11 @@ object ResultServiceWorker {
 
                 when (response.code) {
                     in 200..299 -> {
-                        // If the response is successful, mark the results as sent
-                        updateSentResults(dataProcessor, filteredResults)
+                        val sentResults =
+                            filterSentRobisResults(filteredResults, response.body.string())
+                        updateSentResults(dataProcessor, sentResults)
                         resultService.status = ResultServiceStatus.OK
-                        resultService.sent += filteredResults.size
+                        resultService.sent += sentResults.size
                     }
 
                     401 -> {
@@ -155,6 +156,17 @@ object ResultServiceWorker {
         resultData: List<ResultData>
     ): List<ResultData> {
         return resultData.filter { !it.result.sent }
+    }
+
+    // Filter the results that were sent to ROBIS
+    // TODO: Finish
+    private fun filterSentRobisResults(
+        results: List<ResultData>,
+        robisResponse: String
+    ): List<ResultData> {
+        val sent = ArrayList<ResultData>()
+
+        return sent.toList()
     }
 
     // Mark the results as sent

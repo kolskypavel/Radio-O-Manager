@@ -14,7 +14,6 @@ import java.util.UUID
  */
 class ControlPointsParsingUnitTest {
 
-    private val raceId = UUID.randomUUID()
     private val categoryId = UUID.randomUUID()
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 

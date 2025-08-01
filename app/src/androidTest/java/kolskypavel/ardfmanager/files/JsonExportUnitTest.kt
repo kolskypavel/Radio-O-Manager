@@ -1,24 +1,32 @@
 package kolskypavel.ardfmanager.files
 
+import androidx.test.platform.app.InstrumentationRegistry
+import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.processors.JsonProcessor
+import kolskypavel.ardfmanager.backend.room.ARDFRepository
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorCategory
-import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.time.Duration
 import java.util.UUID
 
 class JsonExportUnitTest {
+    var dataProcessor: DataProcessor? = null
+
+    @Before
+    fun setUp() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        ARDFRepository.initialize(context)
+        DataProcessor.initialize(context)
+        dataProcessor = DataProcessor.get()
+    }
 
     @Test
     fun testJsonResultExport() = runBlocking {
@@ -57,7 +65,7 @@ class JsonExportUnitTest {
             finishTime = null,
             origFinishTime = null,
             automaticStatus = true,
-            resultStatus = ResultStatus.VALID,
+            resultStatus = ResultStatus.OK,
             runTime = Duration.ofSeconds(2142), // 35:42
             modified = false,
             sent = false
@@ -84,7 +92,7 @@ class JsonExportUnitTest {
 
         val competitorCategory = CompetitorCategory(
             competitor = competitor,
-            category   = category
+            category = category
         )
 
         val resultData = ResultData(
@@ -93,10 +101,8 @@ class JsonExportUnitTest {
             competitorCategory = competitorCategory
         )
 
-
-
         val outputStream = ByteArrayOutputStream()
-        JsonProcessor.exportResults(outputStream, listOf(resultData))
+        JsonProcessor.exportResults(outputStream, listOf(resultData), dataProcessor!!)
 
         val json = outputStream.toString(Charsets.UTF_8.name())
         println(json)

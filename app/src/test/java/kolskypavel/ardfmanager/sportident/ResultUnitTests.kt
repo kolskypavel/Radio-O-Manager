@@ -9,7 +9,6 @@ import kolskypavel.ardfmanager.backend.sportident.SIPort
 import kolskypavel.ardfmanager.backend.sportident.SIPort.CardData
 import kolskypavel.ardfmanager.backend.sportident.SITime
 import org.junit.Test
-import org.mockito.Mockito.mock
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -43,7 +42,6 @@ class ResultUnitTests {
         var zeroTimeBase = LocalTime.of(10, 0)
         val cardData =
             CardData(SIConstants.SI_CARD5, 12345, checkTime, startTime, finishTime, punchData)
-        val mockResultsProcessor = ResultsProcessor(mock())
 
         var result =
             Result(
@@ -68,7 +66,7 @@ class ResultUnitTests {
                 false
             )
 
-        val resultPunches = mockResultsProcessor.processCardPunches(
+        val resultPunches = ResultsProcessor.processCardPunches(
             cardData,
             UUID.randomUUID(),
             result,
@@ -133,7 +131,7 @@ class ResultUnitTests {
                 false
             )
 
-        mockResultsProcessor.processCardPunches(
+        ResultsProcessor.processCardPunches(
             cardData,
             UUID.randomUUID(),
             result,

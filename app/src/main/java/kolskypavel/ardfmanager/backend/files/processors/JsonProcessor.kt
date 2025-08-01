@@ -2,12 +2,14 @@ package kolskypavel.ardfmanager.backend.files.processors
 
 import ResultDataJsonAdapter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import com.squareup.moshi.adapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
 import kolskypavel.ardfmanager.backend.files.constants.DataType
 import kolskypavel.ardfmanager.backend.files.json.adapters.RaceDataJsonAdapter
+import kolskypavel.ardfmanager.backend.files.json.temps.ResultCompetitorJson
 import kolskypavel.ardfmanager.backend.files.wrappers.DataImportWrapper
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
@@ -19,8 +21,6 @@ import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.UUID
-import com.squareup.moshi.Types
-import kolskypavel.ardfmanager.backend.files.json.temps.ResultCompetitorJson
 
 @OptIn(ExperimentalStdlibApi::class)
 object JsonProcessor : FormatProcessor {
@@ -51,7 +51,8 @@ object JsonProcessor : FormatProcessor {
             DataType.COMPETITORS -> TODO()
             DataType.RESULTS -> exportResults(
                 outStream,
-                dataProcessor.getResultDataFlowByRace(raceId).first()
+                dataProcessor.getResultDataFlowByRace(raceId).first(),
+                dataProcessor
             )
 
             else -> TODO()
@@ -67,20 +68,25 @@ object JsonProcessor : FormatProcessor {
         return DataImportWrapper(emptyList(), categories.toList())
     }
 
-    suspend fun exportResults(outStream: OutputStream, results: List<ResultData>) {
+    suspend fun exportResults(
+        outStream: OutputStream,
+        results: List<ResultData>,
+        dataProcessor: DataProcessor
+    ) {
         withContext(Dispatchers.IO) {
             val moshi: Moshi = Moshi.Builder()
                 .add(ResultDataJsonAdapter())
                 .add(KotlinJsonAdapterFactory())
                 .build()
 
-            val type = Types.newParameterizedType(List::class.java, ResultCompetitorJson::class.java)
+            val type =
+                Types.newParameterizedType(List::class.java, ResultCompetitorJson::class.java)
             val adapter = moshi.adapter<List<ResultCompetitorJson>>(type)
 
             val exportList = results.mapNotNull { rd ->
                 val compCat = rd.competitorCategory ?: return@mapNotNull null
                 val competitor = compCat.competitor
-                val category   = compCat.category   ?: return@mapNotNull null
+                val category = compCat.category ?: return@mapNotNull null
 
                 ResultCompetitorJson(
                     competitor_index = competitor.index,
@@ -88,7 +94,7 @@ object JsonProcessor : FormatProcessor {
                     last_name = competitor.lastName,
                     first_name = competitor.firstName,
                     category_name = category.name,
-                    result = ResultDataJsonAdapter().toJson(rd)
+                    result = ResultDataJsonAdapter().toJson(rd, dataProcessor)
                 )
             }
 
