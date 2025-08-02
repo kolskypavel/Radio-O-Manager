@@ -169,7 +169,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-
         // Files and imports
         findPreference<CheckBoxPreference>(requireContext().getString(R.string.key_files_invalid_stops_import))
             ?.setOnPreferenceChangeListener { _, keepOpen ->

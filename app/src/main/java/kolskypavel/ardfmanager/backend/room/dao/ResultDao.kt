@@ -2,7 +2,6 @@ package kolskypavel.ardfmanager.backend.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Upsert
 import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
@@ -32,7 +31,7 @@ interface ResultDao {
     @Upsert
     suspend fun createOrUpdateResult(result: Result)
 
-    @Query("UPDATE result SET sent = 0 WHERE id =(:raceId)")
+    @Query("UPDATE result SET sent = 0 WHERE race_id =(:raceId)")
     suspend fun setAllResultsUnsent(raceId: UUID)
 
     @Query("DELETE FROM result WHERE id =(:id)")

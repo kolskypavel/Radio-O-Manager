@@ -69,6 +69,14 @@
             android:layout_marginBottom="10dp"
             android:text="@string/result_service_enable" />
 
+        <Button
+            android:id="@+id/results_service_dialog_resend_results"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:text="@string/result_service_send_again" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -88,16 +96,10 @@
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/results_service_dialog_resend_results"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="@string/result_service_send_again" />
-
-        <Button
             android:id="@+id/results_service_dialog_close"
             style="@style/dialog_ok_cancel_button"
             android:layout_width="wrap_content"
+            android:layout_marginBottom="12dp"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:text="@string/general_close" />

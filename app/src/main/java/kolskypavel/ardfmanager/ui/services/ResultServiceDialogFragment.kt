@@ -101,13 +101,17 @@ class ResultServiceDialogFragment : DialogFragment() {
             dataProcessor.resultServiceTypeToString(resultService.serviceType),
             false
         )
+
+        // TODO: disable service when different type gets selected
+
+
         urlInput.setText(resultService.url)
         apiKeyInput.setText(currRace.apiKey)
 
         // Result service observer
         dataProcessor.getResultServiceLiveDataWithCountByRaceId(currRace.id)
             .observe(viewLifecycleOwner) { data ->
-                if (data != null && data.resultService != null) {
+                if (data?.resultService != null) {
                     statusView.text = getString(
                         R.string.result_service_status_text,
                         dataProcessor.resultServiceStatusToString(resultService.status),
@@ -172,10 +176,16 @@ class ResultServiceDialogFragment : DialogFragment() {
         return valid
     }
 
+    private fun getResultServiceType(): ResultServiceType {
+        val text = typePicker.text.toString()
+        return dataProcessor.resultServiceTypeFromString(text)
+    }
+
     private fun enableResultService() {
 
         // Copy the fields
         resultService.enabled = true
+        resultService.serviceType = getResultServiceType()
         resultService.url = urlInput.text.toString()
         resultService.apiKey = currRace.apiKey
 

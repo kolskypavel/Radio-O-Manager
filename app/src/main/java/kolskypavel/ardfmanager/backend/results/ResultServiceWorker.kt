@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.processors.JsonProcessor
 import kolskypavel.ardfmanager.backend.results.ResultsConstants.JSON
@@ -82,7 +83,7 @@ object ResultServiceWorker {
         }
 
         val outStream = ByteArrayOutputStream()
-        JsonProcessor.exportResults(outStream, filteredResults, dataProcessor)
+        JsonProcessor.exportResults(outStream, filteredResults)
         val resultString = outStream.toString("UTF-8")
         Log.i(RESULTS_LOG_TAG, "Export JSON payload:\n$resultString")
         val body: RequestBody = resultString.toRequestBody(JSON)
@@ -104,7 +105,6 @@ object ResultServiceWorker {
         try {
             //TODO: Handle loging
             httpClient.newCall(request).execute().use { response ->
-
                 val bodyString = response.body.string() ?: ""
 
                 Log.i(RESULTS_LOG_TAG, "ROBIS response code=${response.code}, body=$bodyString")
@@ -112,7 +112,12 @@ object ResultServiceWorker {
                 when (response.code) {
                     in 200..299 -> {
                         val sentResults =
-                            filterSentRobisResults(filteredResults, response.body.string())
+                            processRobisResponse(
+                                filteredResults,
+                                bodyString,
+                                resultService,
+                                dataProcessor.getContext()
+                            )
                         updateSentResults(dataProcessor, sentResults)
                         resultService.status = ResultServiceStatus.OK
                         resultService.sent += sentResults.size
@@ -132,7 +137,7 @@ object ResultServiceWorker {
                     else -> {
                         // Handle error response and log it
                         resultService.status = ResultServiceStatus.ERROR
-                        resultService.errorText = response.message
+                        resultService.errorText = bodyString
                         Log.e(
                             RESULTS_LOG_TAG,
                             "Error ${response.code} sending results to ROBis: ${response.message}"
@@ -166,14 +171,36 @@ object ResultServiceWorker {
         return resultData.filter { !it.result.sent }
     }
 
-    // Filter the results that were sent to ROBIS
-    // TODO: Finish
-    private fun filterSentRobisResults(
+    // Filter the results that were sent to ROBIS and inform about the invalid ones
+    private fun processRobisResponse(
         results: List<ResultData>,
-        robisResponse: String
+        robisResponse: String,
+        resultService: ResultService,
+        context: Context
     ): List<ResultData> {
         val sent = ArrayList<ResultData>()
+        val response = JsonProcessor.parseRobisResponse(robisResponse)
 
+        if (response != null) {
+            for (valid in response.created_entries) {
+                val found = results.find { it.result.siNumber == valid.si_number }
+                if (found != null) {
+                    sent.add(found)
+                }
+            }
+            var invalidString = ""
+            for (invalid in response.invalid_data) {
+                val fullName = "${invalid.last_name.uppercase()} ${invalid.first_name}"
+                invalidString += context.getString(
+                    R.string.result_service_invalid_result,
+                    fullName,
+                    invalid.si_number,
+                    invalid.competitor_index
+                )
+                invalidString += "\n"
+            }
+            resultService.errorText = invalidString
+        }
         return sent.toList()
     }
 

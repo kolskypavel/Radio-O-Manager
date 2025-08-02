@@ -10,6 +10,7 @@ import kolskypavel.ardfmanager.backend.files.constants.DataFormat
 import kolskypavel.ardfmanager.backend.files.constants.DataType
 import kolskypavel.ardfmanager.backend.files.json.adapters.RaceDataJsonAdapter
 import kolskypavel.ardfmanager.backend.files.json.temps.ResultCompetitorJson
+import kolskypavel.ardfmanager.backend.files.json.temps.RobisResponseJson
 import kolskypavel.ardfmanager.backend.files.wrappers.DataImportWrapper
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
@@ -51,8 +52,7 @@ object JsonProcessor : FormatProcessor {
             DataType.COMPETITORS -> TODO()
             DataType.RESULTS -> exportResults(
                 outStream,
-                dataProcessor.getResultDataFlowByRace(raceId).first(),
-                dataProcessor
+                dataProcessor.getResultDataFlowByRace(raceId).first()
             )
 
             else -> TODO()
@@ -68,10 +68,32 @@ object JsonProcessor : FormatProcessor {
         TODO()
     }
 
+    suspend fun importCategories() {
+
+    }
+
+    suspend fun importCompetitors() {
+
+    }
+
+    suspend fun importRaceData(jsonString: String): RaceData {
+        val moshi: Moshi = Moshi.Builder().add(RaceDataJsonAdapter()).build()
+        val adapter = moshi.adapter<RaceData>()
+
+        return adapter.nonNull().fromJson(jsonString)!!
+    }
+
+    fun parseRobisResponse(response: String): RobisResponseJson? {
+        val moshi: Moshi = Moshi.Builder()
+            .add(KotlinJsonAdapterFactory()).build()
+        val adapter = moshi.adapter(RobisResponseJson::class.java)
+
+        return adapter.fromJson(response)
+    }
+
     suspend fun exportResults(
         outStream: OutputStream,
-        results: List<ResultData>,
-        dataProcessor: DataProcessor
+        results: List<ResultData>
     ) {
         withContext(Dispatchers.IO) {
             val moshi: Moshi = Moshi.Builder()
@@ -94,10 +116,9 @@ object JsonProcessor : FormatProcessor {
                     last_name = competitor.lastName,
                     first_name = competitor.firstName,
                     category_name = category.name,
-                    result = ResultDataJsonAdapter().toJson(rd, dataProcessor)
+                    result = ResultDataJsonAdapter().toJson(rd)
                 )
             }
-
 
             val json = adapter.toJson(exportList)
             outStream.write(json.toByteArray(Charsets.UTF_8))
@@ -112,21 +133,6 @@ object JsonProcessor : FormatProcessor {
         raceId: UUID
     ) {
         val raceData: RaceData = dataProcessor.getRaceData(raceId);
-    }
-
-    suspend fun importCategories() {
-
-    }
-
-    suspend fun importCompetitors() {
-
-    }
-
-    suspend fun importRaceData(jsonString: String): RaceData {
-        val moshi: Moshi = Moshi.Builder().add(RaceDataJsonAdapter()).build()
-        val adapter = moshi.adapter<RaceData>()
-
-        return adapter.nonNull().fromJson(jsonString)!!
     }
 
 

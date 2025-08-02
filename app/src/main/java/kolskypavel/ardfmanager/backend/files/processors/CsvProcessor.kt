@@ -286,6 +286,7 @@ object CsvProcessor : FormatProcessor {
         val competitors = ArrayList<CompetitorCategory>()
         var currOrder =
             dataProcessor.getHighestCategoryOrder(race.id) + 1    // Used to keep order of categories correct
+        var currStartNum = dataProcessor.getHighestStartNumberByRace(race.id) + 1
         val invalidLines = ArrayList<Pair<Int, String>>()
 
         for (csvRow in csvReader.withIndex()) {
@@ -323,7 +324,13 @@ object CsvProcessor : FormatProcessor {
                 }
 
                 val categoryId = category?.category?.id
-                val startNumber = row[1].trim().toInt()
+                var startNumber = currStartNum
+
+                if (row[1].isNotEmpty()) {
+                    startNumber = row[1].trim().toInt()
+                } else {
+                    currStartNum++
+                }
                 val firstName = row[2].trim()
                 val lastName = row[3].trim()
                 val isMan = row[5].trim().toIntOrNull() == 0
