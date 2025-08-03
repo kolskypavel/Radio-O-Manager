@@ -159,7 +159,11 @@ class DataProcessor private constructor(context: Context) {
     suspend fun getCategoryByName(string: String, raceId: UUID): Category? =
         ardfRepository.getCategoryByName(string, raceId)
 
-    private suspend fun getCategoryByBirthYear(birthYear: Int, isMan: Boolean, raceId: UUID): Category? {
+    private suspend fun getCategoryByBirthYear(
+        birthYear: Int,
+        isMan: Boolean,
+        raceId: UUID
+    ): Category? {
         //Calculate the age difference
         val age = LocalDate.now().year - birthYear
         return ardfRepository.getCategoryByBirthYear(age, isMan, raceId)

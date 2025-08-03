@@ -80,8 +80,6 @@ class SelectedRaceViewModel : ViewModel() {
             val race = dataProcessor.setCurrentRace(id)
             _race.postValue(race)
 
-            resultService = dataProcessor.getResultServiceLiveDataWithCountByRaceId(id)
-
             launch {
                 dataProcessor.getCategoryDataFlowForRace(id).collect {
                     _categories.value = it
@@ -104,6 +102,20 @@ class SelectedRaceViewModel : ViewModel() {
                 }
             }
         }
+
+        // Start result service again
+        resultService = dataProcessor.getResultServiceLiveDataWithCountByRaceId(id)
+
+        // TODO: finish
+//        if (resultService.value != null && resultService.value!!.resultService?.enabled == true) {
+//            dataProcessor.setResultServiceJob(
+//                ResultServiceWorker.resultServiceJob(
+//                    getCurrentRace().id,
+//                    dataProcessor,
+//                    dataProcessor.getContext()
+//                )
+//            )
+//        }
     }
 
     fun updateRace(race: Race) {

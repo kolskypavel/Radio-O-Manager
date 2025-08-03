@@ -1,6 +1,6 @@
 package kolskypavel.ardfmanager.backend.files.json.temps
 
-data class ResultDataJson(
+data class ResultJson(
     val run_time: String,
     val place: Int,
     val controls_num: Int,

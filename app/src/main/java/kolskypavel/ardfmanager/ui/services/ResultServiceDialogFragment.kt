@@ -3,6 +3,7 @@ package kolskypavel.ardfmanager.ui.services
 import android.content.res.Resources
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -111,14 +112,15 @@ class ResultServiceDialogFragment : DialogFragment() {
         // Result service observer
         dataProcessor.getResultServiceLiveDataWithCountByRaceId(currRace.id)
             .observe(viewLifecycleOwner) { data ->
+                Log.i("DATA", data.toString())
                 if (data?.resultService != null) {
                     statusView.text = getString(
                         R.string.result_service_status_text,
-                        dataProcessor.resultServiceStatusToString(resultService.status),
+                        dataProcessor.resultServiceStatusToString(data.resultService.status),
                         data.resultService.sent,
                         data.resultCount
                     )
-                    errorTextView.text = resultService.errorText
+                    errorTextView.text = data.resultService.errorText
                 }
             }
     }

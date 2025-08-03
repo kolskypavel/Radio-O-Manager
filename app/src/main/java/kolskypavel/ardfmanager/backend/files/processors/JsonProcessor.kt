@@ -1,6 +1,6 @@
 package kolskypavel.ardfmanager.backend.files.processors
 
-import ResultDataJsonAdapter
+import ResultJsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.adapter
@@ -12,12 +12,12 @@ import kolskypavel.ardfmanager.backend.files.json.adapters.RaceDataJsonAdapter
 import kolskypavel.ardfmanager.backend.files.json.temps.ResultCompetitorJson
 import kolskypavel.ardfmanager.backend.files.json.temps.RobisResponseJson
 import kolskypavel.ardfmanager.backend.files.wrappers.DataImportWrapper
+import kolskypavel.ardfmanager.backend.results.ResultsProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
-import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.io.OutputStream
@@ -52,7 +52,7 @@ object JsonProcessor : FormatProcessor {
             DataType.COMPETITORS -> TODO()
             DataType.RESULTS -> exportResults(
                 outStream,
-                dataProcessor.getResultDataFlowByRace(raceId).first()
+                ResultsProcessor.getCompetitorDataByRace(raceId, dataProcessor)
             )
 
             else -> TODO()
@@ -93,11 +93,11 @@ object JsonProcessor : FormatProcessor {
 
     suspend fun exportResults(
         outStream: OutputStream,
-        results: List<ResultData>
+        results: List<CompetitorData>
     ) {
         withContext(Dispatchers.IO) {
             val moshi: Moshi = Moshi.Builder()
-                .add(ResultDataJsonAdapter())
+                .add(ResultJsonAdapter())
                 .add(KotlinJsonAdapterFactory())
                 .build()
 
@@ -116,7 +116,7 @@ object JsonProcessor : FormatProcessor {
                     last_name = competitor.lastName,
                     first_name = competitor.firstName,
                     category_name = category.name,
-                    result = ResultDataJsonAdapter().toJson(rd)
+                    result = ResultJsonAdapter().toJson(rd)
                 )
             }
 

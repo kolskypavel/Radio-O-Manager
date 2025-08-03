@@ -18,7 +18,14 @@ import java.util.UUID
         parentColumns = arrayOf("id"),
         childColumns = arrayOf("race_id"),
         onDelete = ForeignKey.CASCADE
-    )]
+    ),
+        ForeignKey(
+            entity = Competitor::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("competitor_id"),
+            onDelete = ForeignKey.SET_NULL
+        )
+    ]
 )
 data class Result(
     @PrimaryKey var id: UUID,

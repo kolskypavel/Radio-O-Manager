@@ -237,7 +237,7 @@
     <string name="result_service_send_again">Send results again</string>
     <string name="result_service_api_key_missing">API key must be set in race for ROBis</string>
     <string name="result_service_status_text">%1$s, sent %2$d/%3$d</string>
-    <string name="result_service_invalid_result">Invalid result: %1$s, SI: %2$d, Index: %3$s</string>
+    <string name="result_service_invalid_result">Invalid result: %1$s, SI: %2$d, Index: %3$s, Cause: %4$s</string>
 
     <!-- Prints -->
     <string name="prints_result_ticket">Print ticket</string>

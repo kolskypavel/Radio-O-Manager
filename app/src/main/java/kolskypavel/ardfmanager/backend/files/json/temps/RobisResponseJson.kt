@@ -5,6 +5,7 @@ data class RobisResultJson(
     var first_name: String,
     var competitor_index: String,
     var si_number: Int,
+    var reason: String
 ) {}
 
 data class RobisResponseJson(

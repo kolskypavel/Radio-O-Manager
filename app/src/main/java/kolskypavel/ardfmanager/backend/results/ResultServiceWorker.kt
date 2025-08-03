@@ -6,19 +6,19 @@ import android.net.NetworkCapabilities
 import android.util.Log
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
+import kolskypavel.ardfmanager.backend.files.json.temps.RobisResultJson
 import kolskypavel.ardfmanager.backend.files.processors.JsonProcessor
 import kolskypavel.ardfmanager.backend.results.ResultsConstants.JSON
 import kolskypavel.ardfmanager.backend.results.ResultsConstants.RESULTS_LOG_TAG
 import kolskypavel.ardfmanager.backend.results.ResultsConstants.ROBIS_API_HEADER
 import kolskypavel.ardfmanager.backend.room.entity.ResultService
-import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.enums.ResultServiceStatus
 import kolskypavel.ardfmanager.backend.room.enums.ResultServiceType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -71,9 +71,14 @@ object ResultServiceWorker {
         test: Boolean
     ) {
         Log.i(RESULTS_LOG_TAG, ">> exportResultsRobis START")
+
+
         // Fetch results and convert them to JSON
         val filteredResults = filterResultDataBySent(
-            dataProcessor.getResultDataFlowByRace(resultService.raceId).first()
+            ResultsProcessor.getCompetitorDataByRace(
+                resultService.raceId,
+                dataProcessor
+            )
         )
 
         // If there are no results to send, return early
@@ -111,16 +116,16 @@ object ResultServiceWorker {
 
                 when (response.code) {
                     in 200..299 -> {
-                        val sentResults =
-                            processRobisResponse(
-                                filteredResults,
-                                bodyString,
-                                resultService,
-                                dataProcessor.getContext()
-                            )
-                        updateSentResults(dataProcessor, sentResults)
+
+                        filterInvalidResults(
+                            filteredResults,
+                            bodyString,
+                            resultService,
+                            dataProcessor.getContext()
+                        )
+                        updateSentResults(dataProcessor, filteredResults)
                         resultService.status = ResultServiceStatus.OK
-                        resultService.sent += sentResults.size
+                        resultService.sent += filteredResults.size
                     }
 
                     401 -> {
@@ -166,53 +171,76 @@ object ResultServiceWorker {
 
     // Filter the results by sent
     private fun filterResultDataBySent(
-        resultData: List<ResultData>
-    ): List<ResultData> {
-        return resultData.filter { !it.result.sent }
+        results: List<CompetitorData>
+    ): ArrayList<CompetitorData> {
+        val filtered = ArrayList<CompetitorData>()
+        for (cd in results) {
+            if (cd.readoutData != null && !cd.readoutData!!.result.sent) {
+                filtered.add(cd)
+            }
+        }
+        return filtered
     }
 
-    // Filter the results that were sent to ROBIS and inform about the invalid ones
-    private fun processRobisResponse(
-        results: List<ResultData>,
+    /** Find the invalid result and remove it from the array list
+     * First try to match via index, then with SI number and then matching last and first name
+     */
+    private fun findAndRemoveMatchingResult(
+        results: ArrayList<CompetitorData>,
+        response: RobisResultJson
+    ) {
+        val found = results.find {
+            it.competitorCategory.competitor.index == response.competitor_index
+        } ?: results.find {
+            it.readoutData?.result?.siNumber == response.si_number
+        } ?: results.find {
+            it.competitorCategory.competitor.firstName == response.first_name &&
+                    it.competitorCategory.competitor.lastName == response.last_name
+        }
+
+        results.remove(found)
+    }
+
+    // Filter the invalid results that were sent to ROBIS and inform about the errors
+    private fun filterInvalidResults(
+        results: ArrayList<CompetitorData>,
         robisResponse: String,
         resultService: ResultService,
         context: Context
-    ): List<ResultData> {
-        val sent = ArrayList<ResultData>()
+    ) {
         val response = JsonProcessor.parseRobisResponse(robisResponse)
 
         if (response != null) {
-            for (valid in response.created_entries) {
-                val found = results.find { it.result.siNumber == valid.si_number }
-                if (found != null) {
-                    sent.add(found)
-                }
-            }
+
             var invalidString = ""
             for (invalid in response.invalid_data) {
+                findAndRemoveMatchingResult(results, invalid)
                 val fullName = "${invalid.last_name.uppercase()} ${invalid.first_name}"
                 invalidString += context.getString(
                     R.string.result_service_invalid_result,
                     fullName,
                     invalid.si_number,
-                    invalid.competitor_index
+                    invalid.competitor_index,
+                    invalid.reason
                 )
                 invalidString += "\n"
             }
             resultService.errorText = invalidString
         }
-        return sent.toList()
     }
 
     // Mark the results as sent
     private fun updateSentResults(
         dataProcessor: DataProcessor,
-        resultData: List<ResultData>
+        resultData: List<CompetitorData>
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             for (r in resultData) {
-                r.result.sent = true
-                dataProcessor.createOrUpdateResult(r.result)
+                val result = r.readoutData?.result
+                if (result != null) {
+                    result.sent = true
+                    dataProcessor.createOrUpdateResult(result)
+                }
             }
         }
     }

@@ -6,5 +6,5 @@ data class ResultCompetitorJson (
     val last_name: String,
     val first_name: String,
     val category_name: String,
-    val result: ResultDataJson
+    val result: ResultJson
 ){}

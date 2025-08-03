@@ -489,7 +489,10 @@ object ResultsProcessor {
                 clearEvaluation(punches, result)
             }
 
-            removeStartAndFinishPunch(result, punches)  // Remove start and finish punches before calculation
+            removeStartAndFinishPunch(
+                result,
+                punches
+            )  // Remove start and finish punches before calculation
             calculateResult(result, category, punches, null, dataProcessor)
         }
     }
@@ -508,7 +511,7 @@ object ResultsProcessor {
 
     }
 
-    private fun List<CompetitorData>.sortByPlace(): List<CompetitorData> {
+    fun List<CompetitorData>.sortByPlace(): List<CompetitorData> {
         val sorted = this.sortedWith(ResultDataComparator())
 
         var place = 0
@@ -549,7 +552,7 @@ object ResultsProcessor {
         }
     }
 
-    private fun List<CompetitorData>.groupByCategoryAndSortByPlace(): Map<Category?, List<CompetitorData>> {
+    fun List<CompetitorData>.groupByCategoryAndSortByPlace(): Map<Category?, List<CompetitorData>> {
         val grouped = this.groupBy { it.competitorCategory.category }.toMutableMap()
         grouped.forEach { cg ->
             grouped[cg.key] = cg.value.sortByPlace()
@@ -564,6 +567,15 @@ object ResultsProcessor {
         return dataProcessor.getCompetitorDataFlowByRace(raceId).map { resultDataList ->
             resultDataList.toResultDisplayWrappers()
         }
+    }
+
+    suspend fun getCompetitorDataByRace(
+        raceId: UUID,
+        dataProcessor: DataProcessor
+    ): List<CompetitorData> {
+        val grouped = dataProcessor.getCompetitorDataFlowByRace(raceId).first()
+            .groupByCategoryAndSortByPlace()
+        return grouped.values.flatten().toList()
     }
 
     /**
