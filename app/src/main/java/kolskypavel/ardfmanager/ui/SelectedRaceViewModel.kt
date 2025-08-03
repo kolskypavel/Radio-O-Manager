@@ -1,9 +1,12 @@
 package kolskypavel.ardfmanager.ui
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.preference.PreferenceManager
+import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
 import kolskypavel.ardfmanager.backend.files.constants.DataType
@@ -31,6 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.Locale
 import java.util.UUID
 
 /**
@@ -110,6 +114,15 @@ class SelectedRaceViewModel : ViewModel() {
     }
 
     fun removeReaderRace() = dataProcessor.removeCurrentRace()
+
+    // get current locale
+    fun getCurrentLocale(context: Context): Locale {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val preference =
+            sharedPref.getString(context.getString(R.string.key_app_language), "en")
+
+        return Locale(preference)
+    }
 
     //Category
     suspend fun getCategory(id: UUID) = dataProcessor.getCategory(id)

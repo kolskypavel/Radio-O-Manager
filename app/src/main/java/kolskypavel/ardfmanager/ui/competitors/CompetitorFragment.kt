@@ -35,6 +35,7 @@ import kolskypavel.ardfmanager.databinding.FragmentCompetitorsBinding
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment
 import kotlinx.coroutines.launch
+import java.text.Collator
 
 
 class CompetitorFragment : Fragment() {
@@ -43,6 +44,7 @@ class CompetitorFragment : Fragment() {
 
     private val selectedRaceViewModel: SelectedRaceViewModel by activityViewModels()
     private val dataProcessor = DataProcessor.get()
+    private lateinit var collator: Collator
     private lateinit var competitorToolbar: Toolbar
     private lateinit var competitorTableView: SortableTableView<CompetitorData>
     private lateinit var competitorDisplayTypePicker: MaterialAutoCompleteTextView
@@ -97,6 +99,9 @@ class CompetitorFragment : Fragment() {
             }
             mLastClickTime = SystemClock.elapsedRealtime()
         }
+        // Set collator for comparing
+        collator = Collator.getInstance(selectedRaceViewModel.getCurrentLocale(requireContext()))
+
         competitorDisplayTypePicker.setText(getText(R.string.competitor_display_overview), false)
         toggleCompetitorDisplay(CompetitorTableDisplayType.OVERVIEW)
         setBackButton()
@@ -159,9 +164,9 @@ class CompetitorFragment : Fragment() {
 
                 //Set comparators
                 competitorTableView.setColumnComparator(0, CompetitorStartNumComparator())
-                competitorTableView.setColumnComparator(1, CompetitorNameComparator())
-                competitorTableView.setColumnComparator(2, CompetitorClubComparator())
-                competitorTableView.setColumnComparator(3, CompetitorCategoryComparator())
+                competitorTableView.setColumnComparator(1, CompetitorNameComparator(collator))
+                competitorTableView.setColumnComparator(2, CompetitorClubComparator(collator))
+                competitorTableView.setColumnComparator(3, CompetitorCategoryComparator(collator))
                 competitorTableView.setColumnComparator(4, CompetitorSINumberComparator())
 
             }
@@ -176,9 +181,9 @@ class CompetitorFragment : Fragment() {
                         R.string.general_si_number
                     )
                 competitorTableView.setColumnComparator(0, CompetitorStartNumComparator())
-                competitorTableView.setColumnComparator(1, CompetitorStartTimeComparator())
-                competitorTableView.setColumnComparator(2, CompetitorNameComparator())
-                competitorTableView.setColumnComparator(3, CompetitorCategoryComparator())
+                competitorTableView.setColumnComparator(1, CompetitorDrawnStartTimeComparator())
+                competitorTableView.setColumnComparator(2, CompetitorNameComparator(collator))
+                competitorTableView.setColumnComparator(3, CompetitorCategoryComparator(collator))
                 competitorTableView.setColumnComparator(4, CompetitorSINumberComparator())
             }
 
@@ -192,11 +197,11 @@ class CompetitorFragment : Fragment() {
                         R.string.general_finish_time,
                     )
 
-                competitorTableView.setColumnComparator(0, CompetitorNameComparator())
-                competitorTableView.setColumnComparator(1, CompetitorCategoryComparator())
-                competitorTableView.setColumnComparator(2, CompetitorStartTimeComparator())
-                competitorTableView.setColumnComparator(3, CompetitorFinishTimeComparator())
-                competitorTableView.setColumnComparator(4, CompetitorRunTimeComparator())
+                competitorTableView.setColumnComparator(0, CompetitorNameComparator(collator))
+                competitorTableView.setColumnComparator(1, CompetitorCategoryComparator(collator))
+                competitorTableView.setColumnComparator(2, CompetitorRunTimeComparator())
+                competitorTableView.setColumnComparator(3, CompetitorStartTimeComparator())
+                competitorTableView.setColumnComparator(4, CompetitorFinishTimeComparator())
             }
 
             CompetitorTableDisplayType.ON_THE_WAY -> {
@@ -243,21 +248,22 @@ class CompetitorFragment : Fragment() {
         data: List<CompetitorData>,
         displayType: CompetitorTableDisplayType
     ): List<CompetitorData> {
-        return when (displayType) {
+        when (displayType) {
             CompetitorTableDisplayType.OVERVIEW,
-            CompetitorTableDisplayType.START_LIST -> data
+            CompetitorTableDisplayType.START_LIST -> return data
 
             CompetitorTableDisplayType.FINISH_REACHED -> {
-                data.filter { cd ->
+                val filtered = data.filter { cd ->
                     cd.readoutData != null
                 }
+                return filtered.sortedWith(CompetitorFinishTimeComparator())
             }
 
             CompetitorTableDisplayType.ON_THE_WAY -> {
-                data.filter { cd ->
+                val filtered = data.filter { cd ->
                     cd.readoutData == null
                 }
-                data.sortedWith(CompetitorStartTimeComparator())
+                return filtered.sortedWith(CompetitorDrawnStartTimeComparator())
             }
         }
     }
