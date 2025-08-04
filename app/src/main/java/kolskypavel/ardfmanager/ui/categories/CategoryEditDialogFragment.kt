@@ -347,7 +347,8 @@ class CategoryEditDialogFragment : DialogFragment() {
                 setFragmentResult(
                     REQUEST_CATEGORY_MODIFICATION, bundleOf(
                         BUNDLE_KEY_CREATE to args.create,
-                        BUNDLE_KEY_POSITION to args.position
+                        BUNDLE_KEY_POSITION to args.position,
+                        BUNDLE_KEY_CATEGORY_ID to category.id.toString()
                     )
                 )
                 dialog?.dismiss()
@@ -363,5 +364,6 @@ class CategoryEditDialogFragment : DialogFragment() {
         const val REQUEST_CATEGORY_MODIFICATION = "REQUEST_CATEGORY_MODIFICATION"
         const val BUNDLE_KEY_CREATE = "BUNDLE_KEY_CREATE"
         const val BUNDLE_KEY_POSITION = "BUNDLE_KEY_POSITION"
+        const val BUNDLE_KEY_CATEGORY_ID = "BUNDLE_KEY_CATEGORY_ID"
     }
 }

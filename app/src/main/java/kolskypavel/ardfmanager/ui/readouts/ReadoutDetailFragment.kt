@@ -22,6 +22,7 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
+import kolskypavel.ardfmanager.ui.categories.CategoryEditDialogFragment
 import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
@@ -207,6 +208,20 @@ class ReadoutDetailFragment : Fragment() {
             resultData = newData
             populateFields()
 
+        }
+
+        setFragmentResultListener(CategoryEditDialogFragment.REQUEST_CATEGORY_MODIFICATION) { _, bundle ->
+            val categoryId = bundle.getString(CategoryEditDialogFragment.BUNDLE_KEY_CATEGORY_ID)
+            if (categoryId != null && resultData.competitorCategory?.competitor != null) {
+                val comp = resultData.competitorCategory?.competitor!!
+                comp.categoryId = UUID.fromString(categoryId)
+                selectedRaceViewModel.createOrUpdateCompetitor(comp)
+
+                val newData =
+                    selectedRaceViewModel.getResultData(resultData.result.id)
+                resultData = newData
+                populateFields()
+            }
         }
     }
 

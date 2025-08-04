@@ -197,7 +197,6 @@ object ResultServiceWorker {
             it.competitorCategory.competitor.firstName == response.first_name &&
                     it.competitorCategory.competitor.lastName == response.last_name
         }
-
         results.remove(found)
     }
 
