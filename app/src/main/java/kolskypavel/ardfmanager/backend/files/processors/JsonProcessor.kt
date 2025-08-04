@@ -132,8 +132,19 @@ object JsonProcessor : FormatProcessor {
         dataProcessor: DataProcessor,
         raceId: UUID
     ) {
-        val raceData: RaceData = dataProcessor.getRaceData(raceId);
+        withContext(Dispatchers.IO) {
+            val moshi: Moshi = Moshi.Builder()
+                .add(RaceDataJsonAdapter())
+                .add(KotlinJsonAdapterFactory())
+                .build()
+            val raceData: RaceData = dataProcessor.getRaceData(raceId);
+            val adapter = moshi.adapter<RaceData>()
+
+            val json = adapter.toJson(raceData)
+
+            outStream.write(json.toByteArray(Charsets.UTF_8))
+
+            outStream.flush()
+        }
     }
-
-
 }

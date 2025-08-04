@@ -131,7 +131,12 @@ class DataProcessor private constructor(context: Context) {
 
     //RACE DATA
     suspend fun getRaceData(raceId: UUID): RaceData {
-        TODO();
+        val race = getRace(raceId)
+        val categories = getCategoryDataForRace(raceId)
+        val aliases = getAliasesByRace(raceId)
+        val competitorData = ResultsProcessor.getCompetitorDataByRace(raceId, this)
+
+        return RaceData(race, categories, aliases, competitorData)
     }
 
     suspend fun importRaceData() {
