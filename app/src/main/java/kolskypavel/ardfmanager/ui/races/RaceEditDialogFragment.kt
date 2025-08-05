@@ -120,8 +120,8 @@ class RaceEditDialogFragment : DialogFragment() {
                 UUID.randomUUID(),
                 "", "",
                 LocalDateTime.now(),
-                RaceType.CLASSICS,
-                RaceLevel.TRAINING,
+                RaceType.CLASSIC,
+                RaceLevel.PRACTICE,
                 RaceBand.M80,
                 Duration.ofMinutes(120)
             )

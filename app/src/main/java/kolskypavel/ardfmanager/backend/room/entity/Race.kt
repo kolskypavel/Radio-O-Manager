@@ -31,8 +31,8 @@ data class Race(
         UUID.randomUUID(),
         "", "",
         LocalDateTime.now(),
-        RaceType.CLASSICS,
-        RaceLevel.TRAINING,
+        RaceType.CLASSIC,
+        RaceLevel.PRACTICE,
         RaceBand.M80,
         Duration.ZERO
     )

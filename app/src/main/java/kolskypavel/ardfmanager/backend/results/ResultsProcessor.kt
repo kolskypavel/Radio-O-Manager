@@ -417,7 +417,7 @@ object ResultsProcessor {
             dataProcessor.getCurrentRace().raceType
         }
         when (raceType) {
-            RaceType.CLASSICS, RaceType.FOXORING -> evaluateClassics(
+            RaceType.CLASSIC, RaceType.FOXORING -> evaluateClassics(
                 punches,
                 controlPoints,
                 result

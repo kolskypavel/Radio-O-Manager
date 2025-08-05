@@ -8,7 +8,8 @@ import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorCategory
-import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -95,18 +96,16 @@ class JsonExportUnitTest {
             category = category
         )
 
-        val resultData = ResultData(
-            result = result,
-            punches = emptyList(),
-            competitorCategory = competitorCategory
+        val compData = CompetitorData(
+            competitorCategory = competitorCategory,
+            ReadoutData(result, emptyList())
         )
 
         val outputStream = ByteArrayOutputStream()
-        JsonProcessor.exportResults(outputStream, listOf(resultData), dataProcessor!!)
+        JsonProcessor.exportResults(outputStream, listOf(compData))
 
         val json = outputStream.toString(Charsets.UTF_8.name())
         println(json)
-
     }
 
 

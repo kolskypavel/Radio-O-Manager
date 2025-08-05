@@ -106,11 +106,11 @@ object ControlPointsHelper {
             val controlPoint = controlPoints[i]
 
             if (controlPoint.type == ControlPointType.SEPARATOR) {
-                throw IllegalArgumentException(context.getString(R.string.control_point_classics_spectator_not_allowed))
+                throw IllegalArgumentException(context.getString(R.string.control_point_classic_spectator_not_allowed))
             }
 
             if (previousCodes.contains(controlPoint.siCode)) {
-                throw IllegalArgumentException(context.getString(R.string.control_point_classics_duplicate))
+                throw IllegalArgumentException(context.getString(R.string.control_point_classic_duplicate))
             }
 
             if (controlPoint.type == ControlPointType.BEACON && i != controlPoints.size - 1) {
@@ -196,7 +196,7 @@ object ControlPointsHelper {
     ) {
         when (raceType) {
             RaceType.ORIENTEERING -> validateOrienteeringControlSequence(controlPoints, context)
-            RaceType.CLASSICS, RaceType.FOXORING -> validateClassicsControlSequence(
+            RaceType.CLASSIC, RaceType.FOXORING -> validateClassicsControlSequence(
                 controlPoints,
                 context
             )

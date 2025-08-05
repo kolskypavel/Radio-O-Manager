@@ -40,13 +40,13 @@
     <string name="general_band">Pásmo</string>
     <string name="race_end">Ukončit závod</string>
     <string name="race_end_confirmation">Opravdu chcete ukončit závod?</string>
-    <string name="race_type_classics">Klasická trať</string>
+    <string name="race_type_classic">Klasická trať</string>
     <string name="race_type_orienteering">Orientační běh</string>
     <string name="general_finish">Cíl</string>
     <string name="general_finish_time">Čas cíle</string>
     <string name="general_run_time">Čas běhu</string>
     <string name="general_required">Požadováno</string>
-    <string name="race_level_training">Trénink</string>
+    <string name="race_level_practice">Trénink</string>
     <string name="general_invalid">Neplatný</string>
     <string name="race_delete_confirmation">Opravdu chcete smazat závod?</string>
     <string name="category_same_type">Stejný typ jako závod</string>
@@ -64,9 +64,9 @@
     <string name="control_point_invalid_range">SI kód mimo rozsah: %1$s. Kód musí být větší než 30 a menší než 256.</string>
     <string name="control_point_two_in_row">Stejná kontrola nemůže být dvakrát za sebou.</string>
     <string name="control_point_orienteering_special">Orientační běh nemůže obsahovat speciální kontroly</string>
-    <string name="control_point_classics_duplicate">Na klasické trati nemohou být duplikované kontroly.</string>
+    <string name="control_point_classic_duplicate">Na klasické trati nemohou být duplikované kontroly.</string>
     <string name="control_point_non_last_beacon">Maják musí být poslední kontrola.</string>
-    <string name="control_point_classics_spectator_not_allowed">Na klasice nemůže být divácká kontrola.</string>
+    <string name="control_point_classic_spectator_not_allowed">Na klasice nemůže být divácká kontrola.</string>
     <string name="control_point_sprint_duplicate">Stejná kontrola nemůže být v jednom kole sprintu dvakrát.</string>
     <string name="control_point_sprint_two_usages">" Kontrola s kódem [%1$d] je použita jako divácká / maják a kontrola zároveň."</string>
     <string name="category_preset_czech">České</string>

@@ -47,7 +47,7 @@ class CsvExportInstrumentedTest {
 //            30F,
 //            0,
 //            true,
-//            RaceType.CLASSICS,
+//            RaceType.CLASSIC,
 //            Duration.ofMinutes(120),
 //            null,
 //            null,""

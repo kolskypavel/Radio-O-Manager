@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
+import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -19,6 +20,6 @@ class LocalDateTimeAdapter : JsonAdapter<LocalDateTime>() {
 
     @ToJson
     override fun toJson(writer: JsonWriter, value: LocalDateTime?) {
-        writer.value(value?.format(formatter))
+        writer.value(value?.let { TimeProcessor.formatLocalDateTime(it) } ?: "")
     }
 }

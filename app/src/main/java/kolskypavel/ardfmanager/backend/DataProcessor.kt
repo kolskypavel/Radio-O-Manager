@@ -349,8 +349,10 @@ class DataProcessor private constructor(context: Context) {
     suspend fun getResultBySINumber(siNumber: Int, raceId: UUID) =
         ardfRepository.getResultBySINumber(siNumber, raceId)
 
-    suspend fun saveResultPunches(result: Result, punches: List<Punch>) =
+    suspend fun saveResultPunches(result: Result, punches: List<Punch>) {
+        result.sent = false     // Mark as unsent
         ardfRepository.saveResultPunches(result, punches)
+    }
 
     suspend fun createOrUpdateResult(result: Result) =
         ardfRepository.createOrUpdateResult(result)

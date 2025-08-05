@@ -116,7 +116,7 @@ class ControlPointsParsingUnitTest {
         var result = ControlPointsHelper.getControlPointsFromString(
             cpString,
             categoryId,
-            RaceType.CLASSICS,
+            RaceType.CLASSIC,
             appContext
         )
         assertEquals(listOf(31, 32, 33, 34, 35, 99), result.map { cp -> cp.siCode }.toList())
@@ -136,7 +136,7 @@ class ControlPointsParsingUnitTest {
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
             categoryId,
-            RaceType.CLASSICS,
+            RaceType.CLASSIC,
             appContext
         )
         assertEquals(0, result.size)
@@ -149,7 +149,7 @@ class ControlPointsParsingUnitTest {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
                 categoryId,
-                RaceType.CLASSICS,
+                RaceType.CLASSIC,
                 appContext
             )
         }.message)
@@ -158,7 +158,7 @@ class ControlPointsParsingUnitTest {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
                 categoryId,
-                RaceType.CLASSICS,
+                RaceType.CLASSIC,
                 appContext
             )
         }.message)
@@ -167,7 +167,7 @@ class ControlPointsParsingUnitTest {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
                 categoryId,
-                RaceType.CLASSICS,
+                RaceType.CLASSIC,
                 appContext
             )
         }.message)
@@ -176,7 +176,7 @@ class ControlPointsParsingUnitTest {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
                 categoryId,
-                RaceType.CLASSICS,
+                RaceType.CLASSIC,
                 appContext
             )
         }.message)
@@ -185,7 +185,7 @@ class ControlPointsParsingUnitTest {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
                 categoryId,
-                RaceType.CLASSICS,
+                RaceType.CLASSIC,
                 appContext
             )
         }.message)
@@ -194,7 +194,7 @@ class ControlPointsParsingUnitTest {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
                 categoryId,
-                RaceType.CLASSICS,
+                RaceType.CLASSIC,
                 appContext
             )
         }.message)
@@ -203,7 +203,7 @@ class ControlPointsParsingUnitTest {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
                 categoryId,
-                RaceType.CLASSICS,
+                RaceType.CLASSIC,
                 appContext
             )
         }.message)
@@ -212,7 +212,7 @@ class ControlPointsParsingUnitTest {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
                 categoryId,
-                RaceType.CLASSICS,
+                RaceType.CLASSIC,
                 appContext
             )
         }.message)
@@ -221,7 +221,7 @@ class ControlPointsParsingUnitTest {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
                 categoryId,
-                RaceType.CLASSICS,
+                RaceType.CLASSIC,
                 appContext
             )
         }.message)

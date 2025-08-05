@@ -12,7 +12,7 @@ object TimeProcessor {
     }
 
     fun formatLocalDateTime(time: LocalDateTime): String {
-        return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(time).toString()
+        return DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm:ss").format(time).toString()
     }
 
     fun formatLocalDate(time: LocalDate): String {

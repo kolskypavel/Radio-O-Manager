@@ -114,9 +114,9 @@
     <string name="control_point_invalid_range"> Invalid SI range: %1$s. The code must be greater than 30 and less than 256 </string>
     <string name="control_point_two_in_row">" Two identical control points can't be in a row."</string>
     <string name="control_point_orienteering_special"> Orienteering can\'t contain special control points.</string>
-    <string name="control_point_classics_duplicate"> Duplicate control points are not allowed in a classics race.</string>
+    <string name="control_point_classic_duplicate"> Duplicate control points are not allowed in a classic race.</string>
     <string name="control_point_non_last_beacon"> Beacon must be the last control point.</string>
-    <string name="control_point_classics_spectator_not_allowed"> Spectator control points are not allowed on a classic race.</string>
+    <string name="control_point_classic_spectator_not_allowed"> Spectator control points are not allowed on a classic race.</string>
     <string name="control_point_sprint_duplicate"> Duplicate controls are not allowed in a single lap of a sprint race.</string>
     <string name="control_point_sprint_two_usages">" Control point with SI code [%1$d] used as a separator / beacon and as a control."</string>
 
@@ -361,7 +361,7 @@
 
     <!--    DATA ARRAYS-->
 
-    <string name="race_type_classics">Classics</string>
+    <string name="race_type_classic">Classic</string>
     <string name="race_type_sprint" translatable="false">Sprint</string>
     <string name="race_type_foxoring" translatable="false">Foxoring</string>
     <string name="race_type_orienteering">Orienteering</string>
@@ -370,7 +370,7 @@
     <string name="race_level_national">National</string>
     <string name="race_level_regional">Regional</string>
     <string name="race_level_district">District</string>
-    <string name="race_level_training">Training</string>
+    <string name="race_level_practice">Practice</string>
 
     <string name="band_80m" translatable="false">80m</string>
     <string name="band_2m" translatable="false">2m</string>
@@ -395,7 +395,7 @@
     <string name="result_service_status_error">Error</string>
 
     <string-array name="race_types_array">
-        <item>@string/race_type_classics</item>
+        <item>@string/race_type_classic</item>
         <item>@string/race_type_sprint</item>
         <item>@string/race_type_foxoring</item>
         <item>@string/race_type_orienteering</item>
@@ -406,7 +406,7 @@
         <item>@string/race_level_national</item>
         <item>@string/race_level_regional</item>
         <item>@string/race_level_district</item>
-        <item>@string/race_level_training</item>
+        <item>@string/race_level_practice</item>
     </string-array>
 
     <string-array name="race_bands_array">
