@@ -3,6 +3,11 @@
   "description": "Data standard for storing ARDF competition data",
   "type": "object",
   "properties": {
+    "format_version": {
+      "type": "integer",
+      "required": [],
+      "description": "Main version of the ARDF JSON standard - used for compatibility"
+    },
     "event_name": {
       "type": "string",
       "required": [],
@@ -90,8 +95,8 @@
           },
           "race_time_limit": {
             "type": "string",
-            "format": "time",
-            "description": "Time limit in mm:ss"
+            "pattern": "^\\d{1,3}:[0-5]\\d$",
+            "description": "Time limit in MM:ss"
           },
           "race_start_time_source": {
             "type": "string",
@@ -187,7 +192,7 @@
                 },
                 "category_time_limit": {
                   "type": "string",
-                  "format": "time",
+                  "pattern": "^$|^(?:[0-5]\\d):[0-5]\\d$",
                   "description": "Category - different time limit in mm:ss"
                 },
                 "category_start_time_source": {
@@ -252,7 +257,7 @@
                   "type": "string",
                   "description": "Competitor's club / country"
                 },
-                "competitor_category": {
+                "category_name": {
                   "type": "string",
                   "required": [],
                   "description": "Competitor's category in the race"
@@ -361,21 +366,14 @@
                         "description": "One punch of a control point",
                         "properties": {
                           "code": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "maximum": 255,
-                            "required": [],
-                            "description": "Code of the control point"
-                          },
-                          "alias": {
                             "type": "string",
-                            "description": "Alias of the control point - e. g. F1"
+                            "description": "Alias or code of the control point"
                           },
                           "split_time": {
                             "type": "string",
-                            "format": "duration",
+                            "pattern": "^(?:[0-5]\\d):[0-5]\\d$",
                             "required": [],
-                            "description": "Split from the last control"
+                            "description": "Split from the last control, format MM:ss"
                           },
                           "punch_status": {
                             "type": "string",
@@ -383,10 +381,10 @@
                               "OK",
                               "MP",
                               "DP",
-                              "AD"
+                              "AP"
                             ],
                             "required": [],
-                            "description": "Status of the punch: OK - valid, MP - misspunch, DP - duplicate punch, AD - additional punch (unknown SI code)"
+                            "description": "Status of the punch: OK - valid, MP - misspunch, DP - duplicate punch, AP - additional punch (unknown SI code)"
                           }
                         }
                       }
