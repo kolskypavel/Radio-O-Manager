@@ -8,5 +8,6 @@ data class RaceData(
     val race: Race,
     val categories: List<CategoryData>,
     val aliases: List<Alias>,
-    val competitorData: List<CompetitorData>
+    val competitorData: List<CompetitorData>,
+    val unknowReadoutData: List<ReadoutData>
 ) {}

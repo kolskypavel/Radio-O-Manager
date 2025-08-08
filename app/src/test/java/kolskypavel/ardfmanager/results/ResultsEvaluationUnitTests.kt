@@ -475,7 +475,7 @@ class ResultsEvaluationUnitTests {
             )
         }
         punches.add(
-            2,  Punch(
+            2, Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 null,
@@ -487,7 +487,7 @@ class ResultsEvaluationUnitTests {
             )
         )
         punches.add(
-            4,  Punch(
+            4, Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 null,
@@ -504,6 +504,50 @@ class ResultsEvaluationUnitTests {
         assertEquals(6, result.points)
         assertEquals(PunchStatus.INVALID, punches[2].punchStatus)
         assertEquals(PunchStatus.INVALID, punches[4].punchStatus)
+    }
+
+    @Test
+    fun testOrienteeringWithEmptyControls() {
+        val result = Result(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            null,
+            null,
+            123,
+            SIConstants.SI_CARD5,
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            SITime(),
+            LocalDateTime.now(),
+            true,
+            ResultStatus.NO_RANKING,
+            0,
+            Duration.ZERO,
+            false,
+            false
+        )
+        val punches = ArrayList<Punch>()
+        val controlPoints = ArrayList<ControlPoint>()
+
+        for (i in 1..6) {
+            punches.add(
+                Punch(
+                    UUID.randomUUID(),
+                    UUID.randomUUID(),
+                    null,
+                    null,
+                    30 + i,
+                    SITime(),
+                    SITime(),
+                    SIRecordType.CONTROL, i, PunchStatus.UNKNOWN, Duration.ZERO
+                )
+            )
+        }
+        ResultsProcessor.evaluateOrienteering(punches, controlPoints, result)
+        assertEquals(ResultStatus.OK, result.resultStatus)
     }
 
     @Test
@@ -624,7 +668,7 @@ class ResultsEvaluationUnitTests {
 
         //Add some random invalid data
         punches.add(
-            5,  Punch(
+            5, Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 null,
@@ -637,7 +681,7 @@ class ResultsEvaluationUnitTests {
         )
 
         punches.add(
-            9,  Punch(
+            9, Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 null,
@@ -713,7 +757,7 @@ class ResultsEvaluationUnitTests {
         controlPoints.last().type = ControlPointType.BEACON
 
         punches.add(
-            3,  Punch(
+            3, Punch(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 null,

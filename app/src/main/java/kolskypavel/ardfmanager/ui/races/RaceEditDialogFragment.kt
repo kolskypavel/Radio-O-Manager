@@ -146,7 +146,7 @@ class RaceEditDialogFragment : DialogFragment() {
         okButton.setOnClickListener {
 
             //Send the arguments to create a new race
-            if (checkValidity()) {
+            if (validateFields()) {
 
                 race.name = nameEditText.text.toString().trim()
                 if (apiKey.text.toString().trim().isNotBlank()) {
@@ -180,7 +180,7 @@ class RaceEditDialogFragment : DialogFragment() {
     /**
      * Check if all the provided fields are valid
      */
-    private fun checkValidity(): Boolean {
+    private fun validateFields(): Boolean {
         var valid = true
 
         if (nameEditText.text?.isBlank() == true) {

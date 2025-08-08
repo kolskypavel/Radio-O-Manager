@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class LocalDateTimeAdapter : JsonAdapter<LocalDateTime>() {
-    private val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    private val formatter = DateTimeFormatter.ofPattern("YYYY-MM-DD HH:mm:ss")
 
     @FromJson
     override fun fromJson(reader: JsonReader): LocalDateTime? {

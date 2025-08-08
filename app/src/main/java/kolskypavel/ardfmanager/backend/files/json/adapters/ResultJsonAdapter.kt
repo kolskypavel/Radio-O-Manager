@@ -29,6 +29,9 @@ class ResultJsonAdapter {
                         control_type = ap.punch.punchType.name,
                         punch_status = DataProcessor.get()
                             .punchStatusToShortString(ap.punch.punchStatus),
+                        real_time = ap.punch.siTime.getTimeString(),
+                        week = ap.punch.siTime.getWeek(),
+                        day_of_week = ap.punch.siTime.getDayOfWeek(),
                         split_time = TimeProcessor.durationToMinuteString(ap.punch.split)
                     )
                 }
@@ -36,7 +39,7 @@ class ResultJsonAdapter {
     }
 
     @FromJson
-    fun fromJson(json: ResultJson): ResultData {
+    fun fromJson(json: ResultJson?): ResultData {
         throw NotImplementedError("Deserialization not implemented yet")
     }
 }

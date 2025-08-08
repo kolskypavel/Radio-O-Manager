@@ -1,8 +1,10 @@
 package kolskypavel.ardfmanager.backend.files.constants
 
 object FileConstants {
+
     const val OCM_START_CSV_COLUMNS = 3
     const val CATEGORY_CSV_COLUMNS = 11
+    const val UNKNOWN_COMPETITOR_SYMBOL = "?"
 
     const val TEMPLATE_TEXT_RESULTS = "templates/textResultsTemplate.tmpl"
     const val TEMPLATE_TEXT_CATEGORY = "templates/textResCatHeader.tmpl"

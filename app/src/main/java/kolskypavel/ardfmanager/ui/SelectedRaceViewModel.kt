@@ -311,6 +311,12 @@ class SelectedRaceViewModel : ViewModel() {
         )
     }
 
+    fun importRaceData(
+        uri: Uri
+    ) = runBlocking {
+        dataProcessor.importRaceData(uri)
+    }
+
     fun exportData(
         uri: Uri, dataType: DataType, dataFormat: DataFormat
     ) = runBlocking {

@@ -25,6 +25,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.ResultService
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kolskypavel.ardfmanager.backend.room.enums.PunchStatus
 import kolskypavel.ardfmanager.backend.room.enums.RaceBand
@@ -538,24 +539,30 @@ class DataProcessor private constructor(context: Context) {
             raceId
         )
 
-    //RACE DATA
+    //-----------------------RACE DATA-----------------------
+
     suspend fun getRaceData(raceId: UUID): RaceData {
         val race = getRace(raceId)
         val categories = getCategoryDataForRace(raceId)
         val aliases = getAliasesByRace(raceId)
-        val competitorData = ResultsProcessor.getCompetitorDataByRace(raceId, this)
+        val competitorData =
+            ResultsProcessor.getCompetitorDataByRace(raceId, this)
+        val unknownReadoutData =
+            getResultDataFlowByRace(raceId).first().filter { it.competitorCategory == null }
+                .map { fil -> ReadoutData(fil.result, fil.punches) }
 
-        return RaceData(race, categories, aliases, competitorData)
+        return RaceData(race, categories, aliases, competitorData, unknownReadoutData)
     }
 
-    suspend fun importRaceData() {
-
+    suspend fun importRaceData(uri: Uri) {
+        val raceData = fileProcessor?.importRaceData(uri)
+        if (raceData != null) {
+            ardfRepository.saveRaceData(raceData)
+        }
     }
 
-    suspend fun exportRaceData(uri: Uri, raceId: UUID) {
+    suspend fun exportRaceData(uri: Uri, raceId: UUID) =
         fileProcessor?.exportRaceData(uri, raceId)
-    }
-
 
     suspend fun saveDataImportWrapper(
         data: DataImportWrapper

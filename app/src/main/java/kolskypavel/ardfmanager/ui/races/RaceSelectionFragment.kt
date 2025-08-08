@@ -36,6 +36,7 @@ class RaceSelectionFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var mLastClickTime: Long = 0
     private var selectedRaceId: UUID? = null
+    private var exportData: Boolean = true
 
     private val raceViewModel: RaceViewModel by activityViewModels()
     private val selectedRaceViewModel: SelectedRaceViewModel by activityViewModels()
@@ -48,8 +49,12 @@ class RaceSelectionFragment : Fragment() {
             val value = it.data
             val uri = value?.data
 
-            if (uri != null && selectedRaceId != null) {
-                selectedRaceViewModel.exportRaceData(uri, selectedRaceId!!)
+            if (uri != null) {
+                if (exportData && selectedRaceId != null) {
+                    selectedRaceViewModel.exportRaceData(uri, selectedRaceId!!)
+                } else {
+                    selectedRaceViewModel.importRaceData(uri)
+                }
             }
         }
     }
@@ -92,6 +97,10 @@ class RaceSelectionFragment : Fragment() {
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.race_menu_import_file -> {
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                    intent.addCategory(Intent.CATEGORY_OPENABLE)
+                    intent.type = "*/*"
+                    getResult.launch(intent)
                     true
                 }
 

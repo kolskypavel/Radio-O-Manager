@@ -22,5 +22,8 @@ data class ResultPunchJson(
     val code: String,
     val control_type: String,
     val punch_status: String,
+    val real_time: String,
+    val week: Int,
+    val day_of_week: Int,
     val split_time: String
 )

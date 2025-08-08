@@ -103,7 +103,7 @@ class FileProcessor(appContext: WeakReference<Context>) {
     suspend fun importRaceData(uri: Uri): RaceData? {
         val inStream = openInputStream(uri)
         if (inStream != null) {
-
+            return JsonProcessor.importRaceData(inStream)
         }
         return null
     }
@@ -111,7 +111,7 @@ class FileProcessor(appContext: WeakReference<Context>) {
     suspend fun exportRaceData(uri: Uri, raceId: UUID) {
         val outStream = openOutputStream(uri)
         if (outStream != null) {
-            return JsonProcessor.exportRaceData(outStream,dataProcessor,raceId)
+            return JsonProcessor.exportRaceData(outStream, dataProcessor, raceId)
         }
         throw RuntimeException()
     }

@@ -53,5 +53,5 @@ data class CompetitorJson(
     val si_rent: Boolean,
     val start_number: Int,
     val competitor_start_time: String,
-    val result: ResultJson
+    val result: ResultJson?
 ) {}

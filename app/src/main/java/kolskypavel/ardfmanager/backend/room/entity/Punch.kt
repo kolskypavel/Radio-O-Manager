@@ -50,6 +50,4 @@ data class Punch(
         punchStatus = PunchStatus.UNKNOWN,
         split = Duration.ZERO
     )
-
-
 }

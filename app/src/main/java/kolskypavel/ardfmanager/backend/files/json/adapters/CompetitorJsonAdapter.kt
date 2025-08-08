@@ -6,7 +6,10 @@ import com.squareup.moshi.ToJson
 import kolskypavel.ardfmanager.backend.files.json.temps.CompetitorJson
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorCategory
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
+import java.util.UUID
 
 class CompetitorJsonAdapter {
     @ToJson
@@ -29,14 +32,32 @@ class CompetitorJsonAdapter {
                     it
                 )
             } ?: "",
-            result = ResultJsonAdapter().toJson(competitorData)
+            result = if (competitorData.readoutData != null) {
+                ResultJsonAdapter().toJson(competitorData)
+            } else null
         )
     }
 
     @FromJson
-    fun fromJson(jsonString: String): Competitor {
-        val parsed = Competitor();
+    fun fromJson(competitorJson: CompetitorJson): CompetitorData {
+        val competitor = Competitor(
+            id = UUID.randomUUID(),
+            raceId = UUID.randomUUID(),
+            categoryId = null,
+            firstName = competitorJson.first_name,
+            lastName = competitorJson.last_name,
+            club = competitorJson.competitor_club,
+            index = competitorJson.competitor_index,
+            isMan = competitorJson.competitor_gender,
+            birthYear = competitorJson.birth_year,
+            siNumber = competitorJson.si_number,
+            siRent = competitorJson.si_rent,
+            startNumber = competitorJson.start_number,
+            drawnRelativeStartTime = TimeProcessor.minuteStringToDuration(competitorJson.competitor_start_time)
+        )
+        val resultData = ResultJsonAdapter().fromJson(competitorJson.result)
+        val readoutData = ReadoutData(resultData.result, resultData.punches)
 
-        return parsed
+        return CompetitorData(CompetitorCategory(competitor, null), readoutData)
     }
 }

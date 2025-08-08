@@ -736,7 +736,7 @@ object ResultsProcessor {
         //TODO: Inform about missing punches
         for (punch in punches) {
             //Check bounds
-            if (cpIndex > controlPoints.size) {
+            if (cpIndex >= controlPoints.size) {
                 break
             }
 

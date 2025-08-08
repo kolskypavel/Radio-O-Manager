@@ -76,8 +76,14 @@ object JsonProcessor : FormatProcessor {
 
     }
 
-    suspend fun importRaceData(jsonString: String): RaceData {
-        val moshi: Moshi = Moshi.Builder().add(RaceDataJsonAdapter()).build()
+    suspend fun importRaceData(inStream: InputStream): RaceData {
+        val jsonString = inStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+
+        val moshi: Moshi = Moshi.Builder()
+            .add(RaceDataJsonAdapter())
+            .add(LocalDateTimeAdapter())
+            .add(KotlinJsonAdapterFactory())
+            .build()
         val adapter = moshi.adapter<RaceData>()
 
         return adapter.nonNull().fromJson(jsonString)!!
