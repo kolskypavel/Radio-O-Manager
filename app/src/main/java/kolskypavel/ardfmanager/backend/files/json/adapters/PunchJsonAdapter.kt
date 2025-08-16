@@ -21,7 +21,7 @@ class PunchJsonAdapter(val raceId: UUID) {
             control_type = punch.punchType.name,
             punch_status = DataProcessor.get().punchStatusToShortString(punch.punchStatus),
             si_time = siTimeJsonAdapter.toJson(punch.siTime),
-            split_time = TimeProcessor.durationToMinuteString(punch.split)
+            split_time = TimeProcessor.durationToFormattedString(punch.split, true)
         )
     }
 

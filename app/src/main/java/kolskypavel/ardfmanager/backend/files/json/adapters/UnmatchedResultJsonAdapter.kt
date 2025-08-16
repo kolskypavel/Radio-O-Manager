@@ -24,7 +24,7 @@ class UnmatchedResultJsonAdapter(val raceId: UUID) {
             start_time = result.startTime?.let { siTimeJsonAdapter.toJson(it) },
             finish_time = result.finishTime?.let { siTimeJsonAdapter.toJson(it) },
             si_number = result.siNumber,
-            run_time = TimeProcessor.durationToMinuteString(result.runTime),
+            run_time = TimeProcessor.durationToFormattedString(result.runTime,true),
             punches = readoutData.punches.map { ap -> punchJsonAdapter.toJson(ap) },
         )
     }

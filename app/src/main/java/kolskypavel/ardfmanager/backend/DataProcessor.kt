@@ -5,6 +5,7 @@ import android.content.Intent
 import android.hardware.usb.UsbDevice
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
+import androidx.preference.PreferenceManager
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.files.FileProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
@@ -368,6 +369,18 @@ class DataProcessor private constructor(context: Context) {
 
     suspend fun deleteAllResultsByRace(raceId: UUID) {
         ardfRepository.deleteAllResultsByRace(raceId)
+    }
+
+    // Return wherever the "mm:ss" format should be used
+    fun useMinuteTimeFormat(): Boolean {
+        val context = getContext()
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val preference =
+            sharedPref.getString(
+                context.getString(R.string.key_results_time_format),
+                context.getString(R.string.preferences_results_time_format_minutes)
+            )
+        return (preference == context.getString(R.string.preferences_results_time_format_minutes))
     }
 
     //PUNCHES

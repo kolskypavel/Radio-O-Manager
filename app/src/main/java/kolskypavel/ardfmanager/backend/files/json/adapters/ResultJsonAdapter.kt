@@ -32,7 +32,7 @@ class ResultJsonAdapter(val raceId: UUID, val filterStart: Boolean) {
             start_time = result.startTime?.let { siTimeJsonAdapter.toJson(it) },
             finish_time = result.finishTime?.let { siTimeJsonAdapter.toJson(it) },
             modified = result.modified,
-            run_time = TimeProcessor.durationToMinuteString(result.runTime),
+            run_time = TimeProcessor.durationToFormattedString(result.runTime, true),
             place = result.place,
             controls_num = result.points,
             result_status = DataProcessor.get()

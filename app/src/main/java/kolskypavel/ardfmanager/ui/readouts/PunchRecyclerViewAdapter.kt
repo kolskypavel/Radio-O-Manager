@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kolskypavel.ardfmanager.R
+import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
 import kolskypavel.ardfmanager.backend.room.enums.PunchStatus
@@ -17,6 +18,7 @@ class PunchRecyclerViewAdapter(
     private val context: Context
 ) :
     RecyclerView.Adapter<PunchRecyclerViewAdapter.PunchViewHolder>() {
+    private val dataProcessor = DataProcessor.get()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PunchViewHolder {
         val adapterLayout = LayoutInflater.from(parent.context)
@@ -31,7 +33,10 @@ class PunchRecyclerViewAdapter(
         val item = values[position]
 
         holder.punchRealTime.text = item.punch.siTime.getTimeString()
-        holder.punchSplit.text = TimeProcessor.durationToMinuteString(item.punch.split)
+        holder.punchSplit.text = TimeProcessor.durationToFormattedString(
+            item.punch.split,
+            dataProcessor.useMinuteTimeFormat()
+        )
 
         //Set the fields, based on the type of the punch
         when (item.punch.punchType) {

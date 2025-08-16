@@ -5,11 +5,11 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
 import kolskypavel.ardfmanager.backend.files.json.temps.AliasJson
 import kolskypavel.ardfmanager.backend.files.json.temps.RaceJson
-import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
+import java.time.Duration
 import java.util.UUID
 
 class RaceDataJsonAdapter {
@@ -26,7 +26,7 @@ class RaceDataJsonAdapter {
             race_type = race.raceType,
             race_band = race.raceBand,
             race_level = race.raceLevel,
-            race_time_limit = TimeProcessor.durationToMinuteString(race.timeLimit),
+            race_time_limit = race.timeLimit.toMinutes().toString(),
             categories = raceData.categories.map { cat -> categoryAdapter.toJson(cat) },
             aliases = raceData.aliases.map { al -> AliasJson(al.siCode, al.name) },
             competitors = raceData.competitorData.map { cd -> competitorAdapter.toJson(cd) },
@@ -45,7 +45,7 @@ class RaceDataJsonAdapter {
             raceType = raceJson.race_type,
             raceBand = raceJson.race_band,
             raceLevel = raceJson.race_level,
-            timeLimit = TimeProcessor.minuteStringToDuration(raceJson.race_time_limit)
+            timeLimit = Duration.ofMinutes(raceJson.race_time_limit.toLong())
         )
         val categoryAdapter = CategoryJsonAdapter(race.id)
         val competitorAdapter = CompetitorJsonAdapter(race.id)

@@ -100,7 +100,7 @@ class ResultsFragmentRecyclerViewAdapter(
                 if (singleResult.readoutData != null) {
                     val res = singleResult.readoutData!!.result
                     competitorPlace.text =
-                        if (res.resultStatus == ResultStatus.OK && res.place != null) {
+                        if (res.resultStatus == ResultStatus.OK) {
                             res.place.toString()
                         } else {
                             dataProcessor.resultStatusToShortString(res.resultStatus)
@@ -131,15 +131,17 @@ class ResultsFragmentRecyclerViewAdapter(
                 val drawnStartTime = competitor.drawnRelativeStartTime
 
                 if (singleResult.readoutData != null) {
-                    holder.competitorTime.text = TimeProcessor.durationToMinuteString(
-                        singleResult.readoutData!!.result.runTime
+                    holder.competitorTime.text = TimeProcessor.durationToFormattedString(
+                        singleResult.readoutData!!.result.runTime,
+                        dataProcessor.useMinuteTimeFormat()
                     )
                 } else if (drawnStartTime != null) {
                     holder.timerJob = CoroutineScope(Dispatchers.Main).launch {
                         while (true) {
                             holder.competitorTime.text = TimeProcessor.runDurationFromStartString(
                                 startDateTime,
-                                drawnStartTime
+                                drawnStartTime,
+                                dataProcessor
                             )
                             delay(1000)
                         }

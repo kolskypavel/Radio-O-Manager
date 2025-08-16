@@ -148,7 +148,10 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
             }"
 
         val runTime = "${context.getString(R.string.general_run_time)}: " +
-                TimeProcessor.durationToMinuteString(resultData.result.runTime) +
+                TimeProcessor.durationToFormattedString(
+                    resultData.result.runTime,
+                    dataProcessor.useMinuteTimeFormat()
+                ) +
                 " ${
                     dataProcessor.resultStatusToShortString(
                         resultData.result.resultStatus
@@ -191,13 +194,21 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
             SIRecordType.FINISH -> {
                 return "[L]${appContext.get()?.getString(R.string.general_finish)}" +
                         "[R]${aliasPunch.punch.siTime.getTimeString()}" +
-                        "[R]${TimeProcessor.durationToMinuteString(aliasPunch.punch.split)}"
+                        "[R]${
+                            TimeProcessor.durationToFormattedString(
+                                aliasPunch.punch.split, dataProcessor.useMinuteTimeFormat()
+                            )
+                        }"
             }
 
             SIRecordType.CONTROL -> {
                 return "[L]${formatCodeString(aliasPunch)}" +
                         "[R]${aliasPunch.punch.siTime.getTimeString()}" +
-                        "[R]${TimeProcessor.durationToMinuteString(aliasPunch.punch.split)}"
+                        "[R]${
+                            TimeProcessor.durationToFormattedString(
+                                aliasPunch.punch.split, dataProcessor.useMinuteTimeFormat()
+                            )
+                        }"
             }
 
             else -> {
@@ -265,7 +276,10 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
     private fun formatSingleResult(competitorData: CompetitorData): String {
         val result = competitorData.readoutData?.result!!
         var place = result.place.toString()
-        var runTime = TimeProcessor.durationToMinuteString(result.runTime)
+        var runTime = TimeProcessor.durationToFormattedString(
+            result.runTime,
+            dataProcessor.useMinuteTimeFormat()
+        )
         val name = getMaxName(competitorData.competitorCategory.competitor.getFullName())
 
         if (result.resultStatus != ResultStatus.OK) {

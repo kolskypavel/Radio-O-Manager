@@ -63,7 +63,9 @@ class DataPreviewRecyclerViewAdapater(
             DataType.COMPETITOR_STARTS_TIME -> {
                 val item = value.competitorCategories[position]
                 holder.columnOne.text = if (item.competitor.drawnRelativeStartTime != null) {
-                    TimeProcessor.durationToMinuteString(item.competitor.drawnRelativeStartTime!!)
+                    TimeProcessor.durationToFormattedString(
+                        item.competitor.drawnRelativeStartTime!!, true
+                    )
                 } else {
                     "-"
                 }

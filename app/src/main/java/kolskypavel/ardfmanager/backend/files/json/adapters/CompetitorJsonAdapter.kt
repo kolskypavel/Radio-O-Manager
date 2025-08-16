@@ -28,8 +28,8 @@ class CompetitorJsonAdapter(val raceId: UUID) {
             si_rent = competitor.siRent,
             start_number = competitor.startNumber,
             competitor_start_time = competitor.drawnRelativeStartTime?.let {
-                TimeProcessor.durationToMinuteString(
-                    it
+                TimeProcessor.durationToFormattedString(
+                    it, true
                 )
             } ?: "",
             result = if (competitorData.readoutData != null) {

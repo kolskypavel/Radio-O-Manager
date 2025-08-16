@@ -7,6 +7,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import de.codecrafters.tableview.TableDataAdapter
 import kolskypavel.ardfmanager.R
+import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.enums.CompetitorTableDisplayType
@@ -26,6 +27,7 @@ class CompetitorTableViewAdapter(
     private val selectedRaceViewModel: SelectedRaceViewModel,
     private val onMoreClicked: (action: Int, position: Int, competitor: CompetitorData) -> Unit,
 ) : TableDataAdapter<CompetitorData>(context, values) {
+    private val dataProcessor = DataProcessor.get()
 
     override fun getCellView(rowIndex: Int, columnIndex: Int, parentView: ViewGroup?): View {
         val item = values[rowIndex]
@@ -62,7 +64,10 @@ class CompetitorTableViewAdapter(
                     1 -> {
                         if (item.competitorCategory.competitor.drawnRelativeStartTime != null) {
                             cell.text =
-                                TimeProcessor.durationToMinuteString(item.competitorCategory.competitor.drawnRelativeStartTime!!)
+                                TimeProcessor.durationToFormattedString(
+                                    item.competitorCategory.competitor.drawnRelativeStartTime!!,
+                                    true
+                                )
                         } else {
                             cell.text = "-"
                         }
@@ -94,7 +99,10 @@ class CompetitorTableViewAdapter(
 
                     2 -> {
                         cell.text =
-                            TimeProcessor.durationToMinuteString(item.readoutData!!.result.runTime)
+                            TimeProcessor.durationToFormattedString(
+                                item.readoutData!!.result.runTime,
+                                dataProcessor.useMinuteTimeFormat()
+                            )
                     }
 
                     3 -> {
@@ -121,7 +129,10 @@ class CompetitorTableViewAdapter(
 
                         if (item.competitorCategory.competitor.drawnRelativeStartTime != null) {
                             cell.text =
-                                TimeProcessor.durationToMinuteString(item.competitorCategory.competitor.drawnRelativeStartTime!!)
+                                TimeProcessor.durationToFormattedString(
+                                    item.competitorCategory.competitor.drawnRelativeStartTime!!,
+                                    true
+                                )
                         } else {
                             cell.text = "-"
                         }
@@ -140,7 +151,9 @@ class CompetitorTableViewAdapter(
                                         )
                                     if (runDuration != null) {
                                         cell.text =
-                                            TimeProcessor.durationToMinuteString(runDuration)
+                                            TimeProcessor.durationToFormattedString(
+                                                runDuration, dataProcessor.useMinuteTimeFormat()
+                                            )
                                     } else {
                                         cell.text = "-"
                                     }
@@ -174,7 +187,9 @@ class CompetitorTableViewAdapter(
 
                                         if (toLimit != null) {
                                             cell.text =
-                                                TimeProcessor.durationToMinuteString(toLimit)
+                                                TimeProcessor.durationToFormattedString(
+                                                    toLimit, true
+                                                )
                                         } else {
                                             cell.text = "-"
                                         }

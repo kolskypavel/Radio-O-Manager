@@ -172,8 +172,9 @@ object TextProcessor : FormatProcessor {
         params[FileConstants.KEY_COMP_INDEX] =
             competitorData.competitorCategory.competitor.index
         params[FileConstants.KEY_COMP_RUN_TIME] =
-            TimeProcessor.durationToMinuteString(
-                result.runTime
+            TimeProcessor.durationToFormattedString(
+                result.runTime,
+                false
             )
         params[FileConstants.KEY_COMP_POINTS] =
             result.points.toString()
@@ -185,19 +186,23 @@ object TextProcessor : FormatProcessor {
         )
 
         params[FileConstants.KEY_COMP_SPLITS] =
-            getSplitsString(competitorData.readoutData!!.punches)
+            getSplitsString(competitorData.readoutData!!.punches, dataProcessor)
 
         val out = TemplateProcessor.processTemplate(template, params)
         return out
     }
 
     private fun getSplitsString(
-        punches: List<AliasPunch>
+        punches: List<AliasPunch>,
+        dataProcessor: DataProcessor
     ): String {
         var out = ""
 
         for (aliasPunch in punches.withIndex()) {
-            out += TimeProcessor.durationToMinuteString(aliasPunch.value.punch.split)
+            out += TimeProcessor.durationToFormattedString(
+                aliasPunch.value.punch.split,
+                dataProcessor.useMinuteTimeFormat()
+            )
 
             if (aliasPunch.index < punches.size - 1) {
                 out += " "
@@ -221,9 +226,9 @@ object TextProcessor : FormatProcessor {
         params[FileConstants.KEY_CAT_NAME] = category.name
         params[FileConstants.KEY_TITLE_LIMIT] = context.getString(R.string.general_limit)
         params[FileConstants.KEY_CAT_LIMIT] = if (category.timeLimit != null) {
-            TimeProcessor.durationToMinuteString(category.timeLimit!!)
+            category.timeLimit!!.toMinutes().toString()
         } else {
-            TimeProcessor.durationToMinuteString(race.timeLimit)
+            race.timeLimit.toMinutes().toString()
         }
 
         params[FileConstants.KEY_TITLE_BAND] = context.getString(R.string.general_band)
@@ -328,7 +333,8 @@ object TextProcessor : FormatProcessor {
     // Generates two rows of competitor splits
     private fun generateHtmlCompetitorSplits(
         splits: List<AliasPunch>,
-        context: Context
+        context: Context,
+        dataProcessor: DataProcessor
     ): String {
         var out = ""
 
@@ -349,8 +355,8 @@ object TextProcessor : FormatProcessor {
                     FileConstants.HTML_SPLITS_CODE,
                     mapOf(
                         FileConstants.KEY_COMP_SPLIT_CODE to aliasCode,
-                        FileConstants.KEY_COMP_SPLIT_TIME to TimeProcessor.durationToMinuteString(
-                            split.punch.split
+                        FileConstants.KEY_COMP_SPLIT_TIME to TimeProcessor.durationToFormattedString(
+                            split.punch.split, dataProcessor.useMinuteTimeFormat()
                         )
                     )
                 )
@@ -387,14 +393,18 @@ object TextProcessor : FormatProcessor {
         params[FileConstants.KEY_COMP_INDEX] =
             competitorData.competitorCategory.competitor.index
         params[FileConstants.KEY_COMP_RUN_TIME] =
-            TimeProcessor.durationToMinuteString(
-                result.runTime
+            TimeProcessor.durationToFormattedString(
+                result.runTime, dataProcessor.useMinuteTimeFormat()
             )
         params[FileConstants.KEY_COMP_POINTS] =
             result.points.toString()
 
         params[FileConstants.KEY_COMP_SPLITS] =
-            generateHtmlCompetitorSplits(competitorData.readoutData!!.punches, context)
+            generateHtmlCompetitorSplits(
+                competitorData.readoutData!!.punches,
+                context,
+                dataProcessor
+            )
 
         val out = TemplateProcessor.processTemplate(template, params)
         return out

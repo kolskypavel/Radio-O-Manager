@@ -48,7 +48,6 @@ class ResultUnitTests {
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                UUID.randomUUID(),
                 cardData.siNumber,
                 cardData.cardType,
                 cardData.checkTime,
@@ -110,7 +109,6 @@ class ResultUnitTests {
 
         result =
             Result(
-                UUID.randomUUID(),
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 UUID.randomUUID(),

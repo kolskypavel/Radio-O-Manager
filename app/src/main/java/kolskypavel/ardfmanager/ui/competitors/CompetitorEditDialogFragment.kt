@@ -195,8 +195,9 @@ class CompetitorEditDialogFragment : DialogFragment() {
         //Set startTime
         if (competitor.drawnRelativeStartTime != null) {
             startTimeTextView.setText(
-                TimeProcessor.durationToMinuteString(
-                    competitor.drawnRelativeStartTime!!
+                TimeProcessor.durationToFormattedString(
+                    competitor.drawnRelativeStartTime!!,
+                    true
                 )
             )
         }

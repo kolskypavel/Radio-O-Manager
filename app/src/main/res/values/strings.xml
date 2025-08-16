@@ -326,8 +326,8 @@
     <string name="preferences_result_service_always_entry" translatable="false">always</string>
 
     <string-array name="preferences_results_time_format_options">
-        <item>@string/preferences_results_time_format_hours</item>
         <item>@string/preferences_results_time_format_minutes</item>
+        <item>@string/preferences_results_time_format_hours</item>
     </string-array>
 
     <string-array name="preferences_result_service_options">
@@ -553,5 +553,4 @@
         <item>@string/punch_status_duplicate_short</item>
         <item>@string/punch_status_unknown_short</item>
     </string-array>
-
 </resources>

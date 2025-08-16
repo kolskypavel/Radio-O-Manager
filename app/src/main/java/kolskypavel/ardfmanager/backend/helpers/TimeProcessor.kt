@@ -1,5 +1,6 @@
 package kolskypavel.ardfmanager.backend.helpers
 
+import kolskypavel.ardfmanager.backend.DataProcessor
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -23,13 +24,29 @@ object TimeProcessor {
         return DateTimeFormatter.ofPattern("HH:mm:ss").format(time).toString()
     }
 
-    // Converts a Duration to a string in the format "mm:ss"
-    fun durationToMinuteString(duration: Duration): String {
-        val seconds = duration.seconds
-        return if (kotlin.math.abs(seconds / 60) <= 99) {
-            String.format("%02d:%02d", seconds / 60, kotlin.math.abs(seconds) % 60)
+    // Converts a Duration to a string in the format "mm:ss" or "HH:mm:ss"
+    fun durationToFormattedString(
+        duration: Duration,
+        useMinutes: Boolean
+    ): String {
+        val totalSeconds = duration.seconds
+        val absSeconds = kotlin.math.abs(totalSeconds)
+
+        return if (useMinutes) {
+            val minutes = totalSeconds / 60
+            val seconds = absSeconds % 60
+
+            if (kotlin.math.abs(minutes) <= 99) {
+                String.format("%02d:%02d", minutes, seconds)
+            } else {
+                String.format("%d:%02d", minutes, seconds)
+            }
         } else {
-            String.format("%d:%02d", seconds / 60, kotlin.math.abs(seconds) % 60)
+            val hours = totalSeconds / 3600
+            val minutes = (absSeconds % 3600) / 60
+            val seconds = absSeconds % 60
+
+            String.format("%02d:%02d:%02d", hours, minutes, seconds)
         }
     }
 
@@ -88,15 +105,16 @@ object TimeProcessor {
     // Calculates the duration from competitor's start till now and returns it as a string
     fun runDurationFromStartString(
         startDateTime: LocalDateTime,
-        relativeStartTime: Duration
+        relativeStartTime: Duration,
+        dataProcessor: DataProcessor
     ): String {
         //Check if the competitor started
         if (hasStarted(startDateTime, relativeStartTime, LocalDateTime.now())) {
-            return durationToMinuteString(
+            return durationToFormattedString(
                 Duration.between(
                     startDateTime + relativeStartTime,
                     LocalDateTime.now()
-                )
+                ), dataProcessor.useMinuteTimeFormat()
             )
         }
         return ""

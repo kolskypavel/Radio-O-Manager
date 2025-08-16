@@ -24,7 +24,12 @@ class CategoryJsonAdapter(val raceId: UUID) {
             category_climb = category.climb,
             category_different_properties = category.differentProperties,
             category_race_type = category.raceType,
-            category_time_limit = category.timeLimit?.let { TimeProcessor.durationToMinuteString(it) }
+            category_time_limit = category.timeLimit?.let {
+                TimeProcessor.durationToFormattedString(
+                    it,
+                    true
+                )
+            }
                 ?: "",
             category_band = category.categoryBand,
             category_control_points = categoryData.controlPoints.map { cp ->

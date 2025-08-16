@@ -51,7 +51,10 @@ class ReadoutDataRecyclerViewAdapter(
             "-"
         }
         holder.runTimeView.text = "${
-            TimeProcessor.durationToMinuteString(item.result.runTime)
+            TimeProcessor.durationToFormattedString(
+                item.result.runTime,
+                dataProcessor.useMinuteTimeFormat()
+            )
         } (${dataProcessor.resultStatusToShortString(item.result.resultStatus)})"
 
         //Set the start + finish + readout time

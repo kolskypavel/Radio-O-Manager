@@ -110,7 +110,10 @@ class ReadoutDetailFragment : Fragment() {
             "-"
         }
         runTimeView.text =
-            TimeProcessor.durationToMinuteString(resultData.result.runTime)
+            TimeProcessor.durationToFormattedString(
+                resultData.result.runTime,
+                dataProcessor.useMinuteTimeFormat()
+            )
 
         placeView.text = if (resultData.competitorCategory?.competitor != null &&
             resultData.result.resultStatus == ResultStatus.OK
