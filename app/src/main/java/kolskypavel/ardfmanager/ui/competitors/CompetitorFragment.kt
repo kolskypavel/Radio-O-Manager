@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
@@ -314,20 +316,33 @@ class CompetitorFragment : Fragment() {
 
     private fun confirmCompetitorDeletion(competitor: Competitor) {
         val builder = AlertDialog.Builder(context)
-        builder.setTitle(getString(R.string.competitor_delete))
-        val message =
-            "${getString(R.string.competitor_delete_confirmation)} ${competitor.firstName} ${competitor.lastName}"
-        builder.setMessage(message)
 
-        //TODO: Fix the readout removal
+        // Inflate the custom layout
+        val inflater = LayoutInflater.from(context)
+        val dialogView = inflater.inflate(R.layout.dialog_delete_competitor, null)
+
+        // Set dynamic message text
+        val messageTextView = dialogView.findViewById<TextView>(R.id.delete_competitor_message)
+        messageTextView.text =
+            getString(R.string.competitor_delete_confirmation, competitor.getFullName())
+
+        // Reference the checkbox
+        val deleteReadoutCheckbox =
+            dialogView.findViewById<CheckBox>(R.id.delete_competitor_checkbox)
+
+        builder.setTitle(getString(R.string.competitor_delete))
+        builder.setView(dialogView)
+
         builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
-            selectedRaceViewModel.deleteCompetitor(competitor.id, false)
+            val deleteReadout = deleteReadoutCheckbox.isChecked
+            selectedRaceViewModel.deleteCompetitor(competitor.id, deleteReadout)
             dialog.dismiss()
         }
 
         builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
             dialog.cancel()
         }
+
         builder.show()
     }
 

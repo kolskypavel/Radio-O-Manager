@@ -177,8 +177,7 @@ class CategoryFragment : Fragment() {
     private fun confirmCategoryDeletion(category: Category) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(getString(R.string.category_delete))
-        val message = getString(R.string.category_delete_confirmation) + " " + category.name
-        builder.setMessage(message)
+        builder.setMessage(getString(R.string.category_delete_confirmation, category.name))
 
         builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
             selectedRaceViewModel.deleteCategory(category.id)

@@ -321,11 +321,10 @@ class DataProcessor private constructor(context: Context) {
     }
 
     suspend fun deleteCompetitor(id: UUID, deleteResult: Boolean) {
-        ardfRepository.deleteCompetitor(id)
-        // TODO: solve the removal of the result
         if (deleteResult) {
             ardfRepository.deleteResultForCompetitor(id)
         }
+        ardfRepository.deleteCompetitor(id)
     }
 
     suspend fun deleteAllCompetitorsByRace(raceId: UUID) {

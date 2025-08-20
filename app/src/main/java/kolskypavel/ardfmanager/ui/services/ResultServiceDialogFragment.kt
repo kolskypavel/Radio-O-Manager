@@ -103,8 +103,6 @@ class ResultServiceDialogFragment : DialogFragment() {
             false
         )
 
-        // TODO: disable service when different type gets selected
-
 
         urlInput.setText(resultService.url)
         apiKeyInput.setText(currRace.apiKey)

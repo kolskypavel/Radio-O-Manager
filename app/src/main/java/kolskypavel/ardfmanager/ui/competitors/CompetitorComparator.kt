@@ -3,7 +3,6 @@ package kolskypavel.ardfmanager.ui.competitors
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import java.text.Collator
 
-// TODO: add localization
 class CompetitorNameComparator(
     private val collator: Collator
 ) : Comparator<CompetitorData> {

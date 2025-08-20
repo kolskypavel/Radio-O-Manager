@@ -59,7 +59,7 @@
     <string name="no_category">Bez kategorie</string>
     <string name="category_create">Vytvořit kategorii</string>
     <string name="category_edit">Upravit kategorii</string>
-    <string name="category_delete_confirmation">Opravdu chcete smazat tuto kategorii?</string>
+    <string name="category_delete_confirmation">Opravdu chcete smazat tuto kategorii?\n%1$s</string>
     <string name="control_point_unknown_specifier">Neznámý specifikátor: %1$s</string>
     <string name="control_point_invalid_range">SI kód mimo rozsah: %1$s. Kód musí být větší než 30 a menší než 256.</string>
     <string name="control_point_two_in_row">Stejná kontrola nemůže být dvakrát za sebou.</string>
@@ -88,7 +88,8 @@
     <string name="competitor_create">Vytvořit závodníka</string>
     <string name="competitor_edit">Upravit závodníka</string>
     <string name="competitor_delete_all">Smazat všechny závodníky</string>
-    <string name="competitor_delete_confirmation">Opravdu chcete smazat tohoto závodníka?</string>
+    <string name="competitor_delete_confirmation">Opravdu chcete smazat tohoto závodníka?\n%1$s</string>
+    <string name="competitor_delete_readout_data">Smazat i vyčítání (pokud existuje)</string>
     <string name="competitor_delete_all_confirmation">Opravdu chcete smazat všechny závodníky? Tuto akci NELZE vrátit.</string>
     <string name="general_index">Index/Volačka</string>
     <string name="general_si_number">Číslo SI</string>
@@ -127,6 +128,7 @@
     <string name="readout_unknown_competitor">Neznámý závodník</string>
     <string name="readout_assign_control_points">Přiřadit kontroly kategorii</string>
     <string name="readout_no_category_exists">Závod nemá žádné kategorie!</string>
+    <string name="readout_unknown_category">Neznámá kategorie</string>
     <string name="general_points">Body</string>
     <string name="general_place">Umístění</string>
     <string name="readout_edit_readout">Upravit vyčítání</string>

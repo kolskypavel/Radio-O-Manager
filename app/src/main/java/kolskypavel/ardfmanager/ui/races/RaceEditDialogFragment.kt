@@ -134,7 +134,7 @@ class RaceEditDialogFragment : DialogFragment() {
         dateView.setText(race.startDateTime.toLocalDate().toString())
         apiKey.setText(race.apiKey)
         startTimeView.setText(TimeProcessor.hoursMinutesFormatter(race.startDateTime))
-        limitEditText.setText("120") //TODO: Fix with default values from settings
+        limitEditText.setText("120")
 
         raceTypePicker.setText(dataProcessor.raceTypeToString(race.raceType), false)
         raceLevelPicker.setText(dataProcessor.raceLevelToString(race.raceLevel), false)

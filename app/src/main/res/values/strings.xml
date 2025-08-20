@@ -103,7 +103,7 @@
     <string name="category_edit">Edit category</string>
     <string name="category_duplicate">Duplicate category</string>
     <string name="category_delete">Delete category</string>
-    <string name="category_delete_confirmation">Do you really want to delete this category?</string>
+    <string name="category_delete_confirmation">Do you really want to delete this category?\n%1$s</string>
     <string name="category_length_title">Length (km)</string>
     <string name="category_climb_title">Climb (m)</string>
     <string name="category_exists">Category already exists!</string>
@@ -141,7 +141,8 @@
     <string name="competitor_add_categories_automatically">Add categories automatically</string>
     <string name="competitor_add_categories_automatically_confirmation">Do you really want to add categories to competitors automatically (based on age)? Only the competitors without category and will be modified.</string>
     <string name="competitor_add_categories_toast">Automatic categories assigned successfully.</string>
-    <string name="competitor_delete_confirmation">Do you really want to delete this competitor?</string>
+    <string name="competitor_delete_confirmation">Do you really want to delete this competitor?\n%1$s</string>
+    <string name="competitor_delete_readout_data">Also delete readout data (if exist)</string>
     <string name="competitor_delete_all_confirmation">Do you really want to delete all competitors? This action CAN\'T be undone!</string>
     <string name="competitor_rent_chip">Rent chip</string>
 
@@ -176,7 +177,7 @@
     <string name="readout_detail_real_time">Real time</string>
     <string name="readout_detail_split">Split</string>
     <string name="readout_detail_status">Status</string>
-    <string name="readout_si_number">SI: %1$s</string>
+    <string name="readout_si_number" translatable="false">SI: %1$s</string>
     <string name="readout_si_exists">Readout with this SI number already exists!</string>
     <string name="readout_competitor_exists">Readout for this competitor already exists!</string>
     <string name="readout_unknown_category">Unknown category</string>
