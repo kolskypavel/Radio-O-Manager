@@ -275,16 +275,19 @@ class ReadoutEditDialogFragment : DialogFragment() {
 
     private fun setCategoryPicker() {
         // Preset the category
-        if (competitor?.categoryId != null) {
+        if (competitor != null) {
+            categoryPickerLayout.isEnabled = true
+
             origCategoryId = competitor!!.categoryId
             val cat = categories.find { it.id == competitor!!.categoryId }
             if (cat != null) {
                 categoryPicker.setText(cat.name, false)
-                categoryPickerLayout.isEnabled = true
+            } else {
+                categoryPicker.setText(getString(R.string.readout_unknown_category), false)
             }
         } else {
-            categoryPickerLayout.isEnabled = false
             categoryPicker.setText("")
+            categoryPickerLayout.isEnabled = false
         }
     }
 

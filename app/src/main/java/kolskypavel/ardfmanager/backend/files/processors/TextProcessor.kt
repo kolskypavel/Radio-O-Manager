@@ -222,7 +222,7 @@ object TextProcessor : FormatProcessor {
         val template = TemplateProcessor.loadTemplate(templateName, context)
         val params = HashMap<String, String>()
 
-        params[FileConstants.KEY_TITLE_CATEGORY] = context.getString(R.string.category)
+        params[FileConstants.KEY_TITLE_CATEGORY] = context.getString(R.string.general_category)
         params[FileConstants.KEY_CAT_NAME] = category.name
         params[FileConstants.KEY_TITLE_LIMIT] = context.getString(R.string.general_limit)
         params[FileConstants.KEY_CAT_LIMIT] = if (category.timeLimit != null) {

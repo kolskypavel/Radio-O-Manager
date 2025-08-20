@@ -6,10 +6,11 @@
     <string name="general_automatic">Automatic</string>
     <string name="general_band">Band</string>
     <string name="general_cancel">Cancel</string>
+    <string name="general_category">Category</string>
     <string name="general_categories">Categories</string>
-    <string name="general_category" tools:ignore="UnusedResources">Category</string>
     <string name="general_club">Club</string>
     <string name="general_close">Close</string>
+    <string name="general_competitor">Competitor</string>
     <string name="general_competitors">Competitors</string>
     <string name="general_controls">Controls</string>
     <string name="general_copy">Copy</string>
@@ -94,7 +95,6 @@
     <string name="race_end">Close race</string>
 
     <!--Categories-->
-    <string name="category">Category</string>
     <string name="si_codes">SI codes</string>
     <string name="category_create_standard_categories">Create standard categories</string>
     <string name="category_manage_aliases">Manage aliases</string>
@@ -128,7 +128,6 @@
     <string name="category_preset_czech">Czech</string>
 
     <!--Competitors-->
-    <string name="competitor">Competitor</string>
     <string name="competitor_first_name">First name</string>
     <string name="competitor_last_name">Last name</string>
     <string name="competitor_start_number">Start number</string>

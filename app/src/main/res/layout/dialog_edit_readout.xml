@@ -17,7 +17,7 @@
             style="@style/dialog_dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/competitor"
+            android:hint="@string/general_competitor"
             android:inputType="none">
 
             <AutoCompleteTextView
@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:hint="@string/category"
+            android:hint="@string/general_category"
             android:inputType="none">
 
             <AutoCompleteTextView

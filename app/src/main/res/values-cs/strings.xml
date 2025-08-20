@@ -50,7 +50,7 @@
     <string name="general_invalid">Neplatný</string>
     <string name="race_delete_confirmation">Opravdu chcete smazat závod?</string>
     <string name="category_same_type">Stejný typ jako závod</string>
-    <string name="category">Kategorie</string>
+    <string name="general_category">Kategorie</string>
     <string name="general_max_age">Maximalní věk</string>
     <string name="general_year_of_birth">Ročník</string>
     <string name="si_codes">SI kódy</string>
@@ -70,7 +70,7 @@
     <string name="control_point_sprint_duplicate">Stejná kontrola nemůže být v jednom kole sprintu dvakrát.</string>
     <string name="control_point_sprint_two_usages">" Kontrola s kódem [%1$d] je použita jako divácká / maják a kontrola zároveň."</string>
     <string name="category_preset_czech">České</string>
-    <string name="competitor">Závodník</string>
+    <string name="general_competitor">Závodník</string>
     <string name="competitor_first_name">Jméno</string>
     <string name="competitor_last_name">Příjmení</string>
     <string name="files_data">Soubory a data</string>
@@ -188,7 +188,6 @@
     <string name="data_type_results">Výsledky</string>
     <string name="data_type_readout_data">Data z vyčítání</string>
     <string name="general_race">Závod</string>
-    <string name="general_category">Kategorie</string>
     <string name="general_close">Zavřít</string>
     <string name="general_disabled">Vypnuto</string>
     <string name="general_length">Délka</string>

@@ -160,7 +160,7 @@ class CompetitorFragment : Fragment() {
                         R.string.competitor_start_number_header,
                         R.string.general_name,
                         R.string.general_club,
-                        R.string.category,
+                        R.string.general_category,
                         R.string.general_si_number
                     )
 
@@ -179,7 +179,7 @@ class CompetitorFragment : Fragment() {
                         R.string.competitor_start_number_header,
                         R.string.general_start_time,
                         R.string.general_name,
-                        R.string.category,
+                        R.string.general_category,
                         R.string.general_si_number
                     )
                 competitorTableView.setColumnComparator(0, CompetitorStartNumComparator())
@@ -193,7 +193,7 @@ class CompetitorFragment : Fragment() {
                 headers =
                     intArrayOf(
                         R.string.general_name,
-                        R.string.category,
+                        R.string.general_category,
                         R.string.general_run_time,
                         R.string.general_start_time,
                         R.string.general_finish_time,
@@ -210,7 +210,7 @@ class CompetitorFragment : Fragment() {
                 headers =
                     intArrayOf(
                         R.string.general_name,
-                        R.string.category,
+                        R.string.general_category,
                         R.string.general_start_time,
                         R.string.general_run_time,
                         R.string.competitor_to_limit,
