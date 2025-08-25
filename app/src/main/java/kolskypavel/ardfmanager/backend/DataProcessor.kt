@@ -1,5 +1,6 @@
 package kolskypavel.ardfmanager.backend
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.hardware.usb.UsbDevice
@@ -52,7 +53,6 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.jvm.Throws
 
 
 /**
@@ -94,6 +94,7 @@ class DataProcessor private constructor(context: Context) {
         return packageInfo.versionName ?: "Unknown Version"
     }
 
+    @SuppressLint("NullSafeMutableLiveData")
     fun updateReaderState(newSIState: SIReaderState) {
         val stateToUpdate = currentState.value
 
