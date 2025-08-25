@@ -11,13 +11,13 @@ class CsvExportEntityUnitTest {
 
     @Test
     fun testCategoryCsvString() {
-        val category = Category.getTestCategory()
+        val category = Category()
         assertEquals("TEST;1;0;0.0;0.0;0;;;;", category.toCSVString())
     }
 
     @Test
     fun testControlPointCsvString() {
-        val controlPoint = ControlPoint.getTestControlPoint()
+        val controlPoint = ControlPoint()
         assertEquals("31#TEST#0#0#1", controlPoint.toCsvString())
         controlPoint.siCode = 99
         controlPoint.type = ControlPointType.BEACON
@@ -26,7 +26,7 @@ class CsvExportEntityUnitTest {
 
     @Test
     fun testCompetitorCsvString() {
-        val competitor = Competitor.getTestCompetitor()
+        val competitor = Competitor()
         val categoryStr = "M20"
         assertEquals(
             "123456789;Test;Tester;M20;1;2000;;AC Test;;0;ACT0001",

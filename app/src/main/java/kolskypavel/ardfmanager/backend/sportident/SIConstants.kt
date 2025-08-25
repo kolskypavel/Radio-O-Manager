@@ -3,7 +3,7 @@ package kolskypavel.ardfmanager.backend.sportident
 object SIConstants {
     const val SI_VENDOR_ID = 4292
     const val SI_PRODUCT_ID = 32778
-    const val SI_MIN_NUMBER = 999
+    const val SI_MIN_NUMBER = 1000
     const val SI_MAX_NUMBER = 9999999
 
     const val STX: Byte = 0x02 //Transmission start
@@ -49,14 +49,18 @@ object SIConstants {
     const val SI_CARD_PCARD_MAX_PUNCHES = 20
 
     //Code ranges
-    const val SI_MIN_CODE = 31
+    const val SI_MIN_CODE = 1
     const val SI_MAX_CODE = 255
 
+    // Notification ID
+    const val NOTIFICATION_CHANNEL_ID = "si_reader_channel"
+    const val NOTIFICATION_CHANNEL_NAME = "SI Reader"
+
     fun isSINumberValid(siNumber: Int): Boolean {
-        return (siNumber in (SI_MIN_NUMBER + 1)..SI_MAX_NUMBER)
+        return (siNumber in SI_MIN_NUMBER..SI_MAX_NUMBER)
     }
 
     fun isSICodeValid(siCode: Int): Boolean {
-        return (siCode in (SI_MIN_CODE + 1)..SI_MAX_CODE)
+        return (siCode in SI_MIN_CODE..SI_MAX_CODE)
     }
 }

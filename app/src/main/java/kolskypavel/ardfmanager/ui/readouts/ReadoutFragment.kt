@@ -29,7 +29,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kolskypavel.ardfmanager.databinding.FragmentReadoutsBinding
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
-import kolskypavel.ardfmanager.ui.races.RaceCreateDialogFragment
+import kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -152,12 +152,12 @@ class ReadoutFragment : Fragment() {
         builder.setTitle(getString(R.string.readout_delete_all))
         builder.setMessage(R.string.readout_delete_all_confirmation)
 
-        builder.setPositiveButton(R.string.ok) { dialog, _ ->
+        builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
             selectedRaceViewModel.deleteAllResultsByRace()
             dialog.dismiss()
         }
 
-        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+        builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
             dialog.cancel()
         }
         builder.show()
@@ -165,14 +165,14 @@ class ReadoutFragment : Fragment() {
 
     private fun setResultListener() {
         //Enable race modification from menu
-        setFragmentResultListener(RaceCreateDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
+        setFragmentResultListener(RaceEditDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
             val race: Race = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getSerializable(
-                    RaceCreateDialogFragment.BUNDLE_KEY_RACE,
+                    RaceEditDialogFragment.BUNDLE_KEY_RACE,
                     Race::class.java
                 )!!
             } else {
-                bundle.getSerializable(RaceCreateDialogFragment.BUNDLE_KEY_RACE) as Race
+                bundle.getSerializable(RaceEditDialogFragment.BUNDLE_KEY_RACE) as Race
             }
             selectedRaceViewModel.updateRace(race)
         }
@@ -242,12 +242,12 @@ class ReadoutFragment : Fragment() {
             )
         builder.setMessage(message)
 
-        builder.setPositiveButton(R.string.ok) { dialog, _ ->
+        builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
             selectedRaceViewModel.deleteResult(resultData.result.id)
             dialog.dismiss()
         }
 
-        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+        builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
             dialog.cancel()
         }
         builder.show()
@@ -285,14 +285,15 @@ class ReadoutFragment : Fragment() {
             val message = getString(R.string.race_end_confirmation)
             builder.setMessage(message)
 
-            builder.setPositiveButton(R.string.ok) { dialog, _ ->
+            builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
+                selectedRaceViewModel.disableResultService()
                 selectedRaceViewModel.removeReaderRace()
                 statsJob?.cancel()
 
                 findNavController().navigate(ReadoutFragmentDirections.closeRace())
             }
 
-            builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+            builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
                 dialog.cancel()
             }
             builder.show()

@@ -2,6 +2,8 @@ package kolskypavel.ardfmanager.ui.settings
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
+import androidx.appcompat.widget.Toolbar
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -15,6 +17,14 @@ class SoundsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.preferences_sounds, rootKey)
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         setPreferences()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.findViewById<Toolbar>(R.id.settings_toolbar)?.let { toolbar ->
+            toolbar.title = getString(R.string.global_settings)
+            toolbar.subtitle =getString(R.string.preferences_readout_sounds)
+        }
     }
 
     private fun setPreferences() {

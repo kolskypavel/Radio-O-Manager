@@ -7,18 +7,23 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
 import kolskypavel.ardfmanager.R
+import kolskypavel.ardfmanager.backend.DataProcessor
 
 
 class PrintsFragment : PreferenceFragmentCompat() {
     private lateinit var prefs: SharedPreferences
+    private val dataProcessor = DataProcessor.get()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences_prints, rootKey)
@@ -30,6 +35,15 @@ class PrintsFragment : PreferenceFragmentCompat() {
         enableOrDisablePreferences(printsEnabled)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //Add a back button to the toolbar
+        view.findViewById<Toolbar>(R.id.settings_toolbar)?.let { toolbar ->
+            toolbar.title = getString(R.string.global_settings)
+            toolbar.subtitle = getString(R.string.general_print)
+        }
+    }
+
     private fun setPreferences() {
         val editor = prefs.edit()
 
@@ -39,18 +53,36 @@ class PrintsFragment : PreferenceFragmentCompat() {
 
         enablePrintingPreference?.setOnPreferenceChangeListener { _, enablePrints ->
 
+            // If printing is disabled -> let the PrintProcessor know
+            if (enablePrints as Boolean) {
+                // Request bluetooth permissions if needed
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf(
+                            Manifest.permission.BLUETOOTH_CONNECT,
+                            Manifest.permission.BLUETOOTH_SCAN
+                        ),
+                        1
+                    )
+                }
+            } else {
+                dataProcessor.disablePrinter()
+            }
+
             editor.putBoolean(
                 requireContext().getString(R.string.key_prints_enabled),
                 enablePrints as Boolean
             )
             editor.apply()
             enableOrDisablePreferences(enablePrints)
+
             true
         }
 
         //Printer selection
         val printerSelectPreference =
-            findPreference<ListPreference>(requireContext().getString(R.string.key_prints_select_printer))
+            findPreference<ListPreference>(requireContext().getString(R.string.key_prints_selected_printer_address))
 
         printerSelectPreference?.setOnPreferenceClickListener {
 
@@ -105,21 +137,69 @@ class PrintsFragment : PreferenceFragmentCompat() {
             }
             true
         }
+        val currPrinterPref = prefs.getString(
+            requireContext().getString(R.string.key_prints_selected_printer_name),
+            ""
+        )
+        printerSelectPreference?.summary = requireContext().getString(
+            R.string.preferences_prints_select_printer_hint,
+            currPrinterPref
+        )
 
-        printerSelectPreference?.setOnPreferenceChangeListener { _, printer ->
+        // Save both printer name and address
+        printerSelectPreference?.setOnPreferenceChangeListener { preference, printer ->
+            val listPref = preference as ListPreference
+            val address = printer as String
+            val index = listPref.entryValues.indexOf(address)
+            val name = if (index >= 0) listPref.entries[index].toString() else ""
+
             editor.putString(
-                requireContext().getString(R.string.key_prints_select_printer),
-                printer.toString()
+                requireContext().getString(R.string.key_prints_selected_printer_name),
+                name
+            )
+            editor.putString(
+                requireContext().getString(R.string.key_prints_selected_printer_address),
+                address
             )
             editor.apply()
 
             true
         }
+
+        val automaticPrintPreference =
+            findPreference<ListPreference>(requireContext().getString(R.string.key_prints_automatic_printout))
+
+        automaticPrintPreference?.setOnPreferenceChangeListener { _, action ->
+            editor.putString(
+                requireContext().getString(R.string.key_prints_automatic_printout),
+                action.toString()
+            )
+            editor.apply()
+
+            automaticPrintPreference.summary = requireContext().getString(
+                R.string.preferences_prints_automatic_hint,
+                action
+            )
+            true
+        }
+
+        val removeDiacriticsPreference =
+            findPreference<CheckBoxPreference>(requireContext().getString(R.string.key_prints_remove_diacritics))
+
+        removeDiacriticsPreference?.setOnPreferenceChangeListener { _, removeDiacritics ->
+            editor.putBoolean(
+                requireContext().getString(R.string.key_prints_remove_diacritics),
+                removeDiacritics as Boolean
+            )
+            editor.apply()
+            true
+        }
     }
+
 
     private fun enableOrDisablePreferences(enable: Boolean) {
         val printerSelectPreference =
-            findPreference<ListPreference>(requireContext().getString(R.string.key_prints_select_printer))
+            findPreference<ListPreference>(requireContext().getString(R.string.key_prints_selected_printer_address))
 
         val automaticPrintPreference =
             findPreference<ListPreference>(requireContext().getString(R.string.key_prints_automatic_printout))

@@ -15,5 +15,5 @@ data class CompetitorData(
         entityColumn = "competitor_id",
         entity = Result::class
     )
-    var resultData: ResultData?,
+    var readoutData: ReadoutData?,
 ) : Serializable

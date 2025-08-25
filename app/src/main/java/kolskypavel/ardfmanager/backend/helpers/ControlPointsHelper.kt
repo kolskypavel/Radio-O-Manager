@@ -1,9 +1,12 @@
 package kolskypavel.ardfmanager.backend.helpers
 
 import android.content.Context
+import androidx.preference.PreferenceManager
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.room.entity.ControlPoint
 import kolskypavel.ardfmanager.backend.room.entity.Punch
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ControlPointAlias
 import kolskypavel.ardfmanager.backend.room.enums.ControlPointType
 import kolskypavel.ardfmanager.backend.room.enums.RaceType
 import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
@@ -11,6 +14,10 @@ import kolskypavel.ardfmanager.backend.sportident.SIConstants.SI_MAX_CODE
 import kolskypavel.ardfmanager.backend.sportident.SIConstants.SI_MIN_CODE
 import java.util.UUID
 
+/**
+ * @author Vojtech Kopal, Pavel Kolsky
+ * General helper for control points - parsing, validation, export to string, etc.
+ */
 object ControlPointsHelper {
     /**
      * Creates a control point from given string
@@ -19,7 +26,6 @@ object ControlPointsHelper {
     private fun parseControlPoint(
         order: Int,
         controlPointString: String,
-        raceId: UUID,
         categoryId: UUID,
         context: Context
     ): ControlPoint {
@@ -54,7 +60,6 @@ object ControlPointsHelper {
 
         return ControlPoint(
             UUID.randomUUID(),
-            raceId,
             categoryId,
             siCode,
             controlPointType,
@@ -101,11 +106,11 @@ object ControlPointsHelper {
             val controlPoint = controlPoints[i]
 
             if (controlPoint.type == ControlPointType.SEPARATOR) {
-                throw IllegalArgumentException(context.getString(R.string.control_point_classics_spectator_not_allowed))
+                throw IllegalArgumentException(context.getString(R.string.control_point_classic_spectator_not_allowed))
             }
 
             if (previousCodes.contains(controlPoint.siCode)) {
-                throw IllegalArgumentException(context.getString(R.string.control_point_classics_duplicate))
+                throw IllegalArgumentException(context.getString(R.string.control_point_classic_duplicate))
             }
 
             if (controlPoint.type == ControlPointType.BEACON && i != controlPoints.size - 1) {
@@ -191,7 +196,7 @@ object ControlPointsHelper {
     ) {
         when (raceType) {
             RaceType.ORIENTEERING -> validateOrienteeringControlSequence(controlPoints, context)
-            RaceType.CLASSICS, RaceType.FOXORING -> validateClassicsControlSequence(
+            RaceType.CLASSIC, RaceType.FOXORING -> validateClassicsControlSequence(
                 controlPoints,
                 context
             )
@@ -206,7 +211,6 @@ object ControlPointsHelper {
      */
     fun getControlPointsFromString(
         input: String,
-        raceId: UUID,
         categoryId: UUID,
         raceType: RaceType,
         context: Context
@@ -215,7 +219,7 @@ object ControlPointsHelper {
             return ArrayList()
 
         val controlPoints = input.split("\\s+".toRegex()).mapIndexed { index, controlPointString ->
-            parseControlPoint(index + 1, controlPointString, raceId, categoryId, context)
+            parseControlPoint(index + 1, controlPointString, categoryId, context)
         }.toList()
 
         validateControlSequence(controlPoints, raceType, context)
@@ -226,14 +230,41 @@ object ControlPointsHelper {
     fun getStringFromControlPoints(controlPoints: List<ControlPoint>): String {
         var codes = ""
 
-        for (cp in controlPoints) {
-            codes += cp.siCode
+        for (cp in controlPoints.withIndex()) {
+            codes += cp.value.siCode
 
-            if (cp.type == ControlPointType.BEACON) {
+            if (cp.value.type == ControlPointType.BEACON) {
                 codes += "B"
             }
-            if (cp.type == ControlPointType.SEPARATOR) {
+            if (cp.value.type == ControlPointType.SEPARATOR) {
                 codes += "!"
+            }
+
+            if (cp.index < controlPoints.size - 1) {
+                codes += " "
+            }
+        }
+        return codes
+    }
+
+    fun getStringFromControlPointAliases(
+        controlPoints: List<ControlPointAlias>,
+        context: Context
+    ): String {
+        var codes = ""
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val useAlias =
+            sharedPref.getBoolean(context.getString(R.string.key_results_use_aliases), true)
+
+        for (cp in controlPoints.withIndex()) {
+            codes += if (useAlias && cp.value.alias != null) {
+                cp.value.alias!!.name
+            } else {
+                cp.value.controlPoint.siCode.toString()
+            }
+
+            if (cp.index < controlPoints.size - 1) {
+                codes += " "
             }
         }
         return codes
@@ -244,6 +275,29 @@ object ControlPointsHelper {
         for (punch in punches) {
             if (punch.punchType == SIRecordType.CONTROL) {
                 string += "${punch.siCode} "
+            }
+        }
+        return string
+    }
+
+    fun getStringFromAliasPunches(punches: List<AliasPunch>, context: Context): String {
+        var string = ""
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val useAlias =
+            sharedPref.getBoolean(context.getString(R.string.key_results_use_aliases), true)
+
+        for ((index, aliasPunch) in punches.withIndex()) {
+            if (aliasPunch.punch.punchType == SIRecordType.CONTROL) {
+
+                //Use alias if available and enabled
+                string += if (useAlias && aliasPunch.alias != null) {
+                    aliasPunch.alias!!.name
+                } else {
+                    aliasPunch.punch.siCode
+                }
+            }
+            if (index < punches.size - 1) {
+                string += " "
             }
         }
         return string

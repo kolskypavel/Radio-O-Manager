@@ -12,6 +12,7 @@
     <!--RESULTS-->
     <string name="key_results_time_format" translatable="false">results_time_format</string>
     <string name="key_results_use_aliases" translatable="false">results_use_aliases</string>
+    <string name="key_result_service" translatable="false">result_service</string>
 
     <!--FILES-->
     <string name="key_files_invalid_stops_import" translatable="false">invalid_stops_import</string>
@@ -26,6 +27,13 @@
     <!--PRINTING-->
     <string name="key_prints" translatable="false">prints</string>
     <string name="key_prints_enabled" translatable="false">prints_enabled</string>
-    <string name="key_prints_select_printer" translatable="false">select_printer</string>
+    <string name="key_prints_selected_printer_name" translatable="false">selected_printer_name</string>
+    <string name="key_prints_selected_printer_address" translatable="false">selected_printer_address</string>
     <string name="key_prints_automatic_printout" translatable="false">automatic_printout</string>
+    <string name="key_prints_remove_diacritics" translatable="false">remove_diacritics</string>
+
+    <!--HELP-->
+    <string name="key_about_app" translatable="false">about_app</string>
+    <string name="key_changelog" translatable="false">changelog</string>
+
 </resources>

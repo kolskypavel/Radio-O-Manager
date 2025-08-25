@@ -1,130 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp">
+    android:layout_height="wrap_content">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/data_import_type_layout"
-        style="@style/dialog_dropdown"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="@string/data_type"
-        android:padding="8dp"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="8dp">
 
-        <AutoCompleteTextView
-            android:id="@+id/data_import_type"
-            style="@style/dialog_text"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/data_import_type_layout"
+            style="@style/dialog_dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="none"
-            app:simpleItems="@array/competitor_data_types" />
+            android:layout_weight="1"
+            android:hint="@string/data_type"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <AutoCompleteTextView
+                android:id="@+id/data_import_type"
+                style="@style/dialog_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                app:simpleItems="@array/competitor_data_types" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/data_import_format_layout"
-        style="@style/dialog_dropdown"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="@string/data_format"
-        android:padding="8dp"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/data_import_type_layout">
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <AutoCompleteTextView
-            android:id="@+id/data_import_format"
-            style="@style/dialog_text"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/data_import_format_layout"
+            style="@style/dialog_dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="none"
-            app:simpleItems="@array/competitor_data_formats" />
+            android:layout_weight="1"
+            android:hint="@string/data_format"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/data_import_type_layout">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <AutoCompleteTextView
+                android:id="@+id/data_import_format"
+                style="@style/dialog_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                app:simpleItems="@array/competitor_data_formats" />
 
-    <TextView
-        android:id="@+id/data_import_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/data_import_format_layout" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-
-    <LinearLayout
-        android:id="@+id/data_import_preview_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/data_import_import_btn">
 
         <TextView
-            android:id="@+id/data_import_preview"
+            android:id="@+id/data_import_error"
+            style="@style/error_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/general_preview"
-            android:textStyle="bold"
-            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/data_import_import_btn" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/data_import_recyclerview"
+        <LinearLayout
+            android:id="@+id/data_import_preview_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/data_import_error">
 
-        </androidx.recyclerview.widget.RecyclerView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/general_preview"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/data_import_import_btn" />
 
-    </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/data_import_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
 
-    <Button
-        android:id="@+id/data_import_import_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/data_import"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/data_import_format_layout" />
+            </androidx.recyclerview.widget.RecyclerView>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/data_import_preview_layout">
+            <TextView
+                android:id="@+id/data_import_preview_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/data_import_cancel"
-            style="@style/dialog_ok_cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:layout_weight="1"
-            android:text="@string/cancel"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:layout_editor_absoluteY="217dp" />
+        </LinearLayout>
 
         <Button
-            android:id="@+id/data_import_ok"
-            style="@style/dialog_ok_cancel_button"
+            android:id="@+id/data_import_import_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:text="@string/ok"
+            android:layout_marginEnd="8dp"
+            android:text="@string/data_import"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:layout_editor_absoluteY="217dp" />
-    </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/data_import_format_layout" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/data_import_preview_layout">
+
+            <Button
+                android:id="@+id/data_import_cancel"
+                style="@style/dialog_ok_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:layout_weight="1"
+                android:text="@string/general_cancel"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:layout_editor_absoluteY="217dp" />
+
+            <Button
+                android:id="@+id/data_import_ok"
+                style="@style/dialog_ok_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:text="@string/general_ok"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:layout_editor_absoluteY="217dp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

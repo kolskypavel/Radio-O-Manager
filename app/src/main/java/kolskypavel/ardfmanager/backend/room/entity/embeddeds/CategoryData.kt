@@ -6,6 +6,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.ControlPoint
 
+// Contains all information about a category, including control points and competitors
 data class CategoryData(
     @Embedded var category: Category,
     @Relation(

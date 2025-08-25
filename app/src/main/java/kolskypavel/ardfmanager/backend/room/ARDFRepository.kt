@@ -11,7 +11,9 @@ import kolskypavel.ardfmanager.backend.room.entity.ControlPoint
 import kolskypavel.ardfmanager.backend.room.entity.Punch
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.Result
+import kolskypavel.ardfmanager.backend.room.entity.ResultService
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
@@ -25,14 +27,14 @@ class ARDFRepository private constructor(context: Context) {
         )
         .build()
 
-    //Races
+    //-------------------Races-------------------
     fun getRaces(): Flow<List<Race>> = eventDatabase.raceDao().getRaces()
     suspend fun getRace(id: UUID): Race = eventDatabase.raceDao().getRace(id)
     suspend fun createRace(race: Race) = eventDatabase.raceDao().createRace(race)
     suspend fun updateRace(race: Race) = eventDatabase.raceDao().updateRace(race)
     suspend fun deleteRace(id: UUID) = eventDatabase.raceDao().deleteRace(id)
 
-    //Categories
+    //-------------------Categories-------------------
     fun getCategoryDataFlowForRace(raceId: UUID) =
         eventDatabase.categoryDao().getCategoryFlowForRace(raceId)
 
@@ -85,17 +87,17 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun createControlPoint(cp: ControlPoint) =
         eventDatabase.controlPointDao().createControlPoint(cp)
 
-    //Control point
+    //-------------------Control point-------------------
     suspend fun getControlPointsByCategory(categoryId: UUID) =
         eventDatabase.controlPointDao().getControlPointsByCategory(categoryId)
 
-    suspend fun getControlPointByCode(raceId: UUID, code: Int) =
-        eventDatabase.controlPointDao().getControlPointByCode(raceId, code)
+    suspend fun getControlPointAliasesByCategory(categoryId: UUID) =
+        eventDatabase.controlPointDao().getControlPointAliasesByCategory(categoryId)
 
     suspend fun deleteControlPointsByCategory(categoryId: UUID) =
         eventDatabase.controlPointDao().deleteControlPointsByCategory(categoryId)
 
-    //Aliases
+    //-------------------Aliases-------------------
     suspend fun getAliasesByRace(raceId: UUID) =
         eventDatabase.aliasDao().getAliasesByRace(raceId)
 
@@ -105,7 +107,7 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun deleteAliasesByRace(raceId: UUID) =
         eventDatabase.aliasDao().deleteAliasesByRace(raceId)
 
-    //Competitors
+    //-------------------Competitors-------------------
     suspend fun getCompetitor(id: UUID) =
         eventDatabase.competitorDao().getCompetitor(id)
 
@@ -124,7 +126,7 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun getCompetitorsByRace(raceId: UUID) =
         eventDatabase.competitorDao().getCompetitorsByRace(raceId)
 
-    suspend fun createCompetitor(competitor: Competitor) =
+    fun createCompetitor(competitor: Competitor) =
         eventDatabase.competitorDao().createCompetitor(competitor)
 
     suspend fun deleteCompetitor(id: UUID) = eventDatabase.competitorDao().deleteCompetitor(id)
@@ -138,7 +140,7 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun checkIfStartNumberExists(startNumber: Int, raceId: UUID): Int =
         eventDatabase.competitorDao().checkIfStartNumberExists(startNumber, raceId)
 
-    //RESULTS
+    //-------------------Results-------------------
     suspend fun getResult(id: UUID) = eventDatabase.resultDao().getResult(id)
 
     suspend fun getResultData(id: UUID) = eventDatabase.resultDao().getResultData(id)
@@ -149,17 +151,14 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun getResultBySINumber(siNumber: Int, raceId: UUID) =
         eventDatabase.resultDao().getResultForSINumber(siNumber, raceId)
 
-    suspend fun getReadoutsByCompetitor(competitorId: UUID): Result? =
-        eventDatabase.resultDao().getResultByCompetitor(competitorId)
-
-    suspend fun getResultsByCategory(categoryId: UUID) =
-        eventDatabase.resultDao().getResultByCategory(categoryId)
-
     suspend fun getResultByCompetitor(competitorId: UUID) =
         eventDatabase.resultDao().getResultByCompetitor(competitorId)
 
-    suspend fun createResult(result: Result) =
+    suspend fun createOrUpdateResult(result: Result) =
         eventDatabase.resultDao().createOrUpdateResult(result)
+
+    suspend fun setAllResultsUnsent(raceId: UUID) =
+        eventDatabase.resultDao().setAllResultsUnsent(raceId)
 
     suspend fun saveResultPunches(
         result: Result,
@@ -179,14 +178,49 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun deleteAllResultsByRace(raceId: UUID) =
         eventDatabase.resultDao().deleteAllResultsByRace(raceId)
 
-
-    //PUNCHES
+    //-------------------Punches-------------------
     suspend fun createPunch(punch: Punch) = eventDatabase.punchDao().createOrUpdatePunch(punch)
 
     suspend fun getPunchesByResult(resultId: UUID) =
         eventDatabase.punchDao().getPunchesByResult(resultId)
 
-    //Singleton instantiation
+
+    //-------------------Result service-------------------
+    fun getResultServiceByRaceId(raceId: UUID) =
+        eventDatabase.resultServiceDao().getResultServiceByRaceId(raceId)
+
+    fun getResultServiceLiveDataWithCountByRaceId(raceId: UUID) =
+        eventDatabase.resultServiceDao().getResultServiceLiveDataWithCountByRaceId(raceId)
+
+    suspend fun createOrUpdateResultService(resultService: ResultService) =
+        eventDatabase.resultServiceDao().createOrUpdateResultService(resultService)
+
+    //-------------------Race data-------------------
+    suspend fun saveRaceData(raceData: RaceData) {
+        eventDatabase.withTransaction {
+            createRace(raceData.race)
+            raceData.categories.forEach { cd ->
+                createOrUpdateCategory(
+                    cd.category,
+                    cd.controlPoints
+                )
+            }
+            raceData.aliases.forEach { alias -> createOrUpdateAlias(alias) }
+            raceData.competitorData.forEach { cd ->
+                createCompetitor(cd.competitorCategory.competitor)
+                cd.readoutData?.let {
+                    saveResultPunches(
+                        it.result,
+                        cd.readoutData!!.punches.map { ap -> ap.punch })
+                }
+            }
+            raceData.unmatchedReadoutData.forEach { rd ->
+                saveResultPunches(rd.result, rd.punches.map { it -> it.punch })
+            }
+        }
+    }
+
+    //-------------------Singleton instantiation-------------------
     companion object {
         private var INSTANCE: ARDFRepository? = null
         fun initialize(context: Context) {

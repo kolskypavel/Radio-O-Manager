@@ -3,9 +3,9 @@
 
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/results_toolbar"
@@ -16,13 +16,14 @@
         android:theme="@style/Theme.ARDFManager"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/results_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@+id/results_toolbar"
-        tools:layout_editor_absoluteX="28dp" />
+        tools:layout_editor_absoluteX="28dp"
+        android:paddingBottom="72dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

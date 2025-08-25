@@ -66,14 +66,14 @@ class AliasRecyclerViewAdapter(
     private fun codeWatcher(position: Int, code: String, context: Context) {
         if (code.isEmpty()) {
             values[position].isCodeValid = true
-            throw IllegalArgumentException(context.getString(R.string.required))
+            throw IllegalArgumentException(context.getString(R.string.general_required))
         }
 
         val codeValue = code.toInt();
 
         if (!isSICodeValid(codeValue)) {
             values[position].isCodeValid = false
-            throw IllegalArgumentException(context.getString(R.string.invalid))
+            throw IllegalArgumentException(context.getString(R.string.general_invalid))
         }
 
         if (!isCodeAvailable(codeValue)) {
@@ -88,7 +88,7 @@ class AliasRecyclerViewAdapter(
     private fun nameWatcher(position: Int, name: String, context: Context) {
         if (name.isEmpty()) {
             values[position].isNameValid = false
-            throw IllegalArgumentException(context.getString(R.string.required))
+            throw IllegalArgumentException(context.getString(R.string.general_required))
         }
 
         if (!isNameAvailable(name)) {

@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
+    android:id="@+id/openResultService"
     app:startDestination="@id/raceSelectionFragment">
     <fragment
         android:id="@+id/raceSelectionFragment"
@@ -24,6 +24,18 @@
         android:id="@+id/bottomNav"
         app:startDestination="@id/navigation_categories">
 
+        <dialog
+            android:id="@+id/assignControlPointsDialogFragment3"
+            android:name="kolskypavel.ardfmanager.ui.readouts.AssignControlPointsDialogFragment"
+            android:label="AssignControlPointsDialogFragment" >
+            <argument
+                android:name="controlPointsString"
+                app:argType="string" />
+        </dialog>
+        <dialog
+            android:id="@+id/resultServiceDialogFragment"
+            android:name="kolskypavel.ardfmanager.ui.services.ResultServiceDialogFragment"
+            android:label="ResultServiceDialogFragment" />
         <dialog
             android:id="@+id/standardCategoriesDialogFragment"
             android:name="kolskypavel.ardfmanager.ui.categories.StandardCategoriesDialogFragment"
@@ -53,7 +65,7 @@
             android:label="ResultsExportDialogFragment" />
         <dialog
             android:id="@+id/competitorEditDialogFragment"
-            android:name="kolskypavel.ardfmanager.ui.competitors.CompetitorCreateDialogFragment"
+            android:name="kolskypavel.ardfmanager.ui.competitors.CompetitorEditDialogFragment"
             android:label="CompetitorCreateDialogFragment">
             <argument
                 android:name="create"
@@ -130,7 +142,7 @@
         </fragment>
         <fragment
             android:id="@+id/navigation_results"
-            android:name="kolskypavel.ardfmanager.ui.readouts.ResultsFragment"
+            android:name="kolskypavel.ardfmanager.ui.results.ResultsFragment"
             android:label="fragment_results"
             tools:layout="@layout/fragment_results">
             <action
@@ -142,11 +154,14 @@
             <action
                 android:id="@+id/openReadoutDetail"
                 app:destination="@id/readoutDetailFragment" />
+            <action
+                android:id="@+id/openResultService"
+                app:destination="@id/resultServiceDialogFragment" />
         </fragment>
 
         <dialog
             android:id="@+id/categoryEditDialogFragment"
-            android:name="kolskypavel.ardfmanager.ui.categories.CategoryCreateDialogFragment"
+            android:name="kolskypavel.ardfmanager.ui.categories.CategoryEditDialogFragment"
             android:label="CategoryCreateDialogFragment">
             <argument
                 android:name="create"
@@ -179,6 +194,9 @@
             <action
                 android:id="@+id/createCategoryFromReadout"
                 app:destination="@id/categoryEditDialogFragment" />
+            <action
+                android:id="@+id/assignControlPoints"
+                app:destination="@id/assignControlPointsDialogFragment3" />
         </fragment>
 
         <action
@@ -191,7 +209,7 @@
 
     <dialog
         android:id="@+id/RaceCreateDialogFragment"
-        android:name="kolskypavel.ardfmanager.ui.races.RaceCreateDialogFragment"
+        android:name="kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment"
         android:label="RaceCreateDialogFragment">
         <argument
             android:name="create"
@@ -239,11 +257,14 @@
             android:id="@+id/configurePrints"
             app:destination="@id/printsFragment" />
         <action
-            android:id="@+id/openAppInfo"
+            android:id="@+id/openAboutApp"
             app:destination="@id/aboutAppDialogFragment" />
         <action
             android:id="@+id/configureSounds"
             app:destination="@id/soundsFragment" />
+        <action
+            android:id="@+id/openChangeLog"
+            app:destination="@id/changelogDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/printsFragment"
@@ -255,7 +276,11 @@
         android:label="SoundsFragment" />
     <dialog
         android:id="@+id/aboutAppDialogFragment"
-        android:name="kolskypavel.ardfmanager.ui.settings.AboutAppDialogFragment"
+        android:name="kolskypavel.ardfmanager.ui.settings.AboutDialogFragment"
         android:label="AboutAppDialogFragment" />
+    <dialog
+        android:id="@+id/changelogDialogFragment"
+        android:name="kolskypavel.ardfmanager.ui.settings.ChangelogDialogFragment"
+        android:label="ChangelogDialogFragment" />
 
 </navigation>

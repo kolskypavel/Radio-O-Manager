@@ -29,8 +29,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-class CompetitorCreateDialogFragment : DialogFragment() {
-    private val args: CompetitorCreateDialogFragmentArgs by navArgs()
+class CompetitorEditDialogFragment : DialogFragment() {
+    private val args: CompetitorEditDialogFragmentArgs by navArgs()
     private lateinit var selectedRaceViewModel: SelectedRaceViewModel
     private val dataProcessor = DataProcessor.get()
 
@@ -144,14 +144,6 @@ class CompetitorCreateDialogFragment : DialogFragment() {
             }
             startNumberTextView.setText(competitor.startNumber.toString())
 
-            //Auto insertion of the last card read
-            siNumberLayout.setEndIconOnClickListener {
-                val last = selectedRaceViewModel.getLastReadCard()
-                if (last != null) {
-                    siNumberTextView.setText(last.toString())
-                }
-            }
-
             //Preset gender
             if (competitor.isMan) {
                 womanCheckBox.isChecked = true
@@ -192,11 +184,20 @@ class CompetitorCreateDialogFragment : DialogFragment() {
             competitor.isMan = checked
         }
 
+        //Auto insertion of the last card read
+        siNumberLayout.setEndIconOnClickListener {
+            val last = selectedRaceViewModel.getLastReadCard()
+            if (last != null) {
+                siNumberTextView.setText(last.toString())
+            }
+        }
+
         //Set startTime
         if (competitor.drawnRelativeStartTime != null) {
             startTimeTextView.setText(
-                TimeProcessor.durationToMinuteString(
-                    competitor.drawnRelativeStartTime!!
+                TimeProcessor.durationToFormattedString(
+                    competitor.drawnRelativeStartTime!!,
+                    true
                 )
             )
         }
@@ -266,11 +267,11 @@ class CompetitorCreateDialogFragment : DialogFragment() {
 
         if (firstNameTextView.text.toString().trim().isBlank()) {
             valid = false
-            firstNameTextView.error = getString(R.string.required)
+            firstNameTextView.error = getString(R.string.general_required)
         }
         if (lastNameTextView.text.toString().trim().isBlank()) {
             valid = false
-            lastNameTextView.error = getString(R.string.required)
+            lastNameTextView.error = getString(R.string.general_required)
         }
 
         //Check the birth year
@@ -310,7 +311,7 @@ class CompetitorCreateDialogFragment : DialogFragment() {
                 }
             } catch (e: Exception) {
                 valid = false
-                siNumberTextView.error = getString(R.string.invalid)
+                siNumberTextView.error = getString(R.string.general_invalid)
             }
         }
 
@@ -329,11 +330,11 @@ class CompetitorCreateDialogFragment : DialogFragment() {
 
             } catch (e: Exception) {
                 valid = false
-                startNumberTextView.error = getString(R.string.invalid)
+                startNumberTextView.error = getString(R.string.general_invalid)
             }
         } else {
             valid = false
-            startNumberTextView.error = getString(R.string.required)
+            startNumberTextView.error = getString(R.string.general_required)
         }
 
         //Check the start time
@@ -341,7 +342,7 @@ class CompetitorCreateDialogFragment : DialogFragment() {
             try {
                 TimeProcessor.minuteStringToDuration(startTimeTextView.text.toString().trim())
             } catch (e: Exception) {
-                startTimeTextView.error = getString(R.string.invalid)
+                startTimeTextView.error = getString(R.string.general_invalid)
                 valid = false
             }
         }

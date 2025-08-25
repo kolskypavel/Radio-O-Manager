@@ -1,16 +1,18 @@
 package kolskypavel.ardfmanager.ui.competitors
 
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
+import java.text.Collator
 
-class CompetitorNameComparator : Comparator<CompetitorData> {
+class CompetitorNameComparator(
+    private val collator: Collator
+) : Comparator<CompetitorData> {
+
     override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
-        return o1.competitorCategory.competitor.lastName.compareTo(
-            o2.competitorCategory.competitor.lastName,
-            true
-        )
+        val lastName1 = o1.competitorCategory.competitor.lastName
+        val lastName2 = o2.competitorCategory.competitor.lastName
+        return collator.compare(lastName1, lastName2)
     }
 }
-
 
 class CompetitorStartNumComparator : Comparator<CompetitorData> {
     override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
@@ -18,21 +20,31 @@ class CompetitorStartNumComparator : Comparator<CompetitorData> {
     }
 }
 
-class CompetitorClubComparator : Comparator<CompetitorData> {
+class CompetitorClubComparator(
+    private val collator: Collator
+) : Comparator<CompetitorData> {
+
     override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
-        return o1.competitorCategory.competitor.club.compareTo(o2.competitorCategory.competitor.club)
+        val club1 = o1.competitorCategory.competitor.club
+        val club2 = o2.competitorCategory.competitor.club
+        return collator.compare(club1, club2)
     }
 }
 
-class CompetitorCategoryComparator : Comparator<CompetitorData> {
-    override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
+class CompetitorCategoryComparator(
+    private val collator: Collator
+) : Comparator<CompetitorData> {
 
-        return o2.competitorCategory.category?.let {
-            o1.competitorCategory.category?.name?.compareTo(
-                it.name
-            )
+    override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
+        val name1 = o1.competitorCategory.category?.name
+        val name2 = o2.competitorCategory.category?.name
+
+        return when {
+            name1 != null && name2 != null -> collator.compare(name1, name2)
+            name1 != null -> -1 // non-null comes before null
+            name2 != null -> 1
+            else -> 0
         }
-            ?: 0
     }
 }
 
@@ -51,7 +63,7 @@ class CompetitorSINumberComparator : Comparator<CompetitorData> {
     }
 }
 
-class CompetitorStartTimeComparator : Comparator<CompetitorData> {
+class CompetitorDrawnStartTimeComparator : Comparator<CompetitorData> {
     override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
         val t1 = o1.competitorCategory.competitor.drawnRelativeStartTime
         val t2 = o2.competitorCategory.competitor.drawnRelativeStartTime
@@ -64,16 +76,21 @@ class CompetitorStartTimeComparator : Comparator<CompetitorData> {
     }
 }
 
+class CompetitorStartTimeComparator : Comparator<CompetitorData> {
+    override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
+        return o1.readoutData?.result?.startTime?.compareTo(o2.readoutData?.result?.startTime) ?: -1
+    }
+}
+
 class CompetitorFinishTimeComparator : Comparator<CompetitorData> {
     override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
-        return o1.resultData?.result?.finishTime?.compareTo(o2.resultData?.result?.finishTime) ?: -1
+        return o1.readoutData?.result?.finishTime?.compareTo(o2.readoutData?.result?.finishTime)
+            ?: -1
     }
 }
 
 class CompetitorRunTimeComparator : Comparator<CompetitorData> {
     override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
-        return o1.resultData?.result?.runTime?.compareTo(o2.resultData?.result?.runTime) ?: -1
+        return o1.readoutData?.result?.runTime?.compareTo(o2.readoutData?.result?.runTime) ?: -1
     }
 }
-
-

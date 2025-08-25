@@ -27,24 +27,13 @@
             android:id="@+id/result_competitor_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
+            android:layout_marginStart="70dp"
+            android:maxLength="23"
             android:text="Text"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/result_competitor_place"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.454" />
-
-        <TextView
-            android:id="@+id/result_competitor_club"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Text"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/result_competitor_time"
-            app:layout_constraintStart_toEndOf="@id/result_competitor_name"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.454" />
 

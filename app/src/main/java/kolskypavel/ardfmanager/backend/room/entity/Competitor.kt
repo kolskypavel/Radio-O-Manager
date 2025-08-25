@@ -71,23 +71,20 @@ data class Competitor(
         return "${startNumber};${lastName};${firstName};${categoryName};;${real ?: ""};${index};;${club};${siNumber ?: ""}"
     }
 
-    companion object {
-        fun getTestCompetitor(): Competitor {
-            return Competitor(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                null,
-                "Test",
-                "Tester",
-                "AC Test",
-                "ACT0001",
-                true,
-                2000,
-                123456789,
-                false,
-                0,
-                null
-            )
-        }
-    }
+    //Non-args constructor
+    constructor() : this(
+        UUID.randomUUID(),
+        UUID.randomUUID(),
+        null,
+        "Test",
+        "Tester",
+        "AC Test",
+        "ACT0001",
+        true,
+        2000,
+        123456789,
+        false,
+        0,
+        null
+    )
 }

@@ -10,12 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
-import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
-import kolskypavel.ardfmanager.backend.room.enums.RaceStatus
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
+import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.wrappers.ResultWrapper
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -23,7 +24,7 @@ class ResultsFragmentRecyclerViewAdapter(
     var values: ArrayList<ResultWrapper>,
     var context: Context,
     var selectedRaceViewModel: SelectedRaceViewModel,
-    private val openDetail: (resultData: ResultData) -> Unit
+    private val openDetail: (competitorData: CompetitorData) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(
     ) {
@@ -56,6 +57,7 @@ class ResultsFragmentRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val dataList = values[position]
+
         if (dataList.isChild == 0) {
             holder as CategoryViewHolder
             holder.apply {
@@ -95,55 +97,81 @@ class ResultsFragmentRecyclerViewAdapter(
                 val singleResult = dataList.subList.first()
 
                 //Set the competitor place
-                if (singleResult.resultData != null) {
-                    val res = singleResult.resultData!!.result
+                if (singleResult.readoutData != null) {
+                    val res = singleResult.readoutData!!.result
                     competitorPlace.text =
-                        if (res.raceStatus == RaceStatus.VALID && res.place != null) {
+                        if (res.resultStatus == ResultStatus.OK) {
                             res.place.toString()
                         } else {
-                            dataProcessor.raceStatusToShortString(res.raceStatus)
+                            dataProcessor.resultStatusToShortString(res.resultStatus)
                         }
                 } else {
                     competitorPlace.text = "-"
                 }
 
-                competitorName.text =
-                    " ${singleResult.competitorCategory.competitor.lastName.uppercase()} ${singleResult.competitorCategory.competitor.firstName}"
-                competitorClub.text =
-                    singleResult.competitorCategory.competitor.club.ifEmpty {
-                        "-"
-                    }
-                if (singleResult.resultData != null) {
-                    competitorTime.text =
-                        TimeProcessor.durationToMinuteString(singleResult.resultData!!.result.runTime)
-                } else if (singleResult.competitorCategory.competitor.drawnRelativeStartTime != null) {
+                var compName = singleResult.competitorCategory.competitor.getFullName()
 
-                    CoroutineScope(Dispatchers.Main).launch {
+                // Inform that the readout was modified
+                if (singleResult.readoutData?.result?.modified == true) {
+                    compName += " *"
+                }
+                competitorName.text = compName
+
+                // Cancel previous timer job if exists
+                holder.timerJob?.cancel()
+
+                // Set the competitor time
+                val competitor = singleResult.competitorCategory.competitor
+                val startDateTime = selectedRaceViewModel.getCurrentRace().startDateTime
+                val drawnStartTime = competitor.drawnRelativeStartTime
+
+                if (singleResult.readoutData != null) {
+                    holder.competitorTime.text = TimeProcessor.durationToFormattedString(
+                        singleResult.readoutData!!.result.runTime,
+                        dataProcessor.useMinuteTimeFormat()
+                    )
+                } else if (drawnStartTime != null) {
+                    holder.timerJob = CoroutineScope(Dispatchers.Main).launch {
                         while (true) {
-                            competitorTime.text = TimeProcessor.runDurationFromStartString(
-                                selectedRaceViewModel.getCurrentRace().startDateTime,
-                                singleResult.competitorCategory.competitor.drawnRelativeStartTime!!
+                            holder.competitorTime.text = TimeProcessor.runDurationFromStartString(
+                                startDateTime,
+                                drawnStartTime,
+                                dataProcessor
                             )
                             delay(1000)
                         }
                     }
                 } else {
-                    competitorTime.text = "-"
+                    holder.competitorTime.text = "-"
                 }
-                competitorPoints.text = if (singleResult.resultData?.result?.points != null) {
-                    singleResult.resultData?.result?.points.toString()
+
+                //Set points
+                competitorPoints.text = if (singleResult.readoutData?.result?.points != null) {
+                    singleResult.readoutData?.result?.points.toString()
                 } else {
                     "-"
                 }
                 holder.itemView.setOnClickListener {
-                    if (singleResult.resultData != null) {
-                        openDetail(singleResult.resultData!!)
+                    if (singleResult.readoutData != null) {
+                        openDetail(singleResult)
                     }
                 }
 
+
                 if (dataList.childPosition % 2 == 1)
                     holder.itemView.setBackgroundResource(R.color.light_grey)
+                else {
+                    holder.itemView.setBackgroundResource(R.color.white)
+                }
             }
+        }
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        if (holder is CompetitorViewHolder) {
+            holder.timerJob?.cancel()
+            holder.timerJob = null
         }
     }
 
@@ -207,8 +235,9 @@ class ResultsFragmentRecyclerViewAdapter(
     class CompetitorViewHolder(row: View) : RecyclerView.ViewHolder(row) {
         val competitorPlace: TextView = row.findViewById(R.id.result_competitor_place)
         val competitorName: TextView = row.findViewById(R.id.result_competitor_name)
-        val competitorClub: TextView = row.findViewById(R.id.result_competitor_club)
         val competitorTime: TextView = row.findViewById(R.id.result_competitor_time)
         val competitorPoints: TextView = row.findViewById(R.id.result_competitor_points)
+
+        var timerJob: Job? = null
     }
 }

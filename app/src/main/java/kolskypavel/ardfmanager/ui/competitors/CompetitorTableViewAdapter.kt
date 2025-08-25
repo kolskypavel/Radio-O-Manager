@@ -7,9 +7,9 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import de.codecrafters.tableview.TableDataAdapter
 import kolskypavel.ardfmanager.R
+import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
-import kolskypavel.ardfmanager.backend.room.enums.CompetitorTableDisplayType
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +26,7 @@ class CompetitorTableViewAdapter(
     private val selectedRaceViewModel: SelectedRaceViewModel,
     private val onMoreClicked: (action: Int, position: Int, competitor: CompetitorData) -> Unit,
 ) : TableDataAdapter<CompetitorData>(context, values) {
+    private val dataProcessor = DataProcessor.get()
 
     override fun getCellView(rowIndex: Int, columnIndex: Int, parentView: ViewGroup?): View {
         val item = values[rowIndex]
@@ -62,7 +63,10 @@ class CompetitorTableViewAdapter(
                     1 -> {
                         if (item.competitorCategory.competitor.drawnRelativeStartTime != null) {
                             cell.text =
-                                TimeProcessor.durationToMinuteString(item.competitorCategory.competitor.drawnRelativeStartTime!!)
+                                TimeProcessor.durationToFormattedString(
+                                    item.competitorCategory.competitor.drawnRelativeStartTime!!,
+                                    true
+                                )
                         } else {
                             cell.text = "-"
                         }
@@ -94,15 +98,18 @@ class CompetitorTableViewAdapter(
 
                     2 -> {
                         cell.text =
-                            TimeProcessor.durationToMinuteString(item.resultData!!.result.runTime)
+                            TimeProcessor.durationToFormattedString(
+                                item.readoutData!!.result.runTime,
+                                dataProcessor.useMinuteTimeFormat()
+                            )
                     }
 
                     3 -> {
-                        cell.text = item.resultData!!.result.startTime?.localTimeFormatter() ?: ""
+                        cell.text = item.readoutData!!.result.startTime?.localTimeFormatter() ?: ""
                     }
 
                     4 -> {
-                        cell.text = item.resultData!!.result.finishTime?.localTimeFormatter() ?: ""
+                        cell.text = item.readoutData!!.result.finishTime?.localTimeFormatter() ?: ""
                     }
                 }
             }
@@ -121,7 +128,10 @@ class CompetitorTableViewAdapter(
 
                         if (item.competitorCategory.competitor.drawnRelativeStartTime != null) {
                             cell.text =
-                                TimeProcessor.durationToMinuteString(item.competitorCategory.competitor.drawnRelativeStartTime!!)
+                                TimeProcessor.durationToFormattedString(
+                                    item.competitorCategory.competitor.drawnRelativeStartTime!!,
+                                    true
+                                )
                         } else {
                             cell.text = "-"
                         }
@@ -140,7 +150,9 @@ class CompetitorTableViewAdapter(
                                         )
                                     if (runDuration != null) {
                                         cell.text =
-                                            TimeProcessor.durationToMinuteString(runDuration)
+                                            TimeProcessor.durationToFormattedString(
+                                                runDuration, dataProcessor.useMinuteTimeFormat()
+                                            )
                                     } else {
                                         cell.text = "-"
                                     }
@@ -157,7 +169,7 @@ class CompetitorTableViewAdapter(
                         CoroutineScope(Dispatchers.Main).launch {
                             while (true) {
                                 if (item.competitorCategory.competitor.drawnRelativeStartTime != null) {
-                                    if (item.resultData == null) {
+                                    if (item.readoutData == null) {
 
                                         val limit: Duration =
                                             if (item.competitorCategory.category?.timeLimit != null) {
@@ -174,7 +186,9 @@ class CompetitorTableViewAdapter(
 
                                         if (toLimit != null) {
                                             cell.text =
-                                                TimeProcessor.durationToMinuteString(toLimit)
+                                                TimeProcessor.durationToFormattedString(
+                                                    toLimit, true
+                                                )
                                         } else {
                                             cell.text = "-"
                                         }

@@ -1,5 +1,6 @@
 package kolskypavel.ardfmanager.backend.sportident
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
@@ -43,21 +44,33 @@ class SIReaderService :
 
         if (usbDevice != null) {
             when (intent?.action) {
-                ReaderServiceActions.START.toString() -> startService(usbDevice)
+                ReaderServiceActions.START.toString() -> startService(usbDevice, this)
                 ReaderServiceActions.STOP.toString() -> stopService(usbDevice)
             }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun startService(newDevice: UsbDevice) {
+    private fun createNotificationChannel(context: Context) {
+        val channel = NotificationChannel(
+            SIConstants.NOTIFICATION_CHANNEL_ID,
+            context.getString(R.string.si_service),
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(channel)
+    }
+
+    private fun startService(newDevice: UsbDevice, context: Context) {
         if (newDevice.vendorId == SI_VENDOR_ID && newDevice.productId == SI_PRODUCT_ID) {
             device = newDevice
             startSIDevice()
 
-            val notification = NotificationCompat.Builder(this, "si_reader_channel")
-                .setSmallIcon(R.drawable.ic_sportident)
-                .setContentTitle(getString(R.string.si_ready)).build()
+            createNotificationChannel(context)
+            val notification =
+                NotificationCompat.Builder(context, SIConstants.NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_sportident)
+                    .setContentTitle(getString(R.string.si_ready)).build()
 
             startForeground(1, notification)
             setNotificationObserver()
@@ -112,7 +125,7 @@ class SIReaderService :
                 } else {
                     getString(R.string.no_cards_yet)
                 }
-            val notification = NotificationCompat.Builder(this, "si_reader_channel")
+            val notification = NotificationCompat.Builder(this, SIConstants.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_sportident)
                 .setContentTitle(getString(R.string.si_ready))
                 .setContentText(getString(R.string.si_last_card, lastCardString))

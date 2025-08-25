@@ -6,6 +6,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import java.io.Serializable
 
+// Used to group competitor with category
 data class CompetitorCategory(
     @Embedded var competitor: Competitor,
     @Relation(

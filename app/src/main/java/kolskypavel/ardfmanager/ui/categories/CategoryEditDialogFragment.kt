@@ -28,9 +28,9 @@ import java.time.Duration
 import java.util.UUID
 
 
-class CategoryCreateDialogFragment : DialogFragment() {
+class CategoryEditDialogFragment : DialogFragment() {
 
-    private val args: CategoryCreateDialogFragmentArgs by navArgs()
+    private val args: CategoryEditDialogFragmentArgs by navArgs()
     private lateinit var selectedRaceViewModel: SelectedRaceViewModel
     private val dataProcessor = DataProcessor.get()
     private lateinit var category: Category
@@ -161,7 +161,6 @@ class CategoryCreateDialogFragment : DialogFragment() {
                 climbEditText.setText(category.climb.toString())
             }
 
-
             // Custom properties
             if (category.differentProperties) {
                 samePropertiesCheckBox.isChecked = false
@@ -205,7 +204,7 @@ class CategoryCreateDialogFragment : DialogFragment() {
         var valid = true
 
         if (nameEditText.text?.isBlank() == true) {
-            nameEditText.error = getString(R.string.required)
+            nameEditText.error = getString(R.string.general_required)
             valid = false
         }
         //Check if the name is unique
@@ -223,11 +222,11 @@ class CategoryCreateDialogFragment : DialogFragment() {
                 try {
                     Duration.ofMinutes(limitEditText.text.toString().toLong())
                 } catch (e: Exception) {
-                    limitEditText.error = getString(R.string.invalid)
+                    limitEditText.error = getString(R.string.general_invalid)
                     valid = false
                 }
             } else {
-                limitEditText.error = getString(R.string.required)
+                limitEditText.error = getString(R.string.general_required)
                 valid = false
             }
         }
@@ -249,7 +248,6 @@ class CategoryCreateDialogFragment : DialogFragment() {
                 ControlPointsHelper.getControlPointsFromString(
                     text,
                     category.id,
-                    category.raceId,
                     category.raceType ?: selectedRaceViewModel.getCurrentRace().raceType,
                     requireContext()
                 )
@@ -339,18 +337,17 @@ class CategoryCreateDialogFragment : DialogFragment() {
                 //Get control points
                 val controlPoints = ControlPointsHelper.getControlPointsFromString(
                     controlPointsString,
-                    category.raceId,
                     category.id,
                     category.raceType ?: selectedRaceViewModel.getCurrentRace().raceType,
                     requireContext()
                 )
                 selectedRaceViewModel.createOrUpdateCategory(category, controlPoints)
-                category.controlPointsString = controlPointsString
 
                 setFragmentResult(
                     REQUEST_CATEGORY_MODIFICATION, bundleOf(
                         BUNDLE_KEY_CREATE to args.create,
-                        BUNDLE_KEY_POSITION to args.position
+                        BUNDLE_KEY_POSITION to args.position,
+                        BUNDLE_KEY_CATEGORY_ID to category.id.toString()
                     )
                 )
                 dialog?.dismiss()
@@ -366,5 +363,6 @@ class CategoryCreateDialogFragment : DialogFragment() {
         const val REQUEST_CATEGORY_MODIFICATION = "REQUEST_CATEGORY_MODIFICATION"
         const val BUNDLE_KEY_CREATE = "BUNDLE_KEY_CREATE"
         const val BUNDLE_KEY_POSITION = "BUNDLE_KEY_POSITION"
+        const val BUNDLE_KEY_CATEGORY_ID = "BUNDLE_KEY_CATEGORY_ID"
     }
 }

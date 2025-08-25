@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import kolskypavel.ardfmanager.backend.room.enums.RaceStatus
+import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.sportident.SITime
 import java.io.Serializable
 import java.time.Duration
@@ -18,13 +18,19 @@ import java.util.UUID
         parentColumns = arrayOf("id"),
         childColumns = arrayOf("race_id"),
         onDelete = ForeignKey.CASCADE
-    )]
+    ),
+        ForeignKey(
+            entity = Competitor::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("competitor_id"),
+            onDelete = ForeignKey.SET_NULL
+        )
+    ]
 )
 data class Result(
     @PrimaryKey var id: UUID,
     @ColumnInfo(name = "race_id") var raceId: UUID,
     @ColumnInfo(name = "competitor_id") var competitorID: UUID? = null,
-    @ColumnInfo(name = "category_id") var categoryId: UUID? = null,
     @ColumnInfo(name = "si_number") var siNumber: Int?,
     @ColumnInfo(name = "card_type") var cardType: Byte,
     @ColumnInfo(name = "check_time") var checkTime: SITime?,
@@ -35,18 +41,20 @@ data class Result(
     @ColumnInfo(name = "orig_finish_time") var origFinishTime: SITime?, // Immutable copy of original SI Time, used mainly for SI 5 cards
     @ColumnInfo(name = "readout_time") var readoutTime: LocalDateTime = LocalDateTime.now(),
     @ColumnInfo(name = "automatic_status") var automaticStatus: Boolean,
-    @ColumnInfo(name = "race_status") var raceStatus: RaceStatus,
+    @ColumnInfo(name = "result_status") var resultStatus: ResultStatus,
     @ColumnInfo(name = "points") var points: Int = 0,
     @ColumnInfo(name = "run_time") var runTime: Duration,
-    @ColumnInfo(name = "modified") var modified: Boolean
+    @ColumnInfo(name = "modified") var modified: Boolean,
+    @ColumnInfo(name = "sent") var sent: Boolean,      //Marked as sent to the server
+
 ) : Serializable, Comparable<Result> {
     @Ignore
-    var place: Int? = null
+    var place: Int = 0
     override operator fun compareTo(other: Result): Int {
 
         //Compare race status
-        return if (raceStatus != other.raceStatus) {
-            raceStatus.compareTo(other.raceStatus)
+        return if (resultStatus != other.resultStatus) {
+            resultStatus.compareTo(other.resultStatus)
         }
         //Compare points - more points are before less points
         else if (points != other.points) {

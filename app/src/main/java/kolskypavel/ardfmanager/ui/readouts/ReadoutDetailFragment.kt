@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,10 +16,15 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
+import kolskypavel.ardfmanager.backend.helpers.ControlPointsHelper
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
+import kolskypavel.ardfmanager.backend.results.ResultsProcessor
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
+import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
+import kolskypavel.ardfmanager.ui.categories.CategoryEditDialogFragment
+import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
 class ReadoutDetailFragment : Fragment() {
@@ -82,17 +88,16 @@ class ReadoutDetailFragment : Fragment() {
         if (resultData.competitorCategory?.competitor != null) {
             clubView.text = resultData.competitorCategory!!.competitor.club
             indexView.text = resultData.competitorCategory!!.competitor.index
-            competitorNameView.text =
-                "${resultData.competitorCategory!!.competitor.firstName} ${resultData.competitorCategory!!.competitor.lastName}"
+            competitorNameView.text = resultData.competitorCategory!!.competitor.getFullName()
             pointsView.text = resultData.result.points.toString()
         } else {
-            competitorNameView.text = getText(R.string.unknown_competitor)
+            competitorNameView.text = getText(R.string.readout_unknown_competitor)
             pointsView.text = getText(R.string.unknown)
             clubView.text = getText(R.string.unknown)
             indexView.text = getText(R.string.unknown)
         }
         raceStatusView.text =
-            dataProcessor.raceStatusToString(resultData.result.raceStatus)
+            dataProcessor.resultStatusToString(resultData.result.resultStatus)
 
         if (resultData.competitorCategory?.category != null) {
             categoryView.text = resultData.competitorCategory!!.category!!.name
@@ -106,10 +111,25 @@ class ReadoutDetailFragment : Fragment() {
             "-"
         }
         runTimeView.text =
-            TimeProcessor.durationToMinuteString(resultData.result.runTime)
+            TimeProcessor.durationToFormattedString(
+                resultData.result.runTime,
+                dataProcessor.useMinuteTimeFormat()
+            )
 
-        placeView.text = resultData.result.place?.toString()
-            ?: getText(R.string.unknown) //TODO: Place
+        placeView.text = if (resultData.competitorCategory?.competitor != null &&
+            resultData.result.resultStatus == ResultStatus.OK
+        ) {
+            runBlocking {
+                val place = ResultsProcessor.getCompetitorPlace(
+                    resultData.competitorCategory!!.competitor.id,
+                    resultData.result.raceId,
+                    DataProcessor.get()
+                )
+                "${place.toString()}."
+            }
+        } else {
+            "-"
+        }
 
         setMenuActions()
         setRecyclerViewAdapter(resultData.punches)
@@ -129,6 +149,10 @@ class ReadoutDetailFragment : Fragment() {
                 }
 
                 R.id.readout_detail_menu_print_ticket -> {
+                    dataProcessor.printFinishTicket(
+                        resultData,
+                        selectedRaceViewModel.getCurrentRace()
+                    )
                     true
                 }
 
@@ -138,11 +162,32 @@ class ReadoutDetailFragment : Fragment() {
                             true,
                             -1,
                             null,
-                            dataProcessor.getStringFromPunches(resultData.getPunchList())
+                            ControlPointsHelper.getStringFromPunches(resultData.getPunchList())
                         )
                     )
                     true
                 }
+
+                R.id.readout_detail_menu_assign_controls -> {
+                    if (selectedRaceViewModel.getCategories().isNotEmpty()) {
+                        findNavController().navigate(
+                            ReadoutDetailFragmentDirections.assignControlPoints(
+                                ControlPointsHelper.getStringFromPunches(
+                                    resultData.getPunchList()
+                                )
+                            )
+                        )
+                    } else {
+                        Toast.makeText(
+                            context,
+                            requireContext().getText(R.string.readout_no_category_exists),
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                    true
+                }
+
 
                 R.id.readout_detail_menu_delete_readout -> {
                     confirmReadoutDeletion(resultData)
@@ -166,13 +211,13 @@ class ReadoutDetailFragment : Fragment() {
             )
         builder.setMessage(message)
 
-        builder.setPositiveButton(R.string.ok) { dialog, _ ->
+        builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
             selectedRaceViewModel.deleteResult(resultData.result.id)
             dialog.dismiss()
             parentFragmentManager.popBackStackImmediate();
         }
 
-        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+        builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
             dialog.cancel()
         }
         builder.show()
@@ -185,9 +230,23 @@ class ReadoutDetailFragment : Fragment() {
             )
             val newData =
                 selectedRaceViewModel.getResultData(UUID.fromString(resultId))
+            resultData = newData
+            populateFields()
+
+        }
+
+        setFragmentResultListener(CategoryEditDialogFragment.REQUEST_CATEGORY_MODIFICATION) { _, bundle ->
+            val categoryId = bundle.getString(CategoryEditDialogFragment.BUNDLE_KEY_CATEGORY_ID)
+            if (categoryId != null && resultData.competitorCategory?.competitor != null) {
+                val comp = resultData.competitorCategory?.competitor!!
+                comp.categoryId = UUID.fromString(categoryId)
+                selectedRaceViewModel.createOrUpdateCompetitor(comp)
+
+                val newData =
+                    selectedRaceViewModel.getResultData(resultData.result.id)
                 resultData = newData
                 populateFields()
-
+            }
         }
     }
 

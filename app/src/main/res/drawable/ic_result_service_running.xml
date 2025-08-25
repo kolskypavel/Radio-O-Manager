@@ -1,0 +1,17 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- RSS arcs (black) -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M4,11v2.08A6,6 0,0 1,10.92,20h2.08A8.1,8.1 0,0 0,4,11z
+                          M4,4v2.08A13.92,13.92 0,0 1,17.92,20h2.08A16,16 0,0 0,4,4z" />
+
+    <!-- RSS dot (green) -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M6.18,17.82A2.18,2.18 0,1 1,4,15.64A2.18,2.18 0,0 1,6.18,17.82z" />
+</vector>

@@ -12,6 +12,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Punch
 import kolskypavel.ardfmanager.backend.room.enums.PunchStatus
 import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
 import kolskypavel.ardfmanager.backend.sportident.SIConstants
+import kolskypavel.ardfmanager.backend.sportident.SITime
 import kolskypavel.ardfmanager.backend.wrappers.PunchEditItemWrapper
 import java.time.Duration
 import java.time.LocalTime
@@ -39,7 +40,7 @@ class PunchEditRecyclerViewAdapter(
         holder.week.setText(item.punch.siTime.getWeek().toString())
 
         holder.addBtn.setOnClickListener {
-            addPunch(holder.layoutPosition)
+            addPunch(holder.adapterPosition)
         }
 
         holder.deleteBtn.setOnClickListener {
@@ -47,7 +48,7 @@ class PunchEditRecyclerViewAdapter(
             holder.time.clearFocus()
             holder.week.clearFocus()
             holder.weekday.clearFocus()
-            deletePunch(holder.layoutPosition)
+            deletePunch(holder.adapterPosition)
         }
 
         //Set the start punch
@@ -81,26 +82,26 @@ class PunchEditRecyclerViewAdapter(
 
         //Set watchers
         holder.code.doOnTextChanged { cs: CharSequence?, i: Int, i1: Int, i2: Int ->
-            if (!codeWatcher(position, cs.toString())) {
-                holder.code.error = holder.code.context.getString(R.string.invalid)
+            if (!codeWatcher(holder.adapterPosition, cs.toString())) {
+                holder.code.error = holder.code.context.getString(R.string.general_invalid)
             }
         }
 
         holder.time.doOnTextChanged { cs: CharSequence?, i: Int, i1: Int, i2: Int ->
-            if (!timeWatcher(position, cs.toString())) {
-                holder.time.error = holder.code.context.getString(R.string.invalid)
+            if (!timeWatcher(holder.adapterPosition, cs.toString())) {
+                holder.time.error = holder.code.context.getString(R.string.general_invalid)
             }
         }
 
         holder.weekday.doOnTextChanged { cs: CharSequence?, i: Int, i1: Int, i2: Int ->
-            if (!dayWatcher(position, cs.toString())) {
-                holder.weekday.error = holder.code.context.getString(R.string.invalid)
+            if (!dayWatcher(holder.adapterPosition, cs.toString())) {
+                holder.weekday.error = holder.code.context.getString(R.string.general_invalid)
             }
         }
 
         holder.week.doOnTextChanged { cs: CharSequence?, i: Int, i1: Int, i2: Int ->
-            if (!weekWatcher(position, cs.toString())) {
-                holder.week.error = holder.code.context.getString(R.string.invalid)
+            if (!weekWatcher(holder.adapterPosition, cs.toString())) {
+                holder.week.error = holder.code.context.getString(R.string.general_invalid)
             }
         }
     }
@@ -114,8 +115,8 @@ class PunchEditRecyclerViewAdapter(
                     null,
                     null,
                     0,
-                    values[position].punch.siTime,
-                    values[position].punch.siTime,
+                    SITime(values[position].punch.siTime),
+                    SITime(values[position].punch.siTime),
                     SIRecordType.CONTROL,
                     values[position].punch.order++,
                     PunchStatus.UNKNOWN, Duration.ZERO,

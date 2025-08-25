@@ -10,6 +10,7 @@ import kolskypavel.ardfmanager.backend.room.dao.ControlPointDao
 import kolskypavel.ardfmanager.backend.room.dao.PunchDao
 import kolskypavel.ardfmanager.backend.room.dao.RaceDao
 import kolskypavel.ardfmanager.backend.room.dao.ResultDao
+import kolskypavel.ardfmanager.backend.room.dao.ResultServiceDao
 import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
@@ -17,6 +18,7 @@ import kolskypavel.ardfmanager.backend.room.entity.ControlPoint
 import kolskypavel.ardfmanager.backend.room.entity.Punch
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.Result
+import kolskypavel.ardfmanager.backend.room.entity.ResultService
 
 @Database(
     entities = [Race::class,
@@ -25,7 +27,8 @@ import kolskypavel.ardfmanager.backend.room.entity.Result
         Competitor::class,
         ControlPoint::class,
         Punch::class,
-        Result::class],
+        Result::class,
+        ResultService::class],
     version = 1,
     exportSchema = false
 )
@@ -38,4 +41,5 @@ abstract class EventDatabase : RoomDatabase() {
     abstract fun controlPointDao(): ControlPointDao
     abstract fun punchDao(): PunchDao
     abstract fun resultDao(): ResultDao
+    abstract fun resultServiceDao(): ResultServiceDao
 }

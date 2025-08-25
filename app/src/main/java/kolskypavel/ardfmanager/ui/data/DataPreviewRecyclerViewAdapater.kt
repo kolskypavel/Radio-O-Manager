@@ -9,6 +9,7 @@ import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataType
 import kolskypavel.ardfmanager.backend.files.wrappers.DataImportWrapper
+import kolskypavel.ardfmanager.backend.helpers.ControlPointsHelper
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 
 class DataPreviewRecyclerViewAdapater(
@@ -29,7 +30,12 @@ class DataPreviewRecyclerViewAdapater(
     override fun getItemCount(): Int {
         return when (dataType) {
             DataType.CATEGORIES -> value.categories.size
-            DataType.C0MPETITORS, DataType.COMPETITOR_STARTS_TIME -> value.competitorCategories.size
+            DataType.COMPETITORS, DataType.COMPETITOR_STARTS_TIME ->
+                if (value.competitorCategories.size < 5) {
+                    value.competitorCategories.size
+                } else {
+                    5
+                }
 
             else -> 0
         }
@@ -43,10 +49,10 @@ class DataPreviewRecyclerViewAdapater(
                 holder.columnTwo.text = dataProcessor.genderToString(item.category.isMan)
                 holder.columnThree.text = item.category.maxAge.toString()
                 holder.columnFour.text =
-                    dataProcessor.getStringFromControlPoints(item.controlPoints)
+                    ControlPointsHelper.getStringFromControlPoints(item.controlPoints)
             }
 
-            DataType.C0MPETITORS -> {
+            DataType.COMPETITORS -> {
                 val item = value.competitorCategories[position]
                 holder.columnOne.text = item.competitor.siNumber?.toString() ?: "-"
                 holder.columnTwo.text = item.competitor.getFullName()
@@ -57,7 +63,9 @@ class DataPreviewRecyclerViewAdapater(
             DataType.COMPETITOR_STARTS_TIME -> {
                 val item = value.competitorCategories[position]
                 holder.columnOne.text = if (item.competitor.drawnRelativeStartTime != null) {
-                    TimeProcessor.durationToMinuteString(item.competitor.drawnRelativeStartTime!!)
+                    TimeProcessor.durationToFormattedString(
+                        item.competitor.drawnRelativeStartTime!!, true
+                    )
                 } else {
                     "-"
                 }

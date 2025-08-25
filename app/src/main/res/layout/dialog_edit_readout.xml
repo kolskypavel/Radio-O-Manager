@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:orientation="vertical">
 
         <com.google.android.material.textfield.TextInputLayout
@@ -16,7 +17,7 @@
             style="@style/dialog_dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/competitor"
+            android:hint="@string/general_competitor"
             android:inputType="none">
 
             <AutoCompleteTextView
@@ -27,30 +28,31 @@
                 android:focusable="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/readout_dialog_si_number_layout"
-            style="@style/dialog_textView"
+            android:id="@+id/readout_dialog_category_layout"
+            style="@style/dialog_dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/si_number">
+            android:layout_marginTop="4dp"
+            android:hint="@string/general_category"
+            android:inputType="none">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/readout_dialog_si_number"
+            <AutoCompleteTextView
+                android:id="@+id/readout_dialog_category"
                 style="@style/dialog_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLength="10" />
+
+                android:focusable="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/competitor_dialog_status_layout"
             style="@style/dialog_dropdown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:hint="@string/readout_detail_status"
             android:inputType="none"
             android:textColor="@color/black">
@@ -63,6 +65,20 @@
                 android:focusable="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:id="@+id/readout_dialog_si_number"
+            style="@style/readout_edit_dialog_si_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/readout_dialog_edit_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="@color/black"
+            android:text="@string/readout_edit_readout" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/readout_dialog_punch_recycler_view"
@@ -70,6 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:theme="@style/punch_record_recycler"
+            android:visibility="gone"
             app:layoutManager="LinearLayoutManager" />
 
         <LinearLayout
@@ -88,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
                 android:layout_weight="1"
-                android:text="@string/cancel" />
+                android:text="@string/general_cancel" />
 
             <Button
                 android:id="@+id/readout_dialog_ok"
@@ -96,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/ok" />
+                android:text="@string/general_ok" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

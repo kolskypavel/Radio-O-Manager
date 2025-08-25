@@ -19,7 +19,6 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/linearLayout3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -41,8 +40,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
+                android:maxWidth="130dp"
+                android:maxLength="30"
                 android:text="TEST MAN"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -67,7 +68,7 @@
 
                 android:gravity="start"
                 android:text="00:00"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -76,22 +77,22 @@
                 android:id="@+id/readout_title_start_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="96dp"
+                android:layout_marginEnd="80dp"
+                android:layout_marginBottom="4dp"
                 android:text="@string/general_start_time"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/readout_item_run_time" />
+                app:layout_constraintBottom_toTopOf="@+id/readout_title_finish_time"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
                 android:id="@+id/readout_title_finish_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/finish_time"
+                android:layout_marginBottom="4dp"
+                android:text="@string/general_finish_time"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/readout_title_start_time"
-                app:layout_constraintTop_toBottomOf="@+id/readout_title_start_time" />
+                app:layout_constraintBottom_toTopOf="@+id/readout_title_readout_time"
+                app:layout_constraintStart_toStartOf="@+id/readout_title_start_time" />
 
             <TextView
                 android:id="@+id/readout_title_readout_time"
@@ -100,15 +101,15 @@
                 android:layout_marginTop="4dp"
                 android:text="@string/readout_time"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/readout_title_finish_time"
-                app:layout_constraintTop_toBottomOf="@+id/readout_title_finish_time" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/readout_title_finish_time" />
 
             <TextView
                 android:id="@+id/readout_title_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/category"
+                android:text="@string/general_category"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/readout_title_club" />
@@ -118,7 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/si_number"
+                android:text="@string/general_si_number"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/readout_item_competitor" />
@@ -128,7 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/club"
+                android:text="@string/general_club"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/readout_item_si_number" />
@@ -149,20 +150,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
                 android:text="TextView"
-                app:layout_constraintStart_toEndOf="@+id/readout_title_start_time"
-                app:layout_constraintTop_toBottomOf="@+id/readout_item_run_time" />
+                app:layout_constraintBottom_toTopOf="@+id/readout_item_finish_time"
+                app:layout_constraintStart_toEndOf="@+id/readout_title_start_time" />
 
             <TextView
                 android:id="@+id/readout_item_finish_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
                 android:text="TextView"
-                app:layout_constraintStart_toEndOf="@+id/readout_title_finish_time"
-                app:layout_constraintTop_toBottomOf="@+id/readout_item_start_time" />
+                app:layout_constraintBottom_toTopOf="@+id/readout_item_readout_time"
+                app:layout_constraintStart_toEndOf="@+id/readout_title_finish_time" />
 
             <TextView
                 android:id="@+id/readout_item_readout_time"
@@ -170,10 +171,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:text="TextView"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toBottomOf="@+id/readout_title_readout_time"
-                app:layout_constraintStart_toEndOf="@+id/readout_title_readout_time"
-                app:layout_constraintTop_toTopOf="@+id/readout_title_readout_time" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/readout_title_readout_time" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton

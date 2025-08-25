@@ -14,7 +14,6 @@ import java.util.UUID
  */
 class ControlPointsParsingUnitTest {
 
-    private val raceId = UUID.randomUUID()
     private val categoryId = UUID.randomUUID()
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
@@ -23,7 +22,6 @@ class ControlPointsParsingUnitTest {
         var cpString = "31 32 33 34 35 36 38 40"
         var result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
             RaceType.ORIENTEERING,
             appContext
@@ -39,7 +37,6 @@ class ControlPointsParsingUnitTest {
         cpString = "102 31 49 55 52 35"
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
             RaceType.ORIENTEERING,
             appContext
@@ -52,7 +49,6 @@ class ControlPointsParsingUnitTest {
         cpString = "" // Empty string is fine
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
             RaceType.ORIENTEERING,
             appContext
@@ -66,7 +62,6 @@ class ControlPointsParsingUnitTest {
         System.err.println(assertThrows(IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
                 RaceType.ORIENTEERING,
                 appContext
@@ -77,7 +72,6 @@ class ControlPointsParsingUnitTest {
         System.err.println(assertThrows(IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
                 RaceType.ORIENTEERING,
                 appContext
@@ -88,7 +82,6 @@ class ControlPointsParsingUnitTest {
         System.err.println(assertThrows(IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
                 RaceType.ORIENTEERING,
                 appContext
@@ -99,7 +92,6 @@ class ControlPointsParsingUnitTest {
         System.err.println(assertThrows(IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
                 RaceType.ORIENTEERING,
                 appContext
@@ -110,7 +102,6 @@ class ControlPointsParsingUnitTest {
         System.err.println(assertThrows(IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
                 RaceType.ORIENTEERING,
                 appContext
@@ -124,9 +115,9 @@ class ControlPointsParsingUnitTest {
         var cpString = "31 32 33 34 35 99B"
         var result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
-            RaceType.CLASSICS, appContext
+            RaceType.CLASSIC,
+            appContext
         )
         assertEquals(listOf(31, 32, 33, 34, 35, 99), result.map { cp -> cp.siCode }.toList())
         assertEquals((1..6).toList(), result.map { cp -> cp.order }.toList())
@@ -144,9 +135,9 @@ class ControlPointsParsingUnitTest {
         cpString = ""   // Empty string is fine
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
-            RaceType.CLASSICS, appContext
+            RaceType.CLASSIC,
+            appContext
         )
         assertEquals(0, result.size)
     }
@@ -157,81 +148,81 @@ class ControlPointsParsingUnitTest {
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.CLASSICS, appContext
+                RaceType.CLASSIC,
+                appContext
             )
         }.message)
         cpString = "31 32B 33 34 35 99" //Beacon must be the last CP
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.CLASSICS, appContext
+                RaceType.CLASSIC,
+                appContext
             )
         }.message)
         cpString = "31! 32B" //Beacon must be the last CP - check first
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.CLASSICS, appContext
+                RaceType.CLASSIC,
+                appContext
             )
         }.message)
         cpString = "31 32 33 34! 35 99" //No spectator controls are allowed on classics
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.CLASSICS, appContext
+                RaceType.CLASSIC,
+                appContext
             )
         }.message)
         cpString = "31! 32" //No spectator controls are allowed on classics - check first
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.CLASSICS, appContext
+                RaceType.CLASSIC,
+                appContext
             )
         }.message)
         cpString = "32 35 43 44B 99B" //Two beacons
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.CLASSICS, appContext
+                RaceType.CLASSIC,
+                appContext
             )
         }.message)
         cpString = "32 35 35 44" //Duplicate control points
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.CLASSICS, appContext
+                RaceType.CLASSIC,
+                appContext
             )
         }.message)
         cpString = "32 35 35 44 44B" //Same control point and beacon
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.CLASSICS, appContext
+                RaceType.CLASSIC,
+                appContext
             )
         }.message)
         cpString = "#%99%%" //Invalid characters
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.CLASSICS, appContext
+                RaceType.CLASSIC,
+                appContext
             )
         }.message)
     }
@@ -242,9 +233,9 @@ class ControlPointsParsingUnitTest {
         var cpString = "31 32 33 34 36! 31 35 99B"
         var result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
-            RaceType.SPRINT, appContext
+            RaceType.SPRINT,
+            appContext
         )
         assertEquals(
             listOf(31, 32, 33, 34, 36, 31, 35, 99),
@@ -267,9 +258,9 @@ class ControlPointsParsingUnitTest {
         cpString = "31 32 33 34 36! 31 35 99"   //Beacon doesn't need to be present
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
-            RaceType.SPRINT, appContext
+            RaceType.SPRINT,
+            appContext
         )
         assertEquals(
             listOf(31, 32, 33, 34, 36, 31, 35, 99),
@@ -292,9 +283,9 @@ class ControlPointsParsingUnitTest {
         cpString = "33 34 35 36"    //No separator is needed
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
-            RaceType.SPRINT, appContext
+            RaceType.SPRINT,
+            appContext
         )
         assertEquals(listOf(33, 34, 35, 36), result.map { cp -> cp.siCode }.toList())
         assertEquals((1..4).toList(), result.map { cp -> cp.order }.toList())
@@ -310,9 +301,9 @@ class ControlPointsParsingUnitTest {
         cpString = "31 32 33 34 36! 31 32 99B"  //Duplicate controls separated
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
-            RaceType.SPRINT, appContext
+            RaceType.SPRINT,
+            appContext
         )
         assertEquals(
             listOf(31, 32, 33, 34, 36, 31, 32, 99),
@@ -335,9 +326,9 @@ class ControlPointsParsingUnitTest {
         cpString = "31 36! 42 36!"  //Same separators are fine
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
-            RaceType.SPRINT, appContext
+            RaceType.SPRINT,
+            appContext
         )
         assertEquals(listOf(31, 36, 42, 36), result.map { cp -> cp.siCode }.toList())
         assertEquals((1..4).toList(), result.map { cp -> cp.order }.toList())
@@ -353,9 +344,9 @@ class ControlPointsParsingUnitTest {
         cpString = "31 32 36! 41 42 43 99B"  //Same separator and beacon
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
-            RaceType.SPRINT, appContext
+            RaceType.SPRINT,
+            appContext
         )
         assertEquals(listOf(31, 32, 36, 41, 42, 43, 99), result.map { cp -> cp.siCode }.toList())
         assertEquals((1..7).toList(), result.map { cp -> cp.order }.toList())
@@ -374,9 +365,9 @@ class ControlPointsParsingUnitTest {
         cpString = ""   // Empty string is fine
         result = ControlPointsHelper.getControlPointsFromString(
             cpString,
-            raceId,
             categoryId,
-            RaceType.SPRINT, appContext
+            RaceType.SPRINT,
+            appContext
         )
         assertEquals(0, result.size)
     }
@@ -387,9 +378,9 @@ class ControlPointsParsingUnitTest {
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.SPRINT, appContext
+                RaceType.SPRINT,
+                appContext
             )
         }.message)
 
@@ -397,9 +388,9 @@ class ControlPointsParsingUnitTest {
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.SPRINT, appContext
+                RaceType.SPRINT,
+                appContext
             )
         }.message)
 
@@ -407,9 +398,9 @@ class ControlPointsParsingUnitTest {
         System.err.println(assertThrows(java.lang.IllegalArgumentException::class.java) {
             ControlPointsHelper.getControlPointsFromString(
                 cpString,
-                raceId,
                 categoryId,
-                RaceType.SPRINT, appContext
+                RaceType.SPRINT,
+                appContext
             )
         }.message)
     }

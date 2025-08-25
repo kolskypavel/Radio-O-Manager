@@ -1,4 +1,4 @@
-package kolskypavel.ardfmanager.ui.readouts
+package kolskypavel.ardfmanager.ui.results
 
 import android.app.AlertDialog
 import android.os.Build
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -21,11 +22,11 @@ import kolskypavel.ardfmanager.BottomNavDirections
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Race
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kolskypavel.ardfmanager.databinding.FragmentResultsBinding
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
-import kolskypavel.ardfmanager.ui.races.RaceCreateDialogFragment
-import kolskypavel.ardfmanager.ui.results.ResultsFragmentRecyclerViewAdapter
+import kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment
 import kotlinx.coroutines.launch
 
 class ResultsFragment : Fragment() {
@@ -40,6 +41,7 @@ class ResultsFragment : Fragment() {
     private val dataProcessor = DataProcessor.get()
     private lateinit var resultsToolbar: Toolbar
     private lateinit var resultsRecyclerView: RecyclerView
+    private lateinit var resultsServiceMenuItem: MenuItem
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,13 +66,34 @@ class ResultsFragment : Fragment() {
         resultsToolbar = view.findViewById(R.id.results_toolbar)
         resultsRecyclerView = view.findViewById(R.id.results_recycler_view)
         resultsToolbar.inflateMenu(R.menu.fragment_menu_result)
+        resultsServiceMenuItem = resultsToolbar.menu.findItem(R.id.result_menu_results_service)
         resultsToolbar.setOnMenuItemClickListener {
             return@setOnMenuItemClickListener setFragmentMenuActions(it)
         }
 
+        // Set the toolbar as the action bar
         selectedRaceViewModel.race.observe(viewLifecycleOwner) { race ->
             resultsToolbar.title = race.name
             resultsToolbar.subtitle = dataProcessor.raceTypeToString(race.raceType)
+        }
+
+        // Set results service icon
+        selectedRaceViewModel.resultService.observe(viewLifecycleOwner) { data ->
+            if (data != null && data.resultService?.enabled == true) {
+                resultsServiceMenuItem.icon =
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_result_service_running,
+                        null
+                    )
+            } else {
+                resultsServiceMenuItem.icon =
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_result_service_stopped,
+                        null
+                    )
+            }
         }
 
         setResultListener()
@@ -83,6 +106,17 @@ class ResultsFragment : Fragment() {
         when (menuItem.itemId) {
             R.id.result_menu_share_results -> {
                 findNavController().navigate(ResultsFragmentDirections.exportResults())
+            }
+
+            R.id.result_menu_results_service -> {
+                findNavController().navigate(ResultsFragmentDirections.openResultService())
+            }
+
+            R.id.result_menu_print_results -> {
+                dataProcessor.printResults(
+                    selectedRaceViewModel.resultWrappers.value,
+                    selectedRaceViewModel.getCurrentRace()
+                )
             }
 
             R.id.result_menu_edit_race -> {
@@ -107,14 +141,14 @@ class ResultsFragment : Fragment() {
 
     private fun setResultListener() {
         //Enable event modification from menu
-        setFragmentResultListener(RaceCreateDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
+        setFragmentResultListener(RaceEditDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
             val race: Race = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getSerializable(
-                    RaceCreateDialogFragment.BUNDLE_KEY_RACE,
+                    RaceEditDialogFragment.BUNDLE_KEY_RACE,
                     Race::class.java
                 )!!
             } else {
-                bundle.getSerializable(RaceCreateDialogFragment.BUNDLE_KEY_RACE) as Race
+                bundle.getSerializable(RaceEditDialogFragment.BUNDLE_KEY_RACE) as Race
             }
             selectedRaceViewModel.updateRace(race)
         }
@@ -127,12 +161,13 @@ class ResultsFragment : Fragment() {
             val message = getString(R.string.race_end_confirmation)
             builder.setMessage(message)
 
-            builder.setPositiveButton(R.string.ok) { dialog, _ ->
-                dataProcessor.removeReaderRace()
+            builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
+                selectedRaceViewModel.disableResultService()
+                dataProcessor.removeCurrentRace()
                 findNavController().navigate(ResultsFragmentDirections.closeRace())
             }
 
-            builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+            builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
                 dialog.cancel()
             }
             builder.show()
@@ -140,14 +175,19 @@ class ResultsFragment : Fragment() {
 
     }
 
-    private fun openReadoutDetail(resultData: ResultData) {
+    private fun openReadoutDetail(competitorData: CompetitorData) {
+        val resultData = ResultData(
+            competitorData.readoutData!!.result,
+            competitorData.readoutData!!.punches,
+            competitorData.competitorCategory
+        )
         findNavController().navigate(ResultsFragmentDirections.openReadoutDetail(resultData))
     }
 
     private fun setRecyclerViewAdapter() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                selectedRaceViewModel.resultData.collect { results ->
+                selectedRaceViewModel.resultWrappers.collect { results ->
                     resultsRecyclerView.adapter =
                         ResultsFragmentRecyclerViewAdapter(
                             ArrayList(results),

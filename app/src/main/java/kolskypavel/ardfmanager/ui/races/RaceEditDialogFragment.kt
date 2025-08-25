@@ -28,12 +28,12 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.UUID
 
-class RaceCreateDialogFragment : DialogFragment() {
-    private val args: RaceCreateDialogFragmentArgs by navArgs()
+class RaceEditDialogFragment : DialogFragment() {
+    private val args: RaceEditDialogFragmentArgs by navArgs()
     private val dataProcessor = DataProcessor.get()
 
     private lateinit var nameEditText: TextInputEditText
-    private lateinit var externalIdEditText: TextInputEditText
+    private lateinit var apiKey: TextInputEditText
     private lateinit var dateView: TextInputEditText
     private lateinit var startTimeView: TextInputEditText
     private lateinit var limitEditText: TextInputEditText
@@ -59,7 +59,7 @@ class RaceCreateDialogFragment : DialogFragment() {
         setStyle(STYLE_NORMAL, R.style.add_dialog)
 
         nameEditText = view.findViewById(R.id.race_dialog_name)
-        externalIdEditText = view.findViewById(R.id.race_dialog_external_id)
+        apiKey = view.findViewById(R.id.race_dialog_external_id)
         dateView = view.findViewById(R.id.race_dialog_date)
         startTimeView = view.findViewById(R.id.race_dialog_start_time)
         limitEditText = view.findViewById(R.id.race_dialog_limit)
@@ -85,7 +85,7 @@ class RaceCreateDialogFragment : DialogFragment() {
      */
     private fun setPickers() {
         dateView.setOnClickListener {
-            findNavController().navigate(RaceCreateDialogFragmentDirections.selectDate(race.startDateTime.toLocalDate()))
+            findNavController().navigate(RaceEditDialogFragmentDirections.selectDate(race.startDateTime.toLocalDate()))
         }
         setFragmentResultListener(
             DatePickerFragment.REQUEST_KEY_DATE
@@ -101,7 +101,7 @@ class RaceCreateDialogFragment : DialogFragment() {
         }
 
         startTimeView.setOnClickListener {
-            findNavController().navigate(RaceCreateDialogFragmentDirections.selectTime(race.startDateTime.toLocalTime()))
+            findNavController().navigate(RaceEditDialogFragmentDirections.selectTime(race.startDateTime.toLocalTime()))
         }
         setFragmentResultListener(TimePickerFragment.REQUEST_KEY_TIME) { _, bundle ->
             race.startDateTime = race.startDateTime.with(
@@ -118,10 +118,10 @@ class RaceCreateDialogFragment : DialogFragment() {
             dialog?.setTitle(R.string.race_create)
             race = Race(
                 UUID.randomUUID(),
-                "", null,
+                "", "",
                 LocalDateTime.now(),
-                RaceType.CLASSICS,
-                RaceLevel.TRAINING,
+                RaceType.CLASSIC,
+                RaceLevel.PRACTICE,
                 RaceBand.M80,
                 Duration.ofMinutes(120)
             )
@@ -132,11 +132,9 @@ class RaceCreateDialogFragment : DialogFragment() {
         }
 
         dateView.setText(race.startDateTime.toLocalDate().toString())
-        if (race.externalId != null) {
-            externalIdEditText.setText(race.externalId.toString())
-        }
+        apiKey.setText(race.apiKey)
         startTimeView.setText(TimeProcessor.hoursMinutesFormatter(race.startDateTime))
-        limitEditText.setText("120") //TODO: Fix with default values from settings
+        limitEditText.setText("120")
 
         raceTypePicker.setText(dataProcessor.raceTypeToString(race.raceType), false)
         raceLevelPicker.setText(dataProcessor.raceLevelToString(race.raceLevel), false)
@@ -148,13 +146,13 @@ class RaceCreateDialogFragment : DialogFragment() {
         okButton.setOnClickListener {
 
             //Send the arguments to create a new race
-            if (checkValidity()) {
+            if (validateFields()) {
 
                 race.name = nameEditText.text.toString().trim()
-                if (externalIdEditText.text.toString().trim().isNotBlank()) {
-                    race.externalId = externalIdEditText.text.toString().trim().toLong()
+                if (apiKey.text.toString().trim().isNotBlank()) {
+                    race.apiKey = apiKey.text.toString().trim()
                 } else {
-                    race.externalId = null
+                    race.apiKey = ""
                 }
                 race.raceType =
                     dataProcessor.raceTypeStringToEnum(raceTypePicker.text.toString())
@@ -182,23 +180,23 @@ class RaceCreateDialogFragment : DialogFragment() {
     /**
      * Check if all the provided fields are valid
      */
-    private fun checkValidity(): Boolean {
+    private fun validateFields(): Boolean {
         var valid = true
 
         if (nameEditText.text?.isBlank() == true) {
-            nameEditText.error = getString(R.string.required)
+            nameEditText.error = getString(R.string.general_required)
             valid = false
         }
 
         //Validate start time
         if (startTimeView.text?.isBlank() == true) {
-            startTimeView.error = getString(R.string.required)
+            startTimeView.error = getString(R.string.general_required)
             valid = false
         } else {
             try {
                 LocalTime.parse(startTimeView.text.toString().trim())
             } catch (e: Exception) {
-                startTimeView.error = getString(R.string.invalid)
+                startTimeView.error = getString(R.string.general_invalid)
                 valid = false
             }
         }
@@ -207,11 +205,11 @@ class RaceCreateDialogFragment : DialogFragment() {
             try {
                 Duration.ofMinutes(limitEditText.text.toString().trim().toLong())
             } catch (e: Exception) {
-                limitEditText.error = getString(R.string.invalid)
+                limitEditText.error = getString(R.string.general_invalid)
                 valid = false
             }
         } else {
-            limitEditText.error = getString(R.string.required)
+            limitEditText.error = getString(R.string.general_required)
             valid = false
         }
 

@@ -27,7 +27,6 @@ class ResultsExportDialogFragment : DialogFragment() {
     private lateinit var dataTypePicker: MaterialAutoCompleteTextView
     private lateinit var dataFormatPicker: MaterialAutoCompleteTextView
     private lateinit var errorText: TextView
-    private lateinit var previewButton: Button
     private lateinit var exportButton: Button
     private lateinit var cancelButton: Button
 
@@ -61,7 +60,6 @@ class ResultsExportDialogFragment : DialogFragment() {
         dataFormatPicker = view.findViewById(R.id.results_data_format_picker)
         errorText = view.findViewById(R.id.results_error_view)
 
-        previewButton = view.findViewById(R.id.results_file_preview_btn)
         exportButton = view.findViewById(R.id.results_file_export_button)
         cancelButton = view.findViewById(R.id.results_file_cancel)
 
@@ -70,9 +68,26 @@ class ResultsExportDialogFragment : DialogFragment() {
 
     private fun setButtons() {
         dataTypePicker.setText(getString(R.string.data_type_results), false)
-        dataFormatPicker.setText(getText(R.string.data_format_csv), false)
-        previewButton.setOnClickListener {
+        dataFormatPicker.setText(getText(R.string.data_format_txt), false)
 
+        // Filter data formats based on the selected data type
+        dataTypePicker.setOnItemClickListener { _, _, _, _ ->
+            val selectedType = getCurrentType()
+            when (selectedType) {
+                DataType.RESULTS -> {
+                    dataFormatPicker.setSimpleItems(R.array.results_data_formats)
+                    dataFormatPicker.setText(getString(R.string.data_format_txt), false)
+                }
+
+                DataType.READOUT_DATA -> {
+                    dataFormatPicker.setSimpleItems(R.array.readout_data_data_formats)
+                    dataFormatPicker.setText(getString(R.string.data_format_csv), false)
+                }
+
+                else -> {
+                    //safeguard against unsupported types
+                }
+            }
         }
 
         exportButton.setOnClickListener {
@@ -111,11 +126,6 @@ class ResultsExportDialogFragment : DialogFragment() {
                 intent.putExtra(Intent.EXTRA_TITLE, "results.xml")
             }
 
-            DataFormat.PDF -> {
-                intent.type = "application/pdf"
-                intent.putExtra(Intent.EXTRA_TITLE, "results.pdf")
-            }
-
             DataFormat.HTML -> {
                 intent.type = "text/html"
                 intent.putExtra(Intent.EXTRA_TITLE, "results.html")
@@ -135,25 +145,22 @@ class ResultsExportDialogFragment : DialogFragment() {
     }
 
     private fun exportData(uri: Uri) {
-        if (selectedRaceViewModel.exportData(
+
+        try {
+            selectedRaceViewModel.exportData(
                 uri,
                 getCurrentType(),
                 getCurrentFormat()
             )
-        ) {
-            try {
-                errorText.error = ""
-                val intent = Intent()
-                intent.setAction(Intent.ACTION_VIEW)
-                intent.setData(uri)
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                startActivity(intent)
-            } catch (e: Exception) {
-                Log.e("File intent opening", e.stackTraceToString())
-                errorText.error = getString(R.string.results_export_error)
-            }
-        } else {
-            errorText.error = getString(R.string.results_export_error)
+            errorText.text = ""
+            val intent = Intent()
+            intent.setAction(Intent.ACTION_VIEW)
+            intent.setData(uri)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Log.e("File intent opening", e.stackTraceToString())
+            errorText.text = e.message
         }
     }
 
@@ -163,12 +170,11 @@ class ResultsExportDialogFragment : DialogFragment() {
 
         when (currType) {
             DataType.CATEGORIES -> TODO()
-            DataType.C0MPETITORS -> TODO()
+            DataType.COMPETITORS -> TODO()
             DataType.COMPETITOR_STARTS_TIME -> TODO()
             DataType.COMPETITOR_STARTS_CATEGORIES -> TODO()
             DataType.COMPETITOR_STARTS_CLUBS -> TODO()
-            DataType.RESULTS_SIMPLE -> TODO()
-            DataType.RESULTS_SPLITS -> TODO()
+            DataType.RESULTS -> TODO()
             DataType.READOUT_DATA -> TODO()
         }
     }

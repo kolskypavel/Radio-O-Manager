@@ -9,7 +9,7 @@
     <item
         android:id="@+id/readout_detail_menu_print_ticket"
         android:icon="@drawable/ic_print"
-        android:title="@string/readout_print_ticket"
+        android:title="@string/prints_result_ticket"
         app:showAsAction="always" />
 
     <item
@@ -17,6 +17,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/readout_create_category_from_readout" />
+
+    <item
+        android:id="@+id/readout_detail_menu_assign_controls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="@string/readout_assign_control_points" />
+
     <item
         android:id="@+id/readout_detail_menu_delete_readout"
         android:layout_width="wrap_content"

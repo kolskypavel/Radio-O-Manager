@@ -20,10 +20,20 @@ import java.util.UUID
 data class Race(
     @PrimaryKey var id: UUID,
     var name: String,
-    @ColumnInfo(name = "external_id") var externalId: Long?,
+    @ColumnInfo(name = "api_key") var apiKey: String,
     @ColumnInfo(name = "start_date_time") var startDateTime: LocalDateTime,
     @ColumnInfo(name = "race_type") var raceType: RaceType,
     @ColumnInfo(name = "race_level") var raceLevel: RaceLevel,
     @ColumnInfo(name = "race_band") var raceBand: RaceBand,
     @ColumnInfo(name = "time_limit") var timeLimit: Duration
-) : Serializable
+) : Serializable {
+    constructor() : this(
+        UUID.randomUUID(),
+        "", "",
+        LocalDateTime.now(),
+        RaceType.CLASSIC,
+        RaceLevel.PRACTICE,
+        RaceBand.M80,
+        Duration.ZERO
+    )
+}

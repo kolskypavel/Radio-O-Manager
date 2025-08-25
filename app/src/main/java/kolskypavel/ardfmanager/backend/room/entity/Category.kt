@@ -14,10 +14,15 @@ import java.time.Duration
 import java.util.UUID
 
 @Entity(
-    tableName = "category", indices = [Index(
-        value = ["name", "race_id", "order"],
-        unique = true
-    )],
+    tableName = "category", indices = [
+        Index(
+            value = ["name", "race_id"],
+            unique = true
+        ),
+//        Index(
+//            value = ["order", "race_id"],
+//            unique = true        )        // TODO: finish
+                                      ],
     foreignKeys = [ForeignKey(
         entity = Race::class,
         parentColumns = arrayOf("id"),
@@ -30,7 +35,7 @@ data class Category(
     @PrimaryKey var id: UUID,
     @ColumnInfo(name = "race_id") var raceId: UUID,
     @ColumnInfo(name = "name") var name: String,
-    @ColumnInfo(name = "is_woman") var isMan: Boolean,
+    @ColumnInfo(name = "is_man") var isMan: Boolean,
     @ColumnInfo(name = "max_age") var maxAge: Int?,
     @ColumnInfo(name = "length") var length: Float,
     @ColumnInfo(name = "climb") var climb: Float,
@@ -46,23 +51,19 @@ data class Category(
         return "$name;${isMan.compareTo(false)};${maxAge ?: 0};${length};${climb};${order};${raceType?.value ?: ""};${timeLimit?.toMinutes() ?: ""}}"
     }
 
-    companion object {
-        fun getTestCategory(): Category {
-            return Category(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                "TEST",
-                true,
-                null,
-                0F,
-                0F,
-                0,
-                false,
-                null,
-                null,
-                null,
-                ""
-            )
-        }
-    }
+    constructor() : this(
+        UUID.randomUUID(),
+        UUID.randomUUID(),
+        "TEST",
+        true,
+        null,
+        0F,
+        0F,
+        0,
+        false,
+        null,
+        null,
+        null,
+        ""
+    )
 }

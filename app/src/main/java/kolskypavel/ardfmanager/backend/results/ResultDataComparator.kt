@@ -4,19 +4,19 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 
 class ResultDataComparator : Comparator<CompetitorData> {
     override fun compare(o1: CompetitorData, o2: CompetitorData): Int {
-        val readoutResult1 = o1.resultData
-        val readoutResult2 = o2.resultData
+        val readoutData1 = o1.readoutData
+        val readoutData2 = o2.readoutData
 
         // Compare based on the existence of readoutResult
-        if (readoutResult1 == null && readoutResult2 == null) {
+        if (readoutData1 == null && readoutData2 == null) {
             return 0
-        } else if (readoutResult1 == null) {
+        } else if (readoutData1 == null) {
             return 1
-        } else if (readoutResult2 == null) {
+        } else if (readoutData2 == null) {
             return -1
         }
 
         // Both readoutResult are not null, compare based on their result
-        return readoutResult1.result.compareTo(readoutResult2.result)
+        return readoutData1.result.compareTo(readoutData2.result)
     }
 }

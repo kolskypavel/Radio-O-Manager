@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
-        android:key="@string/key_prints_select_printer"
+        android:key="@string/key_prints_selected_printer_address"
         android:summary="@string/preferences_prints_select_printer_hint"
         android:title="@string/preferences_prints_select_printer"
         app:iconSpaceReserved="false" />
@@ -20,11 +20,21 @@
         android:layout_height="wrap_content"
         android:defaultValue="@string/general_automatic"
         android:enabled="false"
-        android:entries="@array/automatic_prints"
-        android:entryValues="@array/automatic_prints"
+        android:entries="@array/preferences_automatic_prints"
+        android:entryValues="@array/preferences_automatic_prints_entries"
         android:key="@string/key_prints_automatic_printout"
-        android:summary="@string/preferences_prints_automatic"
-        android:title="@string/preferences_prints_automatic_hint"
+        android:summary="@string/preferences_prints_automatic_hint"
+        android:title="@string/preferences_prints_automatic"
         app:iconSpaceReserved="false" />
+
+    <CheckBoxPreference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="0"
+        android:key="@string/key_prints_remove_diacritics"
+        android:summary=""
+        android:title="@string/preferences_prints_remove_diacritics"
+        app:iconSpaceReserved="false"
+        app:summary="@string/preferences_prints_remove_diacritics_hint" />
 
 </PreferenceScreen>

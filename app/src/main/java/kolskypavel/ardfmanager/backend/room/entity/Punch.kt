@@ -35,4 +35,19 @@ data class Punch(
     fun toCsvString(): String {
         return "${cardNumber ?: ""};${siCode};${siTime}"
     }
+
+    // For debugging purposes
+    constructor() : this(
+        id = UUID.randomUUID(),
+        raceId = UUID.randomUUID(),
+        resultId = null,
+        cardNumber = null,
+        siCode = 0,
+        siTime = SITime(),
+        origSiTime = SITime(),
+        punchType = SIRecordType.CONTROL,
+        order = 0,
+        punchStatus = PunchStatus.UNKNOWN,
+        split = Duration.ZERO
+    )
 }

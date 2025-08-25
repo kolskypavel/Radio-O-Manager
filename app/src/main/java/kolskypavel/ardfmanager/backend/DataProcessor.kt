@@ -1,10 +1,12 @@
 package kolskypavel.ardfmanager.backend
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.hardware.usb.UsbDevice
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
+import androidx.preference.PreferenceManager
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.files.FileProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
@@ -14,25 +16,35 @@ import kolskypavel.ardfmanager.backend.helpers.ControlPointsHelper
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.prints.PrintProcessor
 import kolskypavel.ardfmanager.backend.results.ResultsProcessor
+import kolskypavel.ardfmanager.backend.results.ResultsProcessor.updateResultsForCategory
 import kolskypavel.ardfmanager.backend.room.ARDFRepository
 import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.ControlPoint
-import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.Punch
+import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.Result
+import kolskypavel.ardfmanager.backend.room.entity.ResultService
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
+import kolskypavel.ardfmanager.backend.room.enums.PunchStatus
 import kolskypavel.ardfmanager.backend.room.enums.RaceBand
 import kolskypavel.ardfmanager.backend.room.enums.RaceLevel
 import kolskypavel.ardfmanager.backend.room.enums.RaceType
-import kolskypavel.ardfmanager.backend.room.enums.RaceStatus
+import kolskypavel.ardfmanager.backend.room.enums.ResultServiceStatus
+import kolskypavel.ardfmanager.backend.room.enums.ResultServiceType
+import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.room.enums.StandardCategoryType
 import kolskypavel.ardfmanager.backend.sportident.SIPort.CardData
 import kolskypavel.ardfmanager.backend.sportident.SIReaderService
 import kolskypavel.ardfmanager.backend.sportident.SIReaderState
 import kolskypavel.ardfmanager.backend.sportident.SIReaderStatus
+import kolskypavel.ardfmanager.backend.wrappers.ResultWrapper
 import kolskypavel.ardfmanager.backend.wrappers.StatisticsWrapper
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -52,9 +64,8 @@ class DataProcessor private constructor(context: Context) {
     private var appContext: WeakReference<Context> = WeakReference(context)
 
     var currentState = MutableLiveData<AppState>()
-    var resultsProcessor: ResultsProcessor? = null
     var fileProcessor: FileProcessor? = null
-    var printProcessor = PrintProcessor()
+    var printProcessor = PrintProcessor(context, this)
 
     companion object {
         private var INSTANCE: DataProcessor? = null
@@ -77,6 +88,13 @@ class DataProcessor private constructor(context: Context) {
 
     fun getContext(): Context = appContext.get()!!
 
+    fun getAppVersion(): String {
+        val packageInfo =
+            appContext.get()!!.packageManager.getPackageInfo(appContext.get()!!.packageName, 0)
+        return packageInfo.versionName ?: "Unknown Version"
+    }
+
+    @SuppressLint("NullSafeMutableLiveData")
     fun updateReaderState(newSIState: SIReaderState) {
         val stateToUpdate = currentState.value
 
@@ -95,17 +113,16 @@ class DataProcessor private constructor(context: Context) {
 
     fun getCurrentRace() = currentState.value?.currentRace!!
 
-    fun removeReaderRace() {
-        currentState.postValue(currentState.value?.let { AppState(null, it.siReaderState) })
+    fun removeCurrentRace() {
+        currentState.postValue(currentState.value?.let { AppState(null, it.siReaderState, null) })
     }
 
     //METHODS TO HANDLE RACES
     fun getRaces(): Flow<List<Race>> = ardfRepository.getRaces()
 
-    private suspend fun getRace(id: UUID): Race = ardfRepository.getRace(id)
+    suspend fun getRace(id: UUID): Race = ardfRepository.getRace(id)
 
     suspend fun createRace(race: Race) = ardfRepository.createRace(race)
-
 
     suspend fun updateRace(race: Race) {
         ardfRepository.updateRace(race)
@@ -135,10 +152,14 @@ class DataProcessor private constructor(context: Context) {
     suspend fun getCategoryByName(string: String, raceId: UUID): Category? =
         ardfRepository.getCategoryByName(string, raceId)
 
-    suspend fun getCategoryByBirthYear(birthYear: Int, isWoman: Boolean, raceId: UUID): Category? {
+    private suspend fun getCategoryByBirthYear(
+        birthYear: Int,
+        isMan: Boolean,
+        raceId: UUID
+    ): Category? {
         //Calculate the age difference
         val age = LocalDate.now().year - birthYear
-        return ardfRepository.getCategoryByBirthYear(age, isWoman, raceId)
+        return ardfRepository.getCategoryByBirthYear(age, isMan, raceId)
     }
 
     suspend fun getStartTimeForCategory(categoryId: UUID): Duration? {
@@ -157,8 +178,12 @@ class DataProcessor private constructor(context: Context) {
         ardfRepository.getCategoryByMaxAge(maxAge, raceId)
 
     suspend fun createOrUpdateCategory(category: Category, controlPoints: List<ControlPoint>?) {
+        // Update the control points string
+        controlPoints?.let {
+            category.controlPointsString = ControlPointsHelper.getStringFromControlPoints(it)
+        }
         ardfRepository.createOrUpdateCategory(category, controlPoints)
-        updateResultsForCategory(category.id, false)
+        updateResultsForCategory(category.id, false, this)
     }
 
     /**
@@ -192,7 +217,7 @@ class DataProcessor private constructor(context: Context) {
     suspend fun deleteCategory(id: UUID, raceId: UUID) {
         ardfRepository.deleteCategory(id)
         ardfRepository.deleteControlPointsByCategory(id)
-        updateResultsForCategory(id, true)
+        updateResultsForCategory(id, true, this)
         updateCategoryOrder(raceId)
     }
 
@@ -209,19 +234,11 @@ class DataProcessor private constructor(context: Context) {
     suspend fun getControlPointsByCategory(categoryId: UUID) =
         ardfRepository.getControlPointsByCategory(categoryId)
 
-
-    suspend fun getControlPointByCode(raceId: UUID, code: Int) =
-        ardfRepository.getControlPointByCode(raceId, code)
-
-
-    fun getStringFromControlPoints(controlPoints: List<ControlPoint>): String =
-        ControlPointsHelper.getStringFromControlPoints(controlPoints)
-
-    fun getStringFromPunches(punches: List<Punch>): String =
-        ControlPointsHelper.getStringFromPunches(punches)
-
     //ALIASES
     suspend fun getAliasesByRace(raceId: UUID) = ardfRepository.getAliasesByRace(raceId)
+
+    suspend fun getControlPointAliasesByCategory(categoryId: UUID) =
+        ardfRepository.getControlPointAliasesByCategory(categoryId)
 
     suspend fun createOrUpdateAliases(aliases: List<Alias>, raceId: UUID) {
         ardfRepository.deleteAliasesByRace(raceId)
@@ -245,16 +262,17 @@ class DataProcessor private constructor(context: Context) {
     suspend fun getStatisticsByRace(raceId: UUID): StatisticsWrapper {
         val competitors = ardfRepository.getCompetitorDataFlowByRace(raceId).first()
         val statistics = StatisticsWrapper(competitors.size, 0, 0, 0)
+        val race = getRace(raceId)
 
         for (cd in competitors) {
             val competitor = cd.competitorCategory.competitor
             val category = cd.competitorCategory.category
 
-            if (cd.resultData == null) {
+            if (cd.readoutData == null) {
                 if (competitor.drawnRelativeStartTime != null) {
                     //Count started
                     if (TimeProcessor.hasStarted(
-                            getCurrentRace().startDateTime,
+                            race.startDateTime,
                             competitor.drawnRelativeStartTime!!,
                             LocalDateTime.now()
                         )
@@ -262,9 +280,9 @@ class DataProcessor private constructor(context: Context) {
                         statistics.startedCompetitors++
                     }
 
-                    val limit = category?.timeLimit ?: getCurrentRace().timeLimit
+                    val limit = category?.timeLimit ?: race.timeLimit
                     if (TimeProcessor.isInLimit(
-                            getCurrentRace().startDateTime,
+                            race.startDateTime,
                             competitor.drawnRelativeStartTime!!,
                             limit, LocalDateTime.now()
                         )
@@ -300,15 +318,14 @@ class DataProcessor private constructor(context: Context) {
         competitor: Competitor,
     ) {
         ardfRepository.createCompetitor(competitor)
-        updateResultsForCompetitor(competitor.id)
+        ResultsProcessor.updateResultsForCompetitor(competitor.id, this)
     }
 
     suspend fun deleteCompetitor(id: UUID, deleteResult: Boolean) {
-        ardfRepository.deleteCompetitor(id)
-        // TODO: solve the removal of the result
         if (deleteResult) {
             ardfRepository.deleteResultForCompetitor(id)
         }
+        ardfRepository.deleteCompetitor(id)
     }
 
     suspend fun deleteAllCompetitorsByRace(raceId: UUID) {
@@ -317,11 +334,10 @@ class DataProcessor private constructor(context: Context) {
 
     suspend fun addCategoriesAutomatically(raceId: UUID) {
         val competitors = ardfRepository.getCompetitorsByRace(raceId)
-        val categories = getCategoriesForRace(raceId)
 
         for (comp in competitors) {
             if (comp.categoryId == null && comp.birthYear != null) {
-
+                comp.categoryId = getCategoryByBirthYear(comp.birthYear!!, comp.isMan, raceId)?.id
                 createOrUpdateCompetitor(comp)
             }
         }
@@ -334,21 +350,23 @@ class DataProcessor private constructor(context: Context) {
 
     fun getResultDataFlowByRace(raceId: UUID) = ardfRepository.getResultDataFlowByRace(raceId)
 
-    fun getResultWrapperFlowByRace(raceId: UUID) =
-        resultsProcessor!!.getResultWrappersByRace(raceId)
-
     suspend fun getResultByCompetitor(competitorId: UUID) =
         ardfRepository.getResultByCompetitor(competitorId)
 
     suspend fun getResultBySINumber(siNumber: Int, raceId: UUID) =
         ardfRepository.getResultBySINumber(siNumber, raceId)
 
-    suspend fun saveResultPunches(result: Result, punches: List<Punch>) =
+    suspend fun saveResultPunches(result: Result, punches: List<Punch>) {
+        result.sent = false     // Mark as unsent
         ardfRepository.saveResultPunches(result, punches)
+    }
+
+    suspend fun createOrUpdateResult(result: Result) =
+        ardfRepository.createOrUpdateResult(result)
 
     private suspend fun updateResults(raceId: UUID) {
         getCategoriesForRace(raceId).forEach { category ->
-            updateResultsForCategory(category.id, false)
+            updateResultsForCategory(category.id, false, this)
         }
     }
 
@@ -356,6 +374,18 @@ class DataProcessor private constructor(context: Context) {
 
     suspend fun deleteAllResultsByRace(raceId: UUID) {
         ardfRepository.deleteAllResultsByRace(raceId)
+    }
+
+    // Return wherever the "mm:ss" format should be used
+    fun useMinuteTimeFormat(): Boolean {
+        val context = getContext()
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val preference =
+            sharedPref.getString(
+                context.getString(R.string.key_results_time_format),
+                context.getString(R.string.preferences_results_time_format_minutes)
+            )
+        return (preference == context.getString(R.string.preferences_results_time_format_minutes))
     }
 
     //PUNCHES
@@ -369,27 +399,52 @@ class DataProcessor private constructor(context: Context) {
     }
 
     suspend fun processCardData(cardData: CardData, race: Race) =
-        appContext.get()?.let { resultsProcessor?.processCardData(cardData, race, it) }
+        appContext.get()?.let { ResultsProcessor.processCardData(cardData, race, it, this) }
 
-    suspend fun processManualPunches(
-        result: Result,
-        punches: ArrayList<Punch>,
-        manualStatus: RaceStatus?
-    ) = resultsProcessor?.processManualPunchData(
-        result,
-        punches,
-        getRace(result.raceId),
-        manualStatus
-    )
+    suspend fun setAllResultsUnsent(raceId: UUID) =
+        ardfRepository.setAllResultsUnsent(raceId)
 
+    //RESULT SERVICE
+    fun getResultServiceByRaceId(raceId: UUID) =
+        ardfRepository.getResultServiceByRaceId(raceId)
 
-    private suspend fun updateResultsForCategory(categoryId: UUID, delete: Boolean) =
-        resultsProcessor?.updateResultsForCategory(categoryId, delete)
+    fun getResultServiceLiveDataWithCountByRaceId(raceId: UUID) =
+        ardfRepository.getResultServiceLiveDataWithCountByRaceId(raceId)
 
-    private suspend fun updateResultsForCompetitor(competitorId: UUID) =
-        resultsProcessor?.updateResultsForCompetitor(
-            competitorId
-        )
+    suspend fun createOrUpdateResultService(resultService: ResultService) =
+        ardfRepository.createOrUpdateResultService(resultService)
+
+    suspend fun setResultServiceDisabledByRaceId(raceId: UUID) {
+        val service = getResultServiceByRaceId(raceId)
+        if (service != null) {
+            service.enabled = false
+            service.status = ResultServiceStatus.DISABLED
+            service.errorText = ""
+            ardfRepository.createOrUpdateResultService(service)
+        }
+    }
+
+    fun setResultServiceJob(job: Job) {
+        currentState.postValue(currentState.value?.let {
+            AppState(
+                it.currentRace,
+                it.siReaderState,
+                job
+            )
+        })
+        currentState.value?.resultServiceJob?.start()
+    }
+
+    fun removeResultServiceJob() {
+        currentState.value?.resultServiceJob?.cancel()
+        currentState.postValue(currentState.value?.let {
+            AppState(
+                it.currentRace,
+                it.siReaderState,
+                null
+            )
+        })
+    }
 
     //DATA IMPORT/EXPORT
     suspend fun importData(
@@ -397,8 +452,105 @@ class DataProcessor private constructor(context: Context) {
         dataType: DataType,
         dataFormat: DataFormat,
         raceId: UUID
-    ): DataImportWrapper? {
-        return fileProcessor?.importData(uri, dataType, dataFormat, getRace(raceId))
+    ): DataImportWrapper {
+        val data =
+            fileProcessor?.importData(uri, dataType, dataFormat, getRace(raceId), getContext())
+
+        validateDataImport(data!!, raceId, dataType, getContext())
+        return data
+    }
+
+    @Throws(IllegalArgumentException::class)
+    private fun validateDataImport(
+        data: DataImportWrapper,
+        raceId: UUID,
+        dataType: DataType,
+        context: Context
+    ) {
+        when (dataType) {
+
+            //Name is required for each category and must be unique, categories can be empty
+            DataType.CATEGORIES -> {
+                val names = data.categories.map { it.category.name }
+
+                val duplicates = names.groupingBy { it }.eachCount().filter { it.value > 1 }.keys
+                if (duplicates.isNotEmpty()) {
+                    throw IllegalArgumentException(
+                        context.getString(
+                            R.string.data_import_category_duplicate,
+                            duplicates.joinToString(", ")
+                        )
+                    )
+                }
+            }
+
+            // SI number and start number must be unique
+            DataType.COMPETITORS -> {
+
+                //TODO: add check for duplicate names
+                val startNumbers = HashSet<Int>()
+                val siNumbers = HashSet<Int>()
+                for (comp in data.competitorCategories) {
+                    val siNumber = comp.competitor.siNumber
+                    val startNumber = comp.competitor.startNumber
+
+                    // Check if SI is duplicated in the list or in the database
+                    if (siNumber != null) {
+                        if (siNumbers.contains(siNumber)
+                        ) {
+                            throw IllegalArgumentException(
+                                context.getString(
+                                    R.string.data_import_competitor_duplicate_si_file,
+                                    siNumber
+                                )
+                            )
+                        }
+                        if (checkIfSINumberExists(siNumber, raceId)) {
+                            throw IllegalArgumentException(
+                                context.getString(
+                                    R.string.data_import_competitor_duplicate_si_race,
+                                    siNumber
+                                )
+                            )
+                        }
+                    }
+
+                    // Start number checks
+                    if (startNumbers.contains(startNumber)
+                    ) {
+                        throw IllegalArgumentException(
+                            context.getString(
+                                R.string.data_import_competitor_duplicate_start_number_file,
+                                startNumber
+                            )
+                        )
+                    }
+
+                    if (checkIfStartNumberExists(startNumber, raceId)) {
+                        throw IllegalArgumentException(
+                            context.getString(
+                                R.string.data_import_competitor_duplicate_start_number_race,
+                                startNumber
+                            )
+                        )
+                    }
+
+                    // Add the numbers to the sets
+                    if (siNumber != null) {
+                        siNumbers.add(siNumber)
+                    }
+                    startNumbers.add(startNumber)
+                }
+            }
+
+            DataType.COMPETITOR_STARTS_TIME -> {
+                // TODO: implement - based on settings
+            }
+
+            else -> {
+                throw IllegalArgumentException(context.getString(R.string.data_import_format_not_supported))
+            }
+        }
     }
 
     suspend fun exportData(
@@ -406,15 +558,54 @@ class DataProcessor private constructor(context: Context) {
         dataType: DataType,
         dataFormat: DataFormat,
         raceId: UUID
-    ): Boolean {
-        return fileProcessor?.exportData(
+    ) =
+        fileProcessor?.exportData(
             uri,
             dataType,
             dataFormat,
             raceId
-        ) ?: false
+        )
+
+    //-----------------------RACE DATA-----------------------
+
+    suspend fun getRaceData(raceId: UUID): RaceData {
+        val race = getRace(raceId)
+        val categories = getCategoryDataForRace(raceId)
+        val aliases = getAliasesByRace(raceId)
+        val competitorData =
+            ResultsProcessor.getCompetitorDataByRace(raceId, this)
+        val unknownReadoutData =
+            getResultDataFlowByRace(raceId).first().filter { it.competitorCategory == null }
+                .map { fil -> ReadoutData(fil.result, fil.punches) }
+
+        return RaceData(race, categories, aliases, competitorData, unknownReadoutData)
     }
 
+    suspend fun importRaceData(uri: Uri) {
+        val raceData = fileProcessor?.importRaceData(uri)
+        if (raceData != null) {
+            ardfRepository.saveRaceData(raceData)
+        }
+    }
+
+    suspend fun exportRaceData(uri: Uri, raceId: UUID) =
+        fileProcessor?.exportRaceData(uri, raceId)
+
+    suspend fun saveDataImportWrapper(
+        data: DataImportWrapper
+    ) {
+        //Upsert categories
+        for (catData in data.categories) {
+            createOrUpdateCategory(
+                catData.category,
+                catData.controlPoints
+            )
+        }
+        //Create competitors - TODO: ADD duplicates check
+        for (compData in data.competitorCategories) {
+            createOrUpdateCompetitor(compData.competitor)
+        }
+    }
 
     //SportIdent manipulation
     fun connectDevice(usbDevice: UsbDevice) {
@@ -436,11 +627,18 @@ class DataProcessor private constructor(context: Context) {
     fun getLastReadCard(): Int? = currentState.value?.siReaderState?.lastCard
 
     //PRINTING
-    fun enablePrinting() {
-        printProcessor.printerReady = true
+    fun disablePrinter() {
+        printProcessor.disablePrinter()
     }
 
-    //GENERAL HELPER METHODS
+    fun printFinishTicket(resultData: ResultData, race: Race) =
+        printProcessor.printFinishTicket(resultData, race)
+
+
+    fun printResults(results: List<ResultWrapper>, race: Race) =
+        printProcessor.printResults(results, race)
+
+//GENERAL HELPER METHODS
 
     //Enums manipulation
     fun raceTypeToString(raceType: RaceType): String {
@@ -479,22 +677,22 @@ class DataProcessor private constructor(context: Context) {
         return RaceBand.getByValue(raceBandStrings.indexOf(string))
     }
 
-    fun raceStatusToString(raceStatus: RaceStatus): String {
+    fun resultStatusToString(resultStatus: ResultStatus): String {
         val raceStatusStrings =
             appContext.get()?.resources?.getStringArray(R.array.race_status_array)!!
-        return raceStatusStrings[raceStatus.value]
+        return raceStatusStrings[resultStatus.value]
     }
 
-    fun raceStatusStringToEnum(string: String): RaceStatus {
+    fun resultStatusStringToEnum(string: String): ResultStatus {
         val raceStatusStrings =
             appContext.get()?.resources?.getStringArray(R.array.race_status_array)!!
-        return RaceStatus.getByValue(raceStatusStrings.indexOf(string))
+        return ResultStatus.getByValue(raceStatusStrings.indexOf(string))
     }
 
-    fun raceStatusToShortString(raceStatus: RaceStatus): String {
+    fun resultStatusToShortString(resultStatus: ResultStatus): String {
         val raceStatusStrings =
             appContext.get()?.resources?.getStringArray(R.array.race_status_array_short)!!
-        return raceStatusStrings[raceStatus.value]
+        return raceStatusStrings[resultStatus.value]
     }
 
     fun genderToString(isMan: Boolean?): String {
@@ -502,6 +700,35 @@ class DataProcessor private constructor(context: Context) {
             false -> appContext.get()!!.resources.getString(R.string.general_gender_woman)
             else -> appContext.get()!!.resources.getString(R.string.general_gender_man)
         }
+    }
+
+    fun resultServiceTypeFromString(string: String): ResultServiceType {
+        val raceStatusStrings =
+            appContext.get()?.resources?.getStringArray(R.array.result_service_types)!!
+        return ResultServiceType.getByValue(raceStatusStrings.indexOf(string))
+    }
+
+    fun resultServiceTypeToString(resultServiceType: ResultServiceType): String {
+        val resultServiceTypes =
+            appContext.get()?.resources?.getStringArray(R.array.result_service_types)!!
+        return resultServiceTypes[resultServiceType.value]
+    }
+
+    fun resultServiceStatusToString(status: ResultServiceStatus): CharSequence? {
+        val resultServiceStatus =
+            appContext.get()?.resources?.getStringArray(R.array.result_service_status)!!
+        return resultServiceStatus[status.value]
+    }
+
+    fun punchStatusToShortString(punchStatus: PunchStatus): String {
+        val arr = getContext().resources.getStringArray(R.array.punch_status_array_short)
+        return arr[punchStatus.ordinal]
+    }
+
+    fun shortStringToPunchStatus(string: String): PunchStatus {
+        val punchStatusStrings =
+            appContext.get()?.resources?.getStringArray(R.array.punch_status_array_short)!!
+        return PunchStatus.getByValue(punchStatusStrings.indexOf(string))
     }
 
     /**

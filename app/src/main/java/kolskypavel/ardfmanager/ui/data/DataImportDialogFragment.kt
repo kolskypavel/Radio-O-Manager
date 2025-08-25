@@ -2,6 +2,8 @@ package kolskypavel.ardfmanager.ui.data
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Resources
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,19 +22,11 @@ import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
 import kolskypavel.ardfmanager.backend.files.constants.DataType
 import kolskypavel.ardfmanager.backend.files.wrappers.DataImportWrapper
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class DataImportDialogFragment : DialogFragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.dialog_data_import, container, false)
-    }
 
     private val dataProcessor = DataProcessor.get()
     private val selectedRaceViewModel: SelectedRaceViewModel by activityViewModels()
@@ -44,6 +38,7 @@ class DataImportDialogFragment : DialogFragment() {
     private lateinit var dataPreviewLayout: LinearLayout
     private lateinit var dataPreviewRecyclerView: RecyclerView
     private lateinit var errorView: TextView
+    private lateinit var importInfoView: TextView
     private lateinit var importButton: Button
     private lateinit var okButton: Button
     private lateinit var cancelButton: Button
@@ -61,8 +56,25 @@ class DataImportDialogFragment : DialogFragment() {
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return inflater.inflate(R.layout.dialog_data_import, container, false)
+    }
+
+    private fun DialogFragment.setWidthPercent(percentage: Int) {
+        val percent = percentage.toFloat() / 100
+        val dm = Resources.getSystem().displayMetrics
+        val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
+        val percentWidth = rect.width() * percent
+        dialog?.window?.setLayout(percentWidth.toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setWidthPercent(95)
         setStyle(STYLE_NORMAL, R.style.add_dialog)
         dialog?.setTitle(R.string.data_import_data)
 
@@ -71,6 +83,7 @@ class DataImportDialogFragment : DialogFragment() {
         importButton = view.findViewById(R.id.data_import_import_btn)
         dataPreviewLayout = view.findViewById(R.id.data_import_preview_layout)
         dataPreviewRecyclerView = view.findViewById(R.id.data_import_recyclerview)
+        importInfoView = view.findViewById(R.id.data_import_preview_info)
         errorView = view.findViewById(R.id.data_import_error)
         okButton = view.findViewById(R.id.data_import_ok)
         cancelButton = view.findViewById(R.id.data_import_cancel)
@@ -94,6 +107,7 @@ class DataImportDialogFragment : DialogFragment() {
         }
     }
 
+    // TODO: finish
     private fun setFlags(intent: Intent, dataFormat: DataFormat) {
         intent.type = "text/*"
 //        when (dataFormat) {
@@ -127,52 +141,58 @@ class DataImportDialogFragment : DialogFragment() {
         val currType = getCurrentType()
         val format = getCurrentFormat()
 
-        CoroutineScope(Dispatchers.Main).launch {
-            data = selectedRaceViewModel.importData(
-                uri, currType,
-                format
-            )
-        }
+        try {
+            runBlocking {
+                data = selectedRaceViewModel.importData(
+                    uri, currType,
+                    format
+                )
+            }
 
-        if (data != null) {
             dataPreviewRecyclerView.adapter =
                 DataPreviewRecyclerViewAdapater(data!!, currType)
-            errorView.error = null
+
+            //Inform about invalid lines
+            if (data!!.invalidLines.isNotEmpty()) {
+                var errorText = ""
+                for (err in data!!.invalidLines) {
+                    errorText += requireContext().getString(
+                        R.string.data_import_invalid_line,
+                        err.first,
+                        err.second
+                    )
+                }
+                errorView.text = errorText
+            } else {
+                errorView.text = ""
+            }
+
+            importInfoView.text = getString(
+                R.string.data_import_preview_info,
+                data!!.getCount(currType)
+            )
             dataPreviewLayout.visibility = View.VISIBLE
 
-        } else {
-            errorView.error = getString(R.string.data_import_error)
+        } catch (e: IllegalArgumentException) {
+            errorView.text = e.message
+            dataPreviewLayout.visibility = View.GONE
+        }
+        // Generic error message for other exceptions
+        catch (e: Exception) {
+            errorView.text = getString(R.string.data_import_file_error)
             dataPreviewLayout.visibility = View.GONE
         }
     }
-
 
     //Import data after confirmation
     private fun confirmImport() {
         if (data != null) {
             val currType = getCurrentType()
             when (currType) {
-                DataType.CATEGORIES -> {
-                    for (catData in data!!.categories) {
-                        selectedRaceViewModel.createOrUpdateCategory(
-                            catData.category,
-                            catData.controlPoints
-                        )
-                    }
-                }
+                DataType.CATEGORIES -> importCategories(data!!.categories)
 
-                DataType.C0MPETITORS -> {
-                    //Upsert categories
-                    for (catData in data!!.categories) {
-                        selectedRaceViewModel.createOrUpdateCategory(
-                            catData.category,
-                            catData.controlPoints
-                        )
-                    }
-                    //Create competitors - TODO: ADD duplicates check
-                    for (compData in data!!.competitorCategories) {
-                        selectedRaceViewModel.createOrUpdateCompetitor(compData.competitor)
-                    }
+                DataType.COMPETITORS -> {
+                    selectedRaceViewModel.saveDataImportWrapper(data!!)
                 }
 
                 DataType.COMPETITOR_STARTS_TIME -> {
@@ -184,6 +204,28 @@ class DataImportDialogFragment : DialogFragment() {
 
                 else -> {}
             }
+        }
+    }
+
+    private fun importCategories(categories: List<CategoryData>) {
+        for (cd in categories) {
+
+            //Check if category already exists - if it does, update it
+            val existingCategory = selectedRaceViewModel.getCategoryByName(cd.category.name)
+            if (existingCategory != null) {
+                cd.category.id = existingCategory.id
+
+                for (cp in cd.controlPoints) {
+                    cp.categoryId = existingCategory.id
+                }
+            }
+            // Update the order for non existent category
+            else {
+                cd.category.order =
+                    selectedRaceViewModel.getHighestCategoryOrder(selectedRaceViewModel.getCurrentRace().id) + 1
+            }
+
+            selectedRaceViewModel.createOrUpdateCategory(cd.category, cd.controlPoints)
         }
     }
 }

@@ -51,8 +51,11 @@ class ReadoutDataRecyclerViewAdapter(
             "-"
         }
         holder.runTimeView.text = "${
-            TimeProcessor.durationToMinuteString(item.result.runTime)
-        } (${dataProcessor.raceStatusToShortString(item.result.raceStatus)})"
+            TimeProcessor.durationToFormattedString(
+                item.result.runTime,
+                dataProcessor.useMinuteTimeFormat()
+            )
+        } (${dataProcessor.resultStatusToShortString(item.result.resultStatus)})"
 
         //Set the start + finish + readout time
         holder.startTimeView.text = if (item.result.startTime != null) {
@@ -68,7 +71,7 @@ class ReadoutDataRecyclerViewAdapter(
         }
 
         holder.readoutTimeView.text =
-            item.result.readoutTime.toLocalTime().toString()
+            TimeProcessor.formatLocalTime(item.result.readoutTime.toLocalTime())
 
         //Set readout detail navigation
         holder.itemView.setOnClickListener {

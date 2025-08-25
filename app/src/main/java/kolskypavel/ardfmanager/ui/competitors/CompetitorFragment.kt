@@ -9,6 +9,9 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -29,11 +32,11 @@ import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
-import kolskypavel.ardfmanager.backend.room.enums.CompetitorTableDisplayType
 import kolskypavel.ardfmanager.databinding.FragmentCompetitorsBinding
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
-import kolskypavel.ardfmanager.ui.races.RaceCreateDialogFragment
+import kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment
 import kotlinx.coroutines.launch
+import java.text.Collator
 
 
 class CompetitorFragment : Fragment() {
@@ -42,6 +45,7 @@ class CompetitorFragment : Fragment() {
 
     private val selectedRaceViewModel: SelectedRaceViewModel by activityViewModels()
     private val dataProcessor = DataProcessor.get()
+    private lateinit var collator: Collator
     private lateinit var competitorToolbar: Toolbar
     private lateinit var competitorTableView: SortableTableView<CompetitorData>
     private lateinit var competitorDisplayTypePicker: MaterialAutoCompleteTextView
@@ -96,6 +100,9 @@ class CompetitorFragment : Fragment() {
             }
             mLastClickTime = SystemClock.elapsedRealtime()
         }
+        // Set collator for comparing
+        collator = Collator.getInstance(selectedRaceViewModel.getCurrentLocale(requireContext()))
+
         competitorDisplayTypePicker.setText(getText(R.string.competitor_display_overview), false)
         toggleCompetitorDisplay(CompetitorTableDisplayType.OVERVIEW)
         setBackButton()
@@ -151,16 +158,16 @@ class CompetitorFragment : Fragment() {
                     intArrayOf(
                         R.string.competitor_start_number_header,
                         R.string.general_name,
-                        R.string.club,
-                        R.string.category,
-                        R.string.si_number
+                        R.string.general_club,
+                        R.string.general_category,
+                        R.string.general_si_number
                     )
 
                 //Set comparators
                 competitorTableView.setColumnComparator(0, CompetitorStartNumComparator())
-                competitorTableView.setColumnComparator(1, CompetitorNameComparator())
-                competitorTableView.setColumnComparator(2, CompetitorClubComparator())
-                competitorTableView.setColumnComparator(3, CompetitorCategoryComparator())
+                competitorTableView.setColumnComparator(1, CompetitorNameComparator(collator))
+                competitorTableView.setColumnComparator(2, CompetitorClubComparator(collator))
+                competitorTableView.setColumnComparator(3, CompetitorCategoryComparator(collator))
                 competitorTableView.setColumnComparator(4, CompetitorSINumberComparator())
 
             }
@@ -171,13 +178,13 @@ class CompetitorFragment : Fragment() {
                         R.string.competitor_start_number_header,
                         R.string.general_start_time,
                         R.string.general_name,
-                        R.string.category,
-                        R.string.si_number
+                        R.string.general_category,
+                        R.string.general_si_number
                     )
                 competitorTableView.setColumnComparator(0, CompetitorStartNumComparator())
-                competitorTableView.setColumnComparator(1, CompetitorStartTimeComparator())
-                competitorTableView.setColumnComparator(2, CompetitorNameComparator())
-                competitorTableView.setColumnComparator(3, CompetitorCategoryComparator())
+                competitorTableView.setColumnComparator(1, CompetitorDrawnStartTimeComparator())
+                competitorTableView.setColumnComparator(2, CompetitorNameComparator(collator))
+                competitorTableView.setColumnComparator(3, CompetitorCategoryComparator(collator))
                 competitorTableView.setColumnComparator(4, CompetitorSINumberComparator())
             }
 
@@ -185,26 +192,26 @@ class CompetitorFragment : Fragment() {
                 headers =
                     intArrayOf(
                         R.string.general_name,
-                        R.string.category,
-                        R.string.run_time,
+                        R.string.general_category,
+                        R.string.general_run_time,
                         R.string.general_start_time,
-                        R.string.finish_time,
+                        R.string.general_finish_time,
                     )
 
-                competitorTableView.setColumnComparator(0, CompetitorNameComparator())
-                competitorTableView.setColumnComparator(1, CompetitorCategoryComparator())
-                competitorTableView.setColumnComparator(2, CompetitorStartTimeComparator())
-                competitorTableView.setColumnComparator(3, CompetitorFinishTimeComparator())
-                competitorTableView.setColumnComparator(4, CompetitorRunTimeComparator())
+                competitorTableView.setColumnComparator(0, CompetitorNameComparator(collator))
+                competitorTableView.setColumnComparator(1, CompetitorCategoryComparator(collator))
+                competitorTableView.setColumnComparator(2, CompetitorRunTimeComparator())
+                competitorTableView.setColumnComparator(3, CompetitorStartTimeComparator())
+                competitorTableView.setColumnComparator(4, CompetitorFinishTimeComparator())
             }
 
             CompetitorTableDisplayType.ON_THE_WAY -> {
                 headers =
                     intArrayOf(
                         R.string.general_name,
-                        R.string.category,
+                        R.string.general_category,
                         R.string.general_start_time,
-                        R.string.run_time,
+                        R.string.general_run_time,
                         R.string.competitor_to_limit,
                     )
                 for (i in 0..4) {
@@ -242,21 +249,22 @@ class CompetitorFragment : Fragment() {
         data: List<CompetitorData>,
         displayType: CompetitorTableDisplayType
     ): List<CompetitorData> {
-        return when (displayType) {
+        when (displayType) {
             CompetitorTableDisplayType.OVERVIEW,
-            CompetitorTableDisplayType.START_LIST -> data
+            CompetitorTableDisplayType.START_LIST -> return data
 
             CompetitorTableDisplayType.FINISH_REACHED -> {
-                data.filter { cd ->
-                    cd.resultData != null
+                val filtered = data.filter { cd ->
+                    cd.readoutData != null
                 }
+                return filtered.sortedWith(CompetitorFinishTimeComparator())
             }
 
             CompetitorTableDisplayType.ON_THE_WAY -> {
-                data.filter { cd ->
-                    cd.resultData == null
+                val filtered = data.filter { cd ->
+                    cd.readoutData == null
                 }
-                data.sortedWith(CompetitorStartTimeComparator())
+                return filtered.sortedWith(CompetitorDrawnStartTimeComparator())
             }
         }
     }
@@ -307,34 +315,54 @@ class CompetitorFragment : Fragment() {
 
     private fun confirmCompetitorDeletion(competitor: Competitor) {
         val builder = AlertDialog.Builder(context)
-        builder.setTitle(getString(R.string.competitor_delete))
-        val message =
-            "${getString(R.string.competitor_delete_confirmation)} ${competitor.firstName} ${competitor.lastName}"
-        builder.setMessage(message)
 
-        //TODO: Fix the readout removal
-        builder.setPositiveButton(R.string.ok) { dialog, _ ->
-            selectedRaceViewModel.deleteCompetitor(competitor.id, false)
+        // Inflate the custom layout
+        val inflater = LayoutInflater.from(context)
+        val dialogView = inflater.inflate(R.layout.dialog_delete_competitor, null)
+
+        // Set dynamic message text
+        val messageTextView = dialogView.findViewById<TextView>(R.id.delete_competitor_message)
+        messageTextView.text =
+            getString(R.string.competitor_delete_confirmation, competitor.getFullName())
+
+        // Reference the checkbox
+        val deleteReadoutCheckbox =
+            dialogView.findViewById<CheckBox>(R.id.delete_competitor_checkbox)
+
+        builder.setTitle(getString(R.string.competitor_delete))
+        builder.setView(dialogView)
+
+        builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
+            val deleteReadout = deleteReadoutCheckbox.isChecked
+            selectedRaceViewModel.deleteCompetitor(competitor.id, deleteReadout)
             dialog.dismiss()
         }
 
-        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+        builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
             dialog.cancel()
         }
+
         builder.show()
     }
 
     private fun confirmAutomaticCategories() {
         val builder = AlertDialog.Builder(context)
-        builder.setTitle(getString(R.string.competitor_add_categories_automatically))
-        builder.setMessage(R.string.competitor_add_categories_automatically_confirmation)
+        builder.setTitle(getString(R.string.competitor_assign_categories_automatically))
+        builder.setMessage(R.string.competitor_assign_categories_automatically_confirmation)
 
-        builder.setPositiveButton(R.string.ok) { dialog, _ ->
+        builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
             selectedRaceViewModel.addCategoriesAutomatically()
             dialog.dismiss()
+
+            Toast.makeText(
+                requireContext(),
+                requireContext().getText(R.string.competitor_assign_categories_toast),
+                Toast.LENGTH_LONG
+            )
+                .show()
         }
 
-        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+        builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
             dialog.cancel()
         }
         builder.show()
@@ -345,12 +373,12 @@ class CompetitorFragment : Fragment() {
         builder.setTitle(getString(R.string.competitor_delete_all))
         builder.setMessage(R.string.competitor_delete_all_confirmation)
 
-        builder.setPositiveButton(R.string.ok) { dialog, _ ->
+        builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
             selectedRaceViewModel.deleteAllCompetitorsByRace()
             dialog.dismiss()
         }
 
-        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+        builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
             dialog.cancel()
         }
         builder.show()
@@ -363,12 +391,13 @@ class CompetitorFragment : Fragment() {
             val message = getString(R.string.race_end_confirmation)
             builder.setMessage(message)
 
-            builder.setPositiveButton(R.string.ok) { dialog, _ ->
-                dataProcessor.removeReaderRace()
+            builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
+                selectedRaceViewModel.disableResultService()
+                dataProcessor.removeCurrentRace()
                 findNavController().navigate(CompetitorFragmentDirections.closeRace())
             }
 
-            builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+            builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
                 dialog.cancel()
             }
             builder.show()
@@ -376,8 +405,8 @@ class CompetitorFragment : Fragment() {
     }
 
     private fun setResultListener() {
-        setFragmentResultListener(CompetitorCreateDialogFragment.REQUEST_COMPETITOR_MODIFICATION) { _, bundle ->
-            val create = bundle.getBoolean(CompetitorCreateDialogFragment.BUNDLE_KEY_CREATE)
+        setFragmentResultListener(CompetitorEditDialogFragment.REQUEST_COMPETITOR_MODIFICATION) { _, bundle ->
+            val create = bundle.getBoolean(CompetitorEditDialogFragment.BUNDLE_KEY_CREATE)
 
             if (!create) {
                 competitorTableView.dataAdapter.notifyDataSetChanged()
@@ -385,14 +414,15 @@ class CompetitorFragment : Fragment() {
         }
 
         //Enable race modification from menu
-        setFragmentResultListener(RaceCreateDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
+        setFragmentResultListener(RaceEditDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
             val race: Race = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getSerializable(
-                    RaceCreateDialogFragment.BUNDLE_KEY_RACE,
+                    RaceEditDialogFragment.BUNDLE_KEY_RACE,
                     Race::class.java
                 )!!
             } else {
-                bundle.getSerializable(RaceCreateDialogFragment.BUNDLE_KEY_RACE) as Race
+                @Suppress("DEPRECATION")
+                bundle.getSerializable(RaceEditDialogFragment.BUNDLE_KEY_RACE) as Race
             }
             selectedRaceViewModel.updateRace(race)
         }
@@ -401,5 +431,16 @@ class CompetitorFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+}
+
+enum class CompetitorTableDisplayType(var value: Int) {
+    OVERVIEW(0),
+    START_LIST(1),
+    FINISH_REACHED(2),
+    ON_THE_WAY(3);
+
+    companion object {
+        fun getByValue(value: Int) = entries.firstOrNull { it.value == value } ?: OVERVIEW
     }
 }
