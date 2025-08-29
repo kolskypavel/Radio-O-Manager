@@ -32,6 +32,9 @@ interface CompetitorDao {
     @Query("SELECT * FROM competitor WHERE category_id=(:categoryId)")
     suspend fun getCompetitorsByCategory(categoryId: UUID): List<Competitor>
 
+    @Query("SELECT * FROM competitor WHERE category_id IS NULL AND race_id=(:raceId)")
+    suspend fun getUnmatchedCompetitorsByRace(raceId: UUID): List<Competitor>
+
     @Query("SELECT COUNT(*) FROM competitor WHERE si_number=(:siNumber) AND race_id =(:raceId)  LIMIT 1")
     suspend fun checkIfSINumberExists(siNumber: Int, raceId: UUID): Int
 

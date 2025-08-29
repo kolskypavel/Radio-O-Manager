@@ -8,7 +8,6 @@ import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
-import java.time.LocalDateTime
 import java.util.UUID
 
 class UnmatchedResultJsonAdapter(val raceId: UUID) {
@@ -34,7 +33,6 @@ class UnmatchedResultJsonAdapter(val raceId: UUID) {
         val result = Result(
             id = UUID.randomUUID(),
             raceId = raceId,
-            competitorID = null,
             siNumber = json.si_number,
             cardType = 0,
             checkTime = json.check_time?.let { siTimeJsonAdapter.fromJson(it) },
@@ -43,10 +41,8 @@ class UnmatchedResultJsonAdapter(val raceId: UUID) {
             origStartTime = json.start_time?.let { siTimeJsonAdapter.fromJson(it) },
             finishTime = json.finish_time?.let { siTimeJsonAdapter.fromJson(it) },
             origFinishTime = json.finish_time?.let { siTimeJsonAdapter.fromJson(it) },
-            readoutTime = LocalDateTime.now(),
             automaticStatus = false,
             resultStatus = ResultStatus.NO_RANKING,
-            points = 0,
             runTime = TimeProcessor.minuteStringToDuration(json.run_time),
             modified = false,
             sent = false

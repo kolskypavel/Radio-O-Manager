@@ -11,7 +11,6 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
-import java.time.LocalDateTime
 import java.util.UUID
 
 class ResultJsonAdapter(val raceId: UUID, val filterStart: Boolean) {
@@ -53,20 +52,17 @@ class ResultJsonAdapter(val raceId: UUID, val filterStart: Boolean) {
         val result = Result(
             id = UUID.randomUUID(),
             raceId = raceId, // replace with real value later
-            competitorID = null, // will be assigned elsewhere
-            siNumber = null, // Not in ResultJson
-            cardType = 0, // default/fallback
-            checkTime = null,
+            siNumber = null, // will be assigned elsewhere
+            cardType = 0, // Not in ResultJson
+            checkTime = null, // default/fallback
             origCheckTime = null,
             startTime = null,
             origStartTime = null,
             finishTime = null,
             origFinishTime = null,
-            readoutTime = LocalDateTime.now(),
             automaticStatus = false,
-            resultStatus = ResultStatus.valueOf(json.result_status), // must match enum exactly
-            points = 0,
-            runTime = TimeProcessor.minuteStringToDuration(json.run_time),
+            resultStatus = ResultStatus.valueOf(json.result_status),
+            runTime = TimeProcessor.minuteStringToDuration(json.run_time), // must match enum exactly
             modified = false,
             sent = false
         )

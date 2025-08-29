@@ -1,6 +1,7 @@
 package kolskypavel.ardfmanager.backend.sportident
 
 import java.io.Serializable
+import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -140,6 +141,19 @@ class SITime(
 
         fun difference(start: SITime, end: SITime): Duration {
             return Duration.ofSeconds(kotlin.math.abs(end.seconds - start.seconds))
+        }
+
+        // Convert DayOfWeek (1 - Monday, 7 - Sunday) to SI index (0 - Sunday, 6 - Saturday)
+        fun dayOfWeekToSIIndex(dayOfWeek: DayOfWeek): Int {
+            return when (dayOfWeek) {
+                DayOfWeek.MONDAY -> 1
+                DayOfWeek.TUESDAY -> 2
+                DayOfWeek.WEDNESDAY -> 3
+                DayOfWeek.THURSDAY -> 4
+                DayOfWeek.FRIDAY -> 5
+                DayOfWeek.SATURDAY -> 6
+                DayOfWeek.SUNDAY -> 0
+            }
         }
     }
 }

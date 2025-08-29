@@ -226,7 +226,8 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
             PunchStatus.DUPLICATE -> context.getString(R.string.punch_status_duplicate)
             PunchStatus.UNKNOWN -> context.getString(R.string.punch_status_unknown)
         }
-        val code = "${aliasPunch.punch.order} (${aliasPunch.alias ?: aliasPunch.punch.siCode})"
+        val code =
+            "${aliasPunch.punch.order} (${aliasPunch.alias?.name ?: aliasPunch.punch.siCode})"
         return "$code$symbol"
     }
 
@@ -244,10 +245,9 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
     }
 
     private fun getResultsFormatted(results: List<ResultWrapper>): String {
-        val context = appContext.get()!!
         val sb = StringBuilder()
 
-        results.forEachIndexed() { index, result ->
+        results.forEachIndexed { index, result ->
             if (result.category != null) {
                 sb.append(formatCategoryHeader(result))
 

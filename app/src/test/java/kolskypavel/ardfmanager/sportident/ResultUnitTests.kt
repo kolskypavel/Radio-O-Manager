@@ -10,7 +10,6 @@ import kolskypavel.ardfmanager.backend.sportident.SIPort.CardData
 import kolskypavel.ardfmanager.backend.sportident.SITime
 import org.junit.Test
 import java.time.Duration
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.UUID
 
@@ -56,13 +55,11 @@ class ResultUnitTests {
                 cardData.startTime,
                 cardData.finishTime,
                 cardData.finishTime,
-                LocalDateTime.now(),
-                false,
-                ResultStatus.NO_RANKING,
-                0,
-                Duration.ZERO,
-                false,
-                false
+                automaticStatus = false,
+                resultStatus = ResultStatus.NO_RANKING,
+                runTime = Duration.ZERO,
+                modified = false,
+                sent = false
             )
 
         val resultPunches = ResultsProcessor.processCardPunches(
@@ -120,13 +117,11 @@ class ResultUnitTests {
                 cardData.startTime,
                 cardData.finishTime,
                 cardData.finishTime,
-                LocalDateTime.now(),
-                false,
-                ResultStatus.NO_RANKING,
-                0,
-                Duration.ZERO,
-                false,
-                false
+                automaticStatus = false,
+                resultStatus = ResultStatus.NO_RANKING,
+                runTime = Duration.ZERO,
+                modified = false,
+                sent = false
             )
 
         ResultsProcessor.processCardPunches(

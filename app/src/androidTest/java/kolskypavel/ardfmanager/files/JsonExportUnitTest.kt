@@ -55,7 +55,7 @@ class JsonExportUnitTest {
         val result = Result(
             id = UUID.randomUUID(),
             raceId = raceIdRandom,
-            competitorID = competitorId,
+            competitorId = competitorId,
             categoryId = categoryId,
             siNumber = 12345,
             cardType = 0,

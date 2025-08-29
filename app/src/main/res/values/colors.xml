@@ -13,4 +13,5 @@
     <color name="yellow_warning">#FFFF00</color>
     <color name="light_grey">#CBC8C8</color>
     <color name="yellow_highlight">#FFB300</color>
+    <color name="red_result_err">#F44336</color>
 </resources>

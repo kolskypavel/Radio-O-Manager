@@ -126,6 +126,9 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun getCompetitorsByRace(raceId: UUID) =
         eventDatabase.competitorDao().getCompetitorsByRace(raceId)
 
+    suspend fun getUnmatchedCompetitorsByRace(raceId: UUID) =
+        eventDatabase.competitorDao().getUnmatchedCompetitorsByRace(raceId)
+
     fun createCompetitor(competitor: Competitor) =
         eventDatabase.competitorDao().createCompetitor(competitor)
 
