@@ -319,11 +319,12 @@ object ResultsProcessor {
         manualStatus: ResultStatus?,
         dataProcessor: DataProcessor
     ) {
+        val race = dataProcessor.getRace(result.raceId)
 
         // If no start time is found in the SI card, try to get it from the competitor
         if (result.competitorId != null && result.origStartTime == null) {
             dataProcessor.getCompetitor(result.competitorId!!)?.drawnRelativeStartTime?.let { relativeStartTime ->
-                val raceStart = dataProcessor.getRace(result.raceId).startDateTime
+                val raceStart = race.startDateTime
                 val startTime =
                     TimeProcessor.getAbsoluteDateTimeFromRelativeTime(raceStart, relativeStartTime)
                 result.startTime =
@@ -380,6 +381,18 @@ object ResultsProcessor {
         // Result time calculation
         if (result.startTime != null && result.finishTime != null) {
             result.runTime = SITime.split(result.startTime!!, result.finishTime!!)
+
+            // Check time limit
+            val timeLimit = if (category?.differentProperties == true) {
+                category.timeLimit
+            } else {
+                race.timeLimit
+            }
+
+            if (result.runTime > timeLimit) {
+                result.resultStatus = ResultStatus.OVER_TIME_LIMIT
+            }
+
         } else {
             result.resultStatus = ResultStatus.ERROR
         }
