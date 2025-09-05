@@ -171,7 +171,6 @@
     <string name="preferences_general_show_log">Zobrazit log</string>
     <string name="preferences_general_language">Jazyk</string>
     <string name="preferences_general_language_hint">Manuálně vybrat jazyk. Aplikace musí být restartována pro projevení změn.\n[%1$s]</string>
-    <string name="preferences_readout_duplicate">Akce pro duplikované vyčtení</string>
     <string name="preferences_readout_sounds">Zvuky</string>
     <string name="preferences_files_prefer_app_start_time">Nepřepisovat startovní čas</string>
     <string name="preferences_changelog">Seznam změn</string>
@@ -259,8 +258,7 @@
     <string name="result_service_send_again">Odeslat výsledky znovu</string>
     <string name="result_service_api_key_missing">API klíč musí být nastaven v závodě pro ROBis</string>
     <string name="prints_bluetooth_disabled">Bluetooth musí být zapnutý pro tisk!</string>
-    <string name="prints_error">Chyba při tisku!</string>
-    <string name="preferences_readout_duplicate_hint">Zvolte akci pro dvojité vyčtení stejného čipu.\n[%1$s]</string>
+    <string name="prints_error">Chyba při tisku! %1$s</string>
     <string name="about_app_version">Verze %1$s</string>
     <string name="about_app_description">ARDF Manager je open-source nástroj pro organizaci soutěží v radiovém (ARDF) orientačním běhu a orientačním běhu.</string>
 

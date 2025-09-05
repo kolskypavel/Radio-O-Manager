@@ -6,7 +6,6 @@
     <!--CATEGORIES-->
 
     <!--READOUTS-->
-    <string name="key_readout_duplicate" translatable="false">readout_duplicate</string>
     <string name="key_readout_sounds" translatable="false">readout_sounds</string>
 
     <!--RESULTS-->

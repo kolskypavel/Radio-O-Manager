@@ -46,17 +46,6 @@
         android:title="@string/general_readouts"
         app:iconSpaceReserved="false">
 
-        <ListPreference
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:defaultValue="@string/preferences_readout_keep_original_entry"
-            android:entries="@array/preferences_readout_duplicate_options"
-            android:entryValues="@array/preferences_readout_duplicate_entries"
-            android:key="@string/key_readout_duplicate"
-            android:summary="@string/preferences_readout_duplicate_hint"
-            android:title="@string/preferences_readout_duplicate"
-            app:iconSpaceReserved="false" />
-
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

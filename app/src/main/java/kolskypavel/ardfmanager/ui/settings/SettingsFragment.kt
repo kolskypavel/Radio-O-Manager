@@ -60,34 +60,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        // Duplicate readout preferences
-        val duplReadoutPref =
-            findPreference<ListPreference>(requireContext().getString(R.string.key_readout_duplicate))
-
-        val currReadoutPref = prefs.getString(
-            requireContext().getString(R.string.key_readout_duplicate),
-            requireContext().getString(R.string.preferences_readout_keep_original)
-        )
-
-        duplReadoutPref?.summary = requireContext().getString(
-            R.string.preferences_readout_duplicate_hint,
-            currReadoutPref
-        )
-
-        duplReadoutPref?.setOnPreferenceChangeListener { _, action ->
-            editor.putString(
-                requireContext().getString(R.string.key_readout_duplicate),
-                action.toString()
-            )
-            editor.apply()
-
-            duplReadoutPref.summary = requireContext().getString(
-                R.string.preferences_readout_duplicate_hint,
-                action
-            )
-            true
-        }
-
         //Sound preferences
         findPreference<androidx.preference.Preference>(
             requireContext().getString(

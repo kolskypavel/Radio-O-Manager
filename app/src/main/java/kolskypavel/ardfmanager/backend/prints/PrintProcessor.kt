@@ -73,7 +73,10 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
                     }
                     //Inform about disabled bluetooth
                     else {
-                        makeToast(R.string.prints_bluetooth_disabled)
+                        makeToast(
+                            appContext.get()?.getString(R.string.prints_bluetooth_disabled)
+                                ?: "Bluetooth disabled"
+                        )
                     }
                 }
             }
@@ -111,8 +114,10 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
             try {
                 printer!!.printFormattedText(textToPrint + "\n\n[C]${version}", 100)
             } catch (e: Exception) {
-                makeToast(R.string.prints_error)
-            } finally {
+                makeToast(
+                    appContext.get()?.getString(R.string.prints_error, e.message)
+                        ?: "Failed to print"
+                )
                 printerReady = false
             }
         }
@@ -123,11 +128,10 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
             .replace("\\p{Mn}+".toRegex(), "")
     }
 
-    private fun makeToast(stringRef: Int) {
+    private fun makeToast(message: String) {
         CoroutineScope(Dispatchers.Main).launch {
             Toast.makeText(
-                appContext.get(), appContext.get()!!
-                    .getText(stringRef), Toast.LENGTH_LONG
+                appContext.get(), message, Toast.LENGTH_LONG
             ).show()
         }
     }
