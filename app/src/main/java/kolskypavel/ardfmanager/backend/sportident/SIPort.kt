@@ -289,7 +289,7 @@ class SIPort(
     private fun probeDevice(): Boolean {
         var ret = false
         var msg: ByteArray
-        var reply: ByteArray
+        var reply: ByteArray?
 
         //Set the serial ports parameters
         port.syncOpen()
@@ -302,17 +302,17 @@ class SIPort(
 
         msg = byteArrayOf(0x4d)
         writeMsg(0xf0.toByte(), msg, true)
-        reply = readMsg(1000, 0xf0.toByte())!!
+        reply = readMsg(1000, 0xf0.toByte())
 
-        if (reply.isEmpty()) {
+        if (reply == null || reply.isEmpty()) {
             Log.d("SI", "No response on high baud rate mode, trying low baud rate")
             port.setBaudRate(SIConstants.BAUDRATE_LOW)
         }
 
         writeMsg(0xf0.toByte(), msg, true)
-        reply = readMsg(1000, 0xf0.toByte())!!
+        reply = readMsg(1000, 0xf0.toByte())
 
-        if (reply.isNotEmpty()) {
+        if (reply != null && reply.isNotEmpty()) {
             Log.d("SI", "Unit responded, reading device info")
             msg = byteArrayOf(ZERO, 0x75)
             writeMsg(GET_SYSTEM_INFO, msg, true)
@@ -336,9 +336,9 @@ class SIPort(
 
                 msg = byteArrayOf(ZERO, 0x07)
                 writeMsg(GET_SYSTEM_INFO, msg, extendedMode)
-                reply = readMsg(6000, GET_SYSTEM_INFO)!!
+                reply = readMsg(6000, GET_SYSTEM_INFO)
 
-                if (reply.size >= 10) {
+                if (reply != null && reply.size >= 10) {
                     Log.d("SI", "Got device info response")
 
                     extendedMode = false

@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.Duration
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.TreeSet
 import java.util.UUID
@@ -56,7 +55,7 @@ object ResultsProcessor {
     /**
      * Adjust the times for the SI_CARD5, because it operates on 12h mode instead of 24h
      */
-    fun card5TimeAdjust(result: Result, punches: List<Punch>, zeroTimeBase: LocalTime) {
+    private fun card5TimeAdjust(result: Result, punches: List<Punch>, zeroTimeBase: LocalTime) {
         //Solve start and check
         if (result.startTime != null) {
             result.startTime = adjustTime(SITime(zeroTimeBase), result.origStartTime!!)
@@ -83,7 +82,7 @@ object ResultsProcessor {
 
         if (result.finishTime != null) {
 
-            val prefinishTime = if (punches.isEmpty()) {
+            val preFinishTime = if (punches.isEmpty()) {
                 if (result.startTime != null) {
                     result.startTime!!
                 } else {
@@ -94,10 +93,10 @@ object ResultsProcessor {
             }
 
             val finishTime = result.finishTime!!
-            finishTime.setDayOfWeek(prefinishTime.getDayOfWeek())
-            finishTime.setWeek(prefinishTime.getWeek())
+            finishTime.setDayOfWeek(preFinishTime.getDayOfWeek())
+            finishTime.setWeek(preFinishTime.getWeek())
 
-            result.finishTime = adjustTime(prefinishTime, finishTime)
+            result.finishTime = adjustTime(preFinishTime, finishTime)
         }
     }
 
@@ -158,7 +157,7 @@ object ResultsProcessor {
     }
 
     /**
-     * Processes the given result - saves the data into the db
+     * Transforms cardData into format for further processing
      */
     suspend fun processCardData(
         cardData: CardData,
@@ -186,27 +185,12 @@ object ResultsProcessor {
                     cardData.startTime,
                     cardData.finishTime,
                     cardData.finishTime,
-                    LocalDateTime.now(),
-                    false,
-                    ResultStatus.NO_RANKING,
-                    0,
-                    Duration.ZERO,
-                    false,
-                    false
+                    automaticStatus = false,
+                    resultStatus = ResultStatus.NO_RANKING,
+                    runTime = Duration.ZERO,
+                    modified = false,
+                    sent = false
                 )
-
-            //TODO: Based on options, set start time to the predefined value
-            if (competitor != null) {
-                if (result.startTime == null && competitor.drawnRelativeStartTime != null) {
-                    val startTime = TimeProcessor.getAbsoluteDateTimeFromRelativeTime(
-                        dataProcessor.getCurrentRace().startDateTime,
-                        competitor.drawnRelativeStartTime!!
-                    )
-                    result.startTime = SITime(
-                        startTime.toLocalTime(), startTime.dayOfWeek.value - 1
-                    )
-                }
-            }
 
             //Process the punches
             val punches = processCardPunches(
@@ -288,13 +272,13 @@ object ResultsProcessor {
     ) {
         var competitor: Competitor? = null
 
-        if (result.competitorID != null) {
-            competitor = dataProcessor.getCompetitor(result.competitorID!!)
+        if (result.competitorId != null) {
+            competitor = dataProcessor.getCompetitor(result.competitorId!!)
         } else if (result.siNumber != null) {
             competitor = dataProcessor.getCompetitorBySINumber(result.siNumber!!, result.raceId)
 
             if (competitor != null) {
-                result.competitorID = competitor.id
+                result.competitorId = competitor.id
             }
         }
 
@@ -327,27 +311,32 @@ object ResultsProcessor {
         )
     }
 
-    private suspend fun calculateResult(
+    // Main method for calculation
+    suspend fun calculateResult(
         result: Result,
         category: Category?,
         punches: ArrayList<Punch>,
         manualStatus: ResultStatus?,
         dataProcessor: DataProcessor
     ) {
+        val race = dataProcessor.getRace(result.raceId)
+
+        // If no start time is found in the SI card, try to get it from the competitor
+        if (result.competitorId != null && result.origStartTime == null) {
+            dataProcessor.getCompetitor(result.competitorId!!)?.drawnRelativeStartTime?.let { relativeStartTime ->
+                val raceStart = race.startDateTime
+                val startTime =
+                    TimeProcessor.getAbsoluteDateTimeFromRelativeTime(raceStart, relativeStartTime)
+                result.startTime =
+                    SITime(startTime.toLocalTime(), SITime.dayOfWeekToSIIndex(startTime.dayOfWeek))
+            }
+        }
 
         if (category != null) {
             evaluatePunches(punches, category, result, dataProcessor)
         }
 
-        val originalStartTime = result.startTime
-        val originalFinishTime = result.finishTime
-
-        if (result.cardType == SIConstants.SI_CARD5) {
-            val zeroTimeBase = dataProcessor.getCurrentRace().startDateTime.toLocalTime()
-            card5TimeAdjust(result, punches, zeroTimeBase)
-        }
-
-        // Add back start and finish - TODO: finish double start and finish punch bug
+        // Add back start and finish
         if (result.startTime != null) {
 
             punches.add(
@@ -359,7 +348,7 @@ object ResultsProcessor {
                     result.siNumber,
                     0,
                     result.startTime!!,
-                    originalStartTime!!,
+                    result.startTime!!,
                     SIRecordType.START,
                     0,
                     PunchStatus.VALID,
@@ -378,7 +367,7 @@ object ResultsProcessor {
                     result.siNumber,
                     0,
                     result.finishTime!!,
-                    originalFinishTime!!,
+                    result.finishTime!!,
                     SIRecordType.FINISH,
                     punches.size,
                     PunchStatus.VALID,
@@ -392,8 +381,21 @@ object ResultsProcessor {
         // Result time calculation
         if (result.startTime != null && result.finishTime != null) {
             result.runTime = SITime.split(result.startTime!!, result.finishTime!!)
+
+            // Check time limit
+            val timeLimit = if (category?.differentProperties == true) {
+                category.timeLimit
+            } else {
+                race.timeLimit
+            }
+
+            if (result.runTime > timeLimit) {
+                result.resultStatus = ResultStatus.OVER_TIME_LIMIT
+            }
+
+        } else {
+            result.resultStatus = ResultStatus.ERROR
         }
-        // TODO: solve situation when start or finish is missing
 
         // Set the result status based on user preference
         if (manualStatus != null) {
@@ -422,7 +424,7 @@ object ResultsProcessor {
         val raceType = if (category.differentProperties) {
             category.raceType!!
         } else {
-            dataProcessor.getCurrentRace().raceType
+            dataProcessor.getRace(category.raceId).raceType
         }
         when (raceType) {
             RaceType.CLASSIC, RaceType.FOXORING -> evaluateClassics(
@@ -454,6 +456,7 @@ object ResultsProcessor {
         delete: Boolean,
         dataProcessor: DataProcessor
     ) {
+        val category = dataProcessor.getCategory(categoryId)
         val competitors = dataProcessor.getCompetitorsByCategory(categoryId)
 
         competitors.forEach { competitor ->
@@ -462,13 +465,14 @@ object ResultsProcessor {
             result?.let {
                 val punches = ArrayList(dataProcessor.getPunchesByResult(result.id))
 
-                if (!delete) {
-                    val category = dataProcessor.getCategory(categoryId)
-                    evaluatePunches(punches, category!!, result, dataProcessor)
-                } else {
+                if (delete) {
                     clearEvaluation(punches, result)
                 }
-                dataProcessor.saveResultPunches(result, punches)
+                val manualStatus = if (!result.automaticStatus) {
+                    result.resultStatus
+                } else null
+
+                calculateResult(result, category, punches, manualStatus, dataProcessor)
             }
         }
     }
@@ -484,7 +488,7 @@ object ResultsProcessor {
             )
             if (siResult != null) {
                 result = siResult
-                result.competitorID = competitorId
+                result.competitorId = competitorId
             }
         }
 

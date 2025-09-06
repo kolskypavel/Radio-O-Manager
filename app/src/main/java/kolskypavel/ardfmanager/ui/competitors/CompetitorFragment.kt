@@ -91,12 +91,14 @@ class CompetitorFragment : Fragment() {
         competitorAddFab.setOnClickListener {
             //Prevent accidental double click
             if (SystemClock.elapsedRealtime() - mLastClickTime > 1500) {
-                findNavController().navigate(
-                    CompetitorFragmentDirections.modifyCompetitor(
-                        true,
-                        null, -1
+                selectedRaceViewModel.getCurrentRace()?.let { race ->
+                    findNavController().navigate(
+                        CompetitorFragmentDirections.modifyCompetitor(
+                            true,
+                            null, -1, race
+                        )
                     )
-                )
+                }
             }
             mLastClickTime = SystemClock.elapsedRealtime()
         }
@@ -278,18 +280,20 @@ class CompetitorFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 selectedRaceViewModel.competitorData.collect { competitorData ->
-                    competitorTableView.dataAdapter =
-                        CompetitorTableViewAdapter(
-                            filterCompetitorData(competitorData, displayType),
-                            displayType,
-                            requireContext(), selectedRaceViewModel
-                        ) { action, position, competitor ->
-                            tableViewContextMenuActions(
-                                action,
-                                position,
-                                competitor
-                            )
-                        }
+                    selectedRaceViewModel.getCurrentRace()?.let {
+                        competitorTableView.dataAdapter =
+                            CompetitorTableViewAdapter(
+                                filterCompetitorData(competitorData, displayType),
+                                displayType,
+                                requireContext(), it
+                            ) { action, position, competitor ->
+                                tableViewContextMenuActions(
+                                    action,
+                                    position,
+                                    competitor
+                                )
+                            }
+                    }
                 }
             }
         }
@@ -301,13 +305,17 @@ class CompetitorFragment : Fragment() {
         competitorData: CompetitorData
     ) {
         when (action) {
-            0 -> findNavController().navigate(
-                CompetitorFragmentDirections.modifyCompetitor(
-                    false,
-                    competitorData.competitorCategory.competitor,
-                    position
-                )
-            )
+            0 -> {
+                selectedRaceViewModel.getCurrentRace()?.let { race ->
+                    findNavController().navigate(
+                        CompetitorFragmentDirections.modifyCompetitor(
+                            false,
+                            competitorData.competitorCategory.competitor,
+                            position, race
+                        )
+                    )
+                }
+            }
 
             1 -> confirmCompetitorDeletion(competitorData.competitorCategory.competitor)
         }
@@ -351,15 +359,17 @@ class CompetitorFragment : Fragment() {
         builder.setMessage(R.string.competitor_assign_categories_automatically_confirmation)
 
         builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
-            selectedRaceViewModel.addCategoriesAutomatically()
-            dialog.dismiss()
+            selectedRaceViewModel.getCurrentRace()?.let { race ->
+                selectedRaceViewModel.addCategoriesAutomatically(race.id)
+                dialog.dismiss()
 
-            Toast.makeText(
-                requireContext(),
-                requireContext().getText(R.string.competitor_assign_categories_toast),
-                Toast.LENGTH_LONG
-            )
-                .show()
+                Toast.makeText(
+                    requireContext(),
+                    requireContext().getText(R.string.competitor_assign_categories_toast),
+                    Toast.LENGTH_LONG
+                )
+                    .show()
+            }
         }
 
         builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->

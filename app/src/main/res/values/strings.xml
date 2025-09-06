@@ -250,7 +250,7 @@
     <!-- Prints -->
     <string name="prints_result_ticket">Print ticket</string>
     <string name="prints_bluetooth_disabled">Bluetooth needs to be on for printing!</string>
-    <string name="prints_error">Error when printing!</string>
+    <string name="prints_error">Error when printing! %1$s</string>
     <string name="prints_error_init">Error with printer init!</string>
 
     <!-- =============================================== PREFERENCES ===============================================-->
@@ -280,24 +280,6 @@
         <item>cs</item>
     </array>
 
-    <!--Preferences:readouts-->
-    <string name="preferences_readout_duplicate">Action for duplicate readouts</string>
-    <string name="preferences_readout_duplicate_hint">Select an action for duplicate readout of the same card.\n[%1$s]</string>
-    <string name="preferences_readout_replace">Replace</string>
-    <string name="preferences_readout_keep_original">Keep original</string>
-
-    <string name="preferences_readout_replace_entry" translatable="false">replace</string>
-    <string name="preferences_readout_keep_original_entry" translatable="false">keep_original</string>
-
-    <string-array name="preferences_readout_duplicate_options">
-        <item>@string/preferences_readout_keep_original</item>
-        <item>@string/preferences_readout_replace</item>
-    </string-array>
-
-    <string-array name="preferences_readout_duplicate_entries">
-        <item>@string/preferences_readout_keep_original_entry</item>
-        <item>@string/preferences_readout_replace_entry</item>
-    </string-array>
 
     <!--Preferences:sounds-->
     <string name="preferences_readout_sounds">Sounds</string>
@@ -356,6 +338,8 @@
     <string name="preferences_prints_select_printer_hint">Select the device you want to print with. Make sure Bluetooth is on and the device is paired.\n[%1$s]</string>
     <string name="preferences_prints_automatic">Automatic ticket printout </string>
     <string name="preferences_prints_automatic_hint">Select when to print the tickets automatically.\n[%1$s] </string>
+    <string name="preferences_prints_double_print">Print finish ticket twice</string>
+    <string name="preferences_prints_double_print_hint">Use this option if you want to print each finish ticket twice</string>
     <string name="preferences_prints_remove_diacritics">Remove diacritics from printing </string>
     <string name="preferences_prints_remove_diacritics_hint">Use this option if you face issues when printing tickets.</string>
     <string name="print_bluetooth_not_supported">Unfortunately, your device does not support Bluetooth.</string>

@@ -143,11 +143,14 @@ class AssignControlPointsDialogFragment : DialogFragment() {
         val controlPointsString =
             controlPointsEditText.text.toString().trim()
 
-        return ControlPointsHelper.getControlPointsFromString(
-            controlPointsString,
-            category.id,
-            category.raceType ?: selectedRaceViewModel.getCurrentRace().raceType,
-            requireContext()
-        )
+        selectedRaceViewModel.getCurrentRace()?.let { race ->
+            return ControlPointsHelper.getControlPointsFromString(
+                controlPointsString,
+                category.id,
+                category.raceType ?: race.raceType,
+                requireContext()
+            )
+        }
+        return emptyList()
     }
 }

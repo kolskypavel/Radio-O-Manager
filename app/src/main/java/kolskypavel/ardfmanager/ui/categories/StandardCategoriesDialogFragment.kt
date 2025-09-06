@@ -60,10 +60,13 @@ class StandardCategoriesDialogFragment : DialogFragment() {
                 else -> StandardCategoryType.INTERNATIONAL
             }
 
-            selectedRaceViewModel.createStandardCategories(
-                currentCheck
-            )
-            dialog?.dismiss()
+            selectedRaceViewModel.getCurrentRace()?.let { it1 ->
+                selectedRaceViewModel.createStandardCategories(
+                    currentCheck,
+                    it1.id
+                )
+                dialog?.dismiss()
+            }
         }
         cancelButton.setOnClickListener {
             dialog?.cancel()

@@ -109,14 +109,18 @@ class ResultsFragment : Fragment() {
             }
 
             R.id.result_menu_results_service -> {
-                findNavController().navigate(ResultsFragmentDirections.openResultService())
+                selectedRaceViewModel.getCurrentRace()?.let { race ->
+                    findNavController().navigate(ResultsFragmentDirections.openResultService(race))
+                }
             }
 
             R.id.result_menu_print_results -> {
-                dataProcessor.printResults(
-                    selectedRaceViewModel.resultWrappers.value,
-                    selectedRaceViewModel.getCurrentRace()
-                )
+                selectedRaceViewModel.getCurrentRace()?.let { race ->
+                    dataProcessor.printResults(
+                        selectedRaceViewModel.resultWrappers.value,
+                        race
+                    )
+                }
             }
 
             R.id.result_menu_edit_race -> {

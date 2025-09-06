@@ -30,7 +30,7 @@ import java.util.UUID
 data class Result(
     @PrimaryKey var id: UUID,
     @ColumnInfo(name = "race_id") var raceId: UUID,
-    @ColumnInfo(name = "competitor_id") var competitorID: UUID? = null,
+    @ColumnInfo(name = "competitor_id") var competitorId: UUID? = null,
     @ColumnInfo(name = "si_number") var siNumber: Int?,
     @ColumnInfo(name = "card_type") var cardType: Byte,
     @ColumnInfo(name = "check_time") var checkTime: SITime?,

@@ -134,7 +134,7 @@ class RaceEditDialogFragment : DialogFragment() {
         dateView.setText(race.startDateTime.toLocalDate().toString())
         apiKey.setText(race.apiKey)
         startTimeView.setText(TimeProcessor.hoursMinutesFormatter(race.startDateTime))
-        limitEditText.setText("120")
+        limitEditText.setText(race.timeLimit.toMinutes().toString())
 
         raceTypePicker.setText(dataProcessor.raceTypeToString(race.raceType), false)
         raceLevelPicker.setText(dataProcessor.raceLevelToString(race.raceLevel), false)
@@ -156,6 +156,9 @@ class RaceEditDialogFragment : DialogFragment() {
                 }
                 race.raceType =
                     dataProcessor.raceTypeStringToEnum(raceTypePicker.text.toString())
+                race.startDateTime = race.startDateTime.with(
+                    LocalTime.parse(startTimeView.text.toString().trim())
+                )
                 race.raceLevel =
                     dataProcessor.raceLevelStringToEnum(raceLevelPicker.text.toString())
                 race.raceBand =

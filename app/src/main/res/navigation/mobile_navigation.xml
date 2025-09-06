@@ -35,7 +35,11 @@
         <dialog
             android:id="@+id/resultServiceDialogFragment"
             android:name="kolskypavel.ardfmanager.ui.services.ResultServiceDialogFragment"
-            android:label="ResultServiceDialogFragment" />
+            android:label="ResultServiceDialogFragment" >
+            <argument
+                android:name="race"
+                app:argType="kolskypavel.ardfmanager.backend.room.entity.Race" />
+        </dialog>
         <dialog
             android:id="@+id/standardCategoriesDialogFragment"
             android:name="kolskypavel.ardfmanager.ui.categories.StandardCategoriesDialogFragment"
@@ -43,7 +47,11 @@
         <dialog
             android:id="@+id/aliasEditDialogFragment"
             android:name="kolskypavel.ardfmanager.ui.aliases.AliasEditDialogFragment"
-            android:label="AliasEditDialogFragment" />
+            android:label="AliasEditDialogFragment" >
+            <argument
+                android:name="raceId"
+                app:argType="java.util.UUID" />
+        </dialog>
         <dialog
             android:id="@+id/readoutEditDialogFragment"
             android:name="kolskypavel.ardfmanager.ui.readouts.ReadoutEditDialogFragment"
@@ -58,6 +66,9 @@
             <argument
                 android:name="position"
                 app:argType="integer" />
+            <argument
+                android:name="raceId"
+                app:argType="java.util.UUID" />
         </dialog>
         <dialog
             android:id="@+id/resultsShareDialogFragment"
@@ -81,6 +92,9 @@
             <action
                 android:id="@+id/pickStartTime"
                 app:destination="@id/timePickerFragment" />
+            <argument
+                android:name="race"
+                app:argType="kolskypavel.ardfmanager.backend.room.entity.Race" />
 
         </dialog>
         <fragment
@@ -176,6 +190,9 @@
             <argument
                 android:name="controlPoints"
                 app:argType="string" />
+            <argument
+                android:name="race"
+                app:argType="kolskypavel.ardfmanager.backend.room.entity.Race" />
 
         </dialog>
         <action

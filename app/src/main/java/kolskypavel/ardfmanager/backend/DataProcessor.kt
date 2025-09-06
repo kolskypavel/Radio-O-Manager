@@ -17,6 +17,7 @@ import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.prints.PrintProcessor
 import kolskypavel.ardfmanager.backend.results.ResultsProcessor
 import kolskypavel.ardfmanager.backend.results.ResultsProcessor.updateResultsForCategory
+import kolskypavel.ardfmanager.backend.results.ResultsProcessor.updateResultsForCompetitor
 import kolskypavel.ardfmanager.backend.room.ARDFRepository
 import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.room.entity.Category
@@ -111,8 +112,6 @@ class DataProcessor private constructor(context: Context) {
         return race
     }
 
-    fun getCurrentRace() = currentState.value?.currentRace!!
-
     fun removeCurrentRace() {
         currentState.postValue(currentState.value?.let { AppState(null, it.siReaderState, null) })
     }
@@ -174,8 +173,8 @@ class DataProcessor private constructor(context: Context) {
     suspend fun getHighestCategoryOrder(raceId: UUID) =
         ardfRepository.getHighestCategoryOrder(raceId)
 
-    suspend fun getCategoryByMaxAge(maxAge: Int, raceId: UUID) =
-        ardfRepository.getCategoryByMaxAge(maxAge, raceId)
+    suspend fun getCategoryByMaxAge(maxAge: Int, isMan: Boolean, raceId: UUID) =
+        ardfRepository.getCategoryByMaxAge(maxAge, isMan, raceId)
 
     suspend fun createOrUpdateCategory(category: Category, controlPoints: List<ControlPoint>?) {
         // Update the control points string
@@ -364,10 +363,16 @@ class DataProcessor private constructor(context: Context) {
     suspend fun createOrUpdateResult(result: Result) =
         ardfRepository.createOrUpdateResult(result)
 
+    /**
+     *     Recalculates all results in a race
+     *     Since race edit could mean a change in start time 00, results for each competitor need to be recalculated
+     */
     private suspend fun updateResults(raceId: UUID) {
         getCategoriesForRace(raceId).forEach { category ->
             updateResultsForCategory(category.id, false, this)
         }
+        ardfRepository.getUnmatchedCompetitorsByRace(raceId)
+            .forEach { comp -> updateResultsForCompetitor(comp.id, this) }
     }
 
     suspend fun deleteResult(id: UUID) = ardfRepository.deleteResult(id)

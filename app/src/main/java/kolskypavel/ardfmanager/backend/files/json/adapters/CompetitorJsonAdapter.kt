@@ -59,7 +59,7 @@ class CompetitorJsonAdapter(val raceId: UUID) {
         )
         if (competitorJson.result != null) {
             val resultData = ResultJsonAdapter(raceId, false).fromJson(competitorJson.result)
-            resultData.result.competitorID = competitor.id
+            resultData.result.competitorId = competitor.id
             resultData.result.siNumber = competitor.siNumber
             val readoutData = ReadoutData(resultData.result, resultData.punches)
             return CompetitorData(CompetitorCategory(competitor, null), readoutData)

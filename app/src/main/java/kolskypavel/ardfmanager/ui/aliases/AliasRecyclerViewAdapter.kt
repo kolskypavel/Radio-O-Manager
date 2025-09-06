@@ -12,12 +12,11 @@ import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.sportident.SIConstants.isSICodeValid
 import kolskypavel.ardfmanager.backend.wrappers.AliasEditItemWrapper
-import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import java.util.UUID
 
 class AliasRecyclerViewAdapter(
     var values: ArrayList<AliasEditItemWrapper>,
-    var selectedRaceViewModel: SelectedRaceViewModel
+    val raceId: UUID
 ) :
     RecyclerView.Adapter<AliasRecyclerViewAdapter.AliasViewHolder>() {
 
@@ -110,7 +109,7 @@ class AliasRecyclerViewAdapter(
         val aliasWrapper = AliasEditItemWrapper(
             Alias(
                 UUID.randomUUID(),
-                selectedRaceViewModel.getCurrentRace().id,
+                raceId,
                 0,
                 ""
             ),

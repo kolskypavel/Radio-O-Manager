@@ -55,6 +55,10 @@ object SIConstants {
     // Notification ID
     const val NOTIFICATION_CHANNEL_ID = "si_reader_channel"
     const val NOTIFICATION_CHANNEL_NAME = "SI Reader"
+    const val NOTIFICATION_PERMISSION_CODE = 1001
+
+    // USB specific constants
+    const val INTENT_ACTION = "kolskypavel.ardfmanager.USB_PERMISSION"
 
     fun isSINumberValid(siNumber: Int): Boolean {
         return (siNumber in SI_MIN_NUMBER..SI_MAX_NUMBER)

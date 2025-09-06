@@ -12,6 +12,7 @@ import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
+import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 
 class ReadoutDataRecyclerViewAdapter(
     private var values: List<ResultData>,
@@ -78,6 +79,10 @@ class ReadoutDataRecyclerViewAdapter(
             onReadoutClicked(item)
         }
 
+        //Set color based on status
+        if (item.result.resultStatus == ResultStatus.ERROR) {
+            holder.itemView.setBackgroundResource(R.color.red_result_err)
+        }
 
         //Set context menu
         holder.moreBtn.setOnClickListener {

@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
+import kolskypavel.ardfmanager.backend.room.enums.RaceBand
+import kolskypavel.ardfmanager.backend.room.enums.RaceType
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 
 class CategoryRecyclerViewAdapter(
@@ -41,11 +43,13 @@ class CategoryRecyclerViewAdapter(
                 context.getString(R.string.general_competitors).lowercase()
             })"
         holder.type.text = dataProcessor.raceTypeToString(
-            item.category.raceType ?: dataProcessor.getCurrentRace().raceType
+            item.category.raceType ?: (selectedRaceViewModel.getCurrentRace()?.raceType
+                ?: RaceType.CLASSIC)
         )
 
         holder.band.text = dataProcessor.raceBandToString(
-            item.category.categoryBand ?: dataProcessor.getCurrentRace().raceBand
+            item.category.categoryBand ?: (selectedRaceViewModel.getCurrentRace()?.raceBand
+                ?: RaceBand.M80)
         )
         holder.gender.text = dataProcessor.genderToString(item.category.isMan)
         holder.siCodes.text = item.category.controlPointsString

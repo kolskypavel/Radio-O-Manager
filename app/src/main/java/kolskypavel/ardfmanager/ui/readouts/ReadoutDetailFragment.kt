@@ -139,32 +139,41 @@ class ReadoutDetailFragment : Fragment() {
         readoutDetailToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.readout_detail_menu_edit_readout -> {
-                    findNavController().navigate(
-                        ReadoutDetailFragmentDirections.editReadout(
-                            false,
-                            resultData, -1
+                    selectedRaceViewModel.getCurrentRace()?.let { it1 ->
+                        findNavController().navigate(
+                            ReadoutDetailFragmentDirections.editReadout(
+                                false,
+                                resultData, -1,
+                                it1.id
+                            )
                         )
-                    )
+                    }
                     true
                 }
 
                 R.id.readout_detail_menu_print_ticket -> {
-                    dataProcessor.printFinishTicket(
-                        resultData,
-                        selectedRaceViewModel.getCurrentRace()
-                    )
+                    selectedRaceViewModel.getCurrentRace()?.let { race ->
+                        dataProcessor.printFinishTicket(
+                            resultData,
+                            race
+                        )
+                    }
                     true
                 }
 
                 R.id.readout_detail_menu_create_category -> {
-                    findNavController().navigate(
-                        ReadoutDetailFragmentDirections.createCategoryFromReadout(
-                            true,
-                            -1,
-                            null,
-                            ControlPointsHelper.getStringFromPunches(resultData.getPunchList())
+                    selectedRaceViewModel.getCurrentRace()?.let { race ->
+                        findNavController().navigate(
+                            ReadoutDetailFragmentDirections.createCategoryFromReadout(
+                                true,
+                                -1,
+                                null,
+                                ControlPointsHelper.getStringFromPunches(
+                                    resultData.getPunchList()
+                                ), race
+                            )
                         )
-                    )
+                    }
                     true
                 }
 

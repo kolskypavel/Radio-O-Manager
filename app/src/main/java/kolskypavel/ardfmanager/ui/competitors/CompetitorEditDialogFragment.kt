@@ -107,7 +107,7 @@ class CompetitorEditDialogFragment : DialogFragment() {
         if (args.create) {
             dialog?.setTitle(R.string.competitor_create)
 
-            val race = selectedRaceViewModel.getCurrentRace()
+            val race = args.race
             val startNumber = runBlocking {
                 return@runBlocking dataProcessor.getHighestStartNumberByRace(race.id)
             } + 1

@@ -31,9 +31,8 @@ import kotlinx.coroutines.runBlocking
 
 class ResultServiceDialogFragment : DialogFragment() {
 
-    private val args: ReadoutEditDialogFragmentArgs by navArgs()
+    private val args: ResultServiceDialogFragmentArgs by navArgs()
     private lateinit var selectedRaceViewModel: SelectedRaceViewModel
-    private lateinit var currRace: Race
 
     private val dataProcessor = DataProcessor.get()
 
@@ -73,7 +72,6 @@ class ResultServiceDialogFragment : DialogFragment() {
 
         val sl: SelectedRaceViewModel by activityViewModels()
         selectedRaceViewModel = sl
-        currRace = selectedRaceViewModel.getCurrentRace()
 
         enableSwitch = view.findViewById(R.id.result_service_dialog_enable)
         typePicker = view.findViewById(R.id.result_service_dialog_type)
@@ -95,7 +93,7 @@ class ResultServiceDialogFragment : DialogFragment() {
 
         runBlocking {
             resultService = selectedRaceViewModel.resultService.value?.resultService
-                ?: ResultService(currRace.id)
+                ?: ResultService(args.race.id)
         }
         enableSwitch.isChecked = resultService.enabled
         typePicker.setText(
@@ -105,10 +103,10 @@ class ResultServiceDialogFragment : DialogFragment() {
 
 
         urlInput.setText(resultService.url)
-        apiKeyInput.setText(currRace.apiKey)
+        apiKeyInput.setText(args.race.apiKey)
 
         // Result service observer
-        dataProcessor.getResultServiceLiveDataWithCountByRaceId(currRace.id)
+        dataProcessor.getResultServiceLiveDataWithCountByRaceId(args.race.id)
             .observe(viewLifecycleOwner) { data ->
                 if (data?.resultService != null) {
                     statusView.text = getString(
@@ -144,7 +142,7 @@ class ResultServiceDialogFragment : DialogFragment() {
         resendResultsButton.setOnClickListener {
             val currService = selectedRaceViewModel.resultService.value?.resultService
             if (currService != null) {
-                selectedRaceViewModel.setAllResultsUnsent()
+                selectedRaceViewModel.setAllResultsUnsent(args.race.id)
                 currService.sent = 0
 
                 // Update the service in the database
@@ -191,13 +189,13 @@ class ResultServiceDialogFragment : DialogFragment() {
         resultService.enabled = true
         resultService.serviceType = getResultServiceType()
         resultService.url = urlInput.text.toString()
-        resultService.apiKey = currRace.apiKey
+        resultService.apiKey = args.race.apiKey
 
         CoroutineScope(Dispatchers.IO).launch {
             dataProcessor.createOrUpdateResultService(resultService)
             dataProcessor.setResultServiceJob(
                 ResultServiceWorker.resultServiceJob(
-                    currRace.id,
+                    args.race.id,
                     dataProcessor,
                     requireContext()
                 )

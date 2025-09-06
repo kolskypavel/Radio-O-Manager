@@ -25,6 +25,7 @@ import kolskypavel.ardfmanager.backend.AppState
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.FileProcessor
 import kolskypavel.ardfmanager.backend.room.ARDFRepository
+import kolskypavel.ardfmanager.backend.sportident.SIConstants
 import kolskypavel.ardfmanager.backend.sportident.SIReaderStatus
 import kolskypavel.ardfmanager.databinding.ActivityMainBinding
 import java.lang.ref.WeakReference
@@ -94,7 +95,14 @@ class MainActivity : AppCompatActivity() {
         dataProcessor = DataProcessor.get()
         dataProcessor.fileProcessor = FileProcessor(WeakReference(this))
 
+
+        val filter = IntentFilter()
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+        registerReceiver(usbDetachReceiver, filter)
+
         // Set the usb device
+        detectSIReader()
+
         if (intent != null) {
             val device: UsbDevice? =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -145,11 +153,19 @@ class MainActivity : AppCompatActivity() {
         setStationObserver()
     }
 
-    override fun onResume() {
-        super.onResume()
-        val filter = IntentFilter()
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
-        registerReceiver(usbDetachReceiver, filter)
+    private fun detectSIReader() {
+        val usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
+        val deviceList = usbManager.deviceList
+        for (device in deviceList.values) {
+            if (usbManager.hasPermission(device)) {
+                dataProcessor.connectDevice(device)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(usbDetachReceiver)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -168,16 +184,50 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setNotificationChannel() {
-        val channel = NotificationChannel(
-            "si_reader_channel",
-            "ARDF Manager channel",
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == SIConstants.NOTIFICATION_PERMISSION_CODE &&
+            permissions.contains(android.Manifest.permission.POST_NOTIFICATIONS) &&
+            grantResults.isNotEmpty() &&
+            grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            setNotificationChannel()
+        }
+    }
 
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+    private fun requestNotificationPermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) ==
+                android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                return true
+            } else {
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    SIConstants.NOTIFICATION_PERMISSION_CODE
+                )
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun setNotificationChannel() {
+        if (requestNotificationPermission()) {
+            val channel = NotificationChannel(
+                SIConstants.NOTIFICATION_CHANNEL_ID,
+                SIConstants.NOTIFICATION_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            val notificationManager =
+                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     private fun setStationObserver() {

@@ -106,7 +106,7 @@ class CategoryEditDialogFragment : DialogFragment() {
      * Populate the data fields - text views, pickers
      */
     private fun populateFields() {
-        val race = selectedRaceViewModel.getCurrentRace()
+        val race = args.race
 
         if (args.create) {
             val order = selectedRaceViewModel.getHighestCategoryOrder(race.id) + 1
@@ -210,7 +210,7 @@ class CategoryEditDialogFragment : DialogFragment() {
         //Check if the name is unique
         else {
             val name = nameEditText.text.toString()
-            val orig = selectedRaceViewModel.getCategoryByName(name)
+            val orig = selectedRaceViewModel.getCategoryByName(name, args.race.id)
             if (orig != null && orig.id != category.id) {
                 valid = false
                 nameEditText.error = getString(R.string.category_exists)
@@ -234,7 +234,11 @@ class CategoryEditDialogFragment : DialogFragment() {
         if (maxAgeEditText.text.toString().isNotBlank()) {
             val maxYear: String = maxAgeEditText.text.toString().trim()
 
-            val orig = selectedRaceViewModel.getCategoryByMaxAge(maxYear.toInt())
+            val orig = selectedRaceViewModel.getCategoryByMaxAge(
+                maxYear.toInt(),
+                getGenderFromPicker(),
+                args.race.id
+            )
             if (orig != null && orig.id != category.id) {
                 maxAgeEditText.error = getString(R.string.invalid_max_age, orig.name)
                 valid = false
@@ -248,7 +252,7 @@ class CategoryEditDialogFragment : DialogFragment() {
                 ControlPointsHelper.getControlPointsFromString(
                     text,
                     category.id,
-                    category.raceType ?: selectedRaceViewModel.getCurrentRace().raceType,
+                    category.raceType ?: args.race.raceType,
                     requireContext()
                 )
             } catch (e: Exception) {
@@ -260,6 +264,8 @@ class CategoryEditDialogFragment : DialogFragment() {
     }
 
     private fun setButtons() {
+        val race = args.race
+
         controlPointsEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -272,7 +278,7 @@ class CategoryEditDialogFragment : DialogFragment() {
 
         //Set the race type checkbox functionality
         samePropertiesCheckBox.setOnClickListener {
-            val race = selectedRaceViewModel.getCurrentRace()
+
             if (samePropertiesCheckBox.isChecked) {
                 raceTypePicker.setText(
                     dataProcessor.raceTypeToString(race.raceType),
@@ -319,7 +325,7 @@ class CategoryEditDialogFragment : DialogFragment() {
                 }
 
                 //Set the data from pickers
-                category.isMan = dataProcessor.genderFromString(genderPicker.text.toString())
+                category.isMan = getGenderFromPicker()
 
                 category.differentProperties = !samePropertiesCheckBox.isChecked
                 if (category.differentProperties) {
@@ -338,7 +344,7 @@ class CategoryEditDialogFragment : DialogFragment() {
                 val controlPoints = ControlPointsHelper.getControlPointsFromString(
                     controlPointsString,
                     category.id,
-                    category.raceType ?: selectedRaceViewModel.getCurrentRace().raceType,
+                    category.raceType ?: race.raceType,
                     requireContext()
                 )
                 selectedRaceViewModel.createOrUpdateCategory(category, controlPoints)
@@ -357,6 +363,10 @@ class CategoryEditDialogFragment : DialogFragment() {
         cancelButton.setOnClickListener {
             dialog?.cancel()
         }
+    }
+
+    fun getGenderFromPicker(): Boolean {
+        return dataProcessor.genderFromString(genderPicker.text.toString())
     }
 
     companion object {

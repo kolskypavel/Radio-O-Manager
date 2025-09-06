@@ -56,8 +56,8 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun getCategoryByName(name: String, raceId: UUID) =
         eventDatabase.categoryDao().getCategoryByName(name, raceId)
 
-    suspend fun getCategoryByMaxAge(maxAge: Int, raceId: UUID) =
-        eventDatabase.categoryDao().getCategoryByMaxAge(maxAge, raceId)
+    suspend fun getCategoryByMaxAge(maxAge: Int, isMan: Boolean, raceId: UUID) =
+        eventDatabase.categoryDao().getCategoryByMaxAge(maxAge, isMan, raceId)
 
     suspend fun getCategoryByBirthYear(birthYear: Int, woman: Boolean, raceId: UUID): Category? =
         eventDatabase.categoryDao().getCategoryByAge(birthYear, woman, raceId)
@@ -125,6 +125,9 @@ class ARDFRepository private constructor(context: Context) {
 
     suspend fun getCompetitorsByRace(raceId: UUID) =
         eventDatabase.competitorDao().getCompetitorsByRace(raceId)
+
+    suspend fun getUnmatchedCompetitorsByRace(raceId: UUID) =
+        eventDatabase.competitorDao().getUnmatchedCompetitorsByRace(raceId)
 
     fun createCompetitor(competitor: Competitor) =
         eventDatabase.competitorDao().createCompetitor(competitor)

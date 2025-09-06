@@ -51,26 +51,17 @@ class SIReaderService :
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun createNotificationChannel(context: Context) {
-        val channel = NotificationChannel(
-            SIConstants.NOTIFICATION_CHANNEL_ID,
-            context.getString(R.string.si_service),
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.createNotificationChannel(channel)
-    }
-
     private fun startService(newDevice: UsbDevice, context: Context) {
         if (newDevice.vendorId == SI_VENDOR_ID && newDevice.productId == SI_PRODUCT_ID) {
             device = newDevice
             startSIDevice()
 
-            createNotificationChannel(context)
             val notification =
                 NotificationCompat.Builder(context, SIConstants.NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_sportident)
-                    .setContentTitle(getString(R.string.si_ready)).build()
+                    .setContentTitle(getString(R.string.si_ready))
+                    .setOngoing(true)
+                    .build()
 
             startForeground(1, notification)
             setNotificationObserver()
@@ -129,6 +120,7 @@ class SIReaderService :
                 .setSmallIcon(R.drawable.ic_sportident)
                 .setContentTitle(getString(R.string.si_ready))
                 .setContentText(getString(R.string.si_last_card, lastCardString))
+                .setOngoing(true)
                 .build()
 
             val notificationManager =

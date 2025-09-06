@@ -171,7 +171,6 @@
     <string name="preferences_general_show_log">Zobrazit log</string>
     <string name="preferences_general_language">Jazyk</string>
     <string name="preferences_general_language_hint">Manuálně vybrat jazyk. Aplikace musí být restartována pro projevení změn.\n[%1$s]</string>
-    <string name="preferences_readout_duplicate">Akce pro duplikované vyčtení</string>
     <string name="preferences_readout_sounds">Zvuky</string>
     <string name="preferences_files_prefer_app_start_time">Nepřepisovat startovní čas</string>
     <string name="preferences_changelog">Seznam změn</string>
@@ -208,7 +207,7 @@
     <string name="preferences_results_time_format_minutes">mm:ss</string>
     <string name="preferences_results_time_format_hours">hh:mm:ss</string>
     <string name="preferences_results_use_aliases">Použít aliasy</string>
-    <string name="preferences_results_use_aliases_hint">Použít aliasy pro kontrolní body místo SI kódů</string>
+    <string name="preferences_results_use_aliases_hint">Použít aliasy pro kontroly místo SI kódů</string>
     <string name="preferences_results_service">Výsledková služba</string>
     <string name="preferences_results_service_hint">Vyberte, kdy odesílat výsledky pomocí výsledkové služby\n[%1$s]</string>
     <string name="preferences_result_service_matched">Při nalezení závodníka</string>
@@ -224,6 +223,9 @@
     <string name="preferences_prints_automatic_hint">Vyberte, kdy tisknout lístečky automaticky.\n[%1$s]</string>
     <string name="preferences_prints_remove_diacritics">Odstranit diakritiku z tisku</string>
     <string name="preferences_prints_remove_diacritics_hint">Použijte tuto možnost, pokud máte problémy s tiskem lístečků.</string>
+    <string name="preferences_prints_double_print">Tisknout lístečky dvakrát</string>
+    <string name="preferences_prints_double_print_hint">Použijte tuto možnost, pokud chcete každý lístek tisknout dvakrát.</string>
+
     <string name="preferences_readout_sounds_hint">Zvolte zvuk po vyčtení čipu.</string>
     <string name="preferences_sounds_enable_sounds">Povolit zvuky</string>
     <string name="preferences_sounds_enable_sounds_hint">Povolte, pokud chcete zvuky po vyčtení čipu</string>
@@ -259,8 +261,7 @@
     <string name="result_service_send_again">Odeslat výsledky znovu</string>
     <string name="result_service_api_key_missing">API klíč musí být nastaven v závodě pro ROBis</string>
     <string name="prints_bluetooth_disabled">Bluetooth musí být zapnutý pro tisk!</string>
-    <string name="prints_error">Chyba při tisku!</string>
-    <string name="preferences_readout_duplicate_hint">Zvolte akci pro dvojité vyčtení stejného čipu.\n[%1$s]</string>
+    <string name="prints_error">Chyba při tisku! %1$s</string>
     <string name="about_app_version">Verze %1$s</string>
     <string name="about_app_description">ARDF Manager je open-source nástroj pro organizaci soutěží v radiovém (ARDF) orientačním běhu a orientačním běhu.</string>
 

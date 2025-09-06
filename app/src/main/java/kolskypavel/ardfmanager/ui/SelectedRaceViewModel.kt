@@ -63,11 +63,8 @@ class SelectedRaceViewModel : ViewModel() {
     var resultService: LiveData<ResultServiceData> = MutableLiveData(null)
 
     @Throws(IllegalStateException::class)
-    fun getCurrentRace(): Race {
-        if (race.value != null) {
-            return race.value!!
-        }
-        throw IllegalStateException("Race value accessed without race set")
+    fun getCurrentRace(): Race? {
+        return race.value
     }
 
     /**
@@ -128,15 +125,15 @@ class SelectedRaceViewModel : ViewModel() {
     suspend fun getCategory(id: UUID) = dataProcessor.getCategory(id)
 
     fun getCategories(): List<Category> = categories.value.map { it.category }
-    fun getCategoryByName(string: String): Category? {
+    fun getCategoryByName(string: String, raceId: UUID): Category? {
         return runBlocking {
-            return@runBlocking dataProcessor.getCategoryByName(string, getCurrentRace().id)
+            return@runBlocking dataProcessor.getCategoryByName(string, raceId)
         }
     }
 
-    fun getCategoryByMaxAge(maxAge: Int): Category? {
+    fun getCategoryByMaxAge(maxAge: Int, isMan: Boolean, raceId: UUID): Category? {
         return runBlocking {
-            return@runBlocking dataProcessor.getCategoryByMaxAge(maxAge, getCurrentRace().id)
+            return@runBlocking dataProcessor.getCategoryByMaxAge(maxAge, isMan, raceId)
         }
     }
 
@@ -157,15 +154,15 @@ class SelectedRaceViewModel : ViewModel() {
         }
     }
 
-    fun createStandardCategories(type: StandardCategoryType) {
+    fun createStandardCategories(type: StandardCategoryType, raceId: UUID) {
         CoroutineScope(Dispatchers.IO).launch {
-            dataProcessor.createStandardCategories(type, getCurrentRace().id)
+            dataProcessor.createStandardCategories(type, raceId)
         }
     }
 
-    fun deleteCategory(categoryId: UUID) = CoroutineScope(Dispatchers.IO).launch {
+    fun deleteCategory(categoryId: UUID, raceId: UUID) = CoroutineScope(Dispatchers.IO).launch {
         dataProcessor.deleteCategory(
-            categoryId, getCurrentRace().id
+            categoryId, raceId
         )
     }
 
@@ -177,11 +174,11 @@ class SelectedRaceViewModel : ViewModel() {
     }
 
     //Alias
-    fun getAliasesByRace() = runBlocking { dataProcessor.getAliasesByRace(getCurrentRace().id) }
+    fun getAliasesByRace(raceId: UUID) = runBlocking { dataProcessor.getAliasesByRace(raceId) }
 
-    fun createOrUpdateAliases(aliases: List<Alias>) {
+    fun createOrUpdateAliases(aliases: List<Alias>, raceId: UUID) {
         CoroutineScope(Dispatchers.IO).launch {
-            dataProcessor.createOrUpdateAliases(aliases, getCurrentRace().id)
+            dataProcessor.createOrUpdateAliases(aliases, raceId)
         }
     }
 
@@ -212,14 +209,14 @@ class SelectedRaceViewModel : ViewModel() {
         }
     }
 
-    fun addCategoriesAutomatically() {
+    fun addCategoriesAutomatically(raceId: UUID) {
         CoroutineScope(Dispatchers.IO).launch {
-            dataProcessor.addCategoriesAutomatically(getCurrentRace().id)
+            dataProcessor.addCategoriesAutomatically(raceId)
         }
     }
 
-    suspend fun getStatistics(): StatisticsWrapper =
-        dataProcessor.getStatisticsByRace(getCurrentRace().id)
+    suspend fun getStatistics(raceId: UUID): StatisticsWrapper =
+        dataProcessor.getStatisticsByRace(raceId)
 
     /**
      * Checks if the SI number is unique
@@ -258,8 +255,8 @@ class SelectedRaceViewModel : ViewModel() {
         }
     }
 
-    fun getResultBySINumber(siNumber: Int) = runBlocking {
-        return@runBlocking dataProcessor.getResultBySINumber(siNumber, getCurrentRace().id)
+    fun getResultBySINumber(siNumber: Int, raceId: UUID) = runBlocking {
+        return@runBlocking dataProcessor.getResultBySINumber(siNumber, raceId)
     }
 
     fun getResultByCompetitor(competitorId: UUID) = runBlocking {
@@ -289,18 +286,18 @@ class SelectedRaceViewModel : ViewModel() {
         }
     }
 
-    fun setAllResultsUnsent() {
+    fun setAllResultsUnsent(raceId: UUID) {
         CoroutineScope(Dispatchers.IO).launch {
-            dataProcessor.setAllResultsUnsent(getCurrentRace().id)
+            dataProcessor.setAllResultsUnsent(raceId)
         }
     }
 
     //DATA IMPORT/EXPORT
     suspend fun importData(
-        uri: Uri, dataType: DataType, dataFormat: DataFormat
+        uri: Uri, dataType: DataType, dataFormat: DataFormat, raceId: UUID
     ): DataImportWrapper {
         return dataProcessor.importData(
-            uri, dataType, dataFormat, getCurrentRace().id
+            uri, dataType, dataFormat, raceId
         )
     }
 
@@ -311,10 +308,10 @@ class SelectedRaceViewModel : ViewModel() {
     }
 
     fun exportData(
-        uri: Uri, dataType: DataType, dataFormat: DataFormat
+        uri: Uri, dataType: DataType, dataFormat: DataFormat,raceId: UUID
     ) = runBlocking {
         dataProcessor.exportData(
-            uri, dataType, dataFormat, getCurrentRace().id
+            uri, dataType, dataFormat, raceId
         )
     }
 

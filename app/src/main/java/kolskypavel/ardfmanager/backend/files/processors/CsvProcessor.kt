@@ -96,7 +96,7 @@ object CsvProcessor : FormatProcessor {
             DataType.COMPETITOR_STARTS_CLUBS -> exportStarts(
                 outStream,
                 dataProcessor.getCompetitorDataFlowByRace(raceId).first(),
-                dataProcessor.getCurrentRace()
+                dataProcessor.getRace(raceId)
             )
 
             DataType.RESULTS -> exportResults(

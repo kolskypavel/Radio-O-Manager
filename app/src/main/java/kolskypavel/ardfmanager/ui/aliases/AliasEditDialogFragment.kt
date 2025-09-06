@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.wrappers.AliasEditItemWrapper
@@ -17,6 +18,7 @@ import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 
 class AliasEditDialogFragment : DialogFragment() {
     private lateinit var selectedRaceViewModel: SelectedRaceViewModel
+    private val args: AliasEditDialogFragmentArgs by navArgs()
 
     private lateinit var addButton: ImageButton
     private lateinit var okButton: Button
@@ -63,12 +65,12 @@ class AliasEditDialogFragment : DialogFragment() {
 
     private fun setAdapter() {
         val aliases =
-            selectedRaceViewModel.getAliasesByRace()
+            selectedRaceViewModel.getAliasesByRace(args.raceId)
         aliasRecyclerView.adapter =
             AliasRecyclerViewAdapter(
                 AliasEditItemWrapper.getWrappers(
                     ArrayList(aliases)
-                ), selectedRaceViewModel
+                ), args.raceId
             )
     }
 
@@ -83,7 +85,7 @@ class AliasEditDialogFragment : DialogFragment() {
             if (adapter.checkFields()) {
                 val values =
                     AliasEditItemWrapper.getAliases((aliasRecyclerView.adapter as AliasRecyclerViewAdapter).values)
-                selectedRaceViewModel.createOrUpdateAliases(values)
+                selectedRaceViewModel.createOrUpdateAliases(values, args.raceId)
                 dialog?.dismiss()
             }
         }

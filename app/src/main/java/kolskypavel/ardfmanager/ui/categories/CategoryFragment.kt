@@ -72,12 +72,15 @@ class CategoryFragment : Fragment() {
         categoryAddFab.setOnClickListener {
             //Prevent accidental double click
             if (SystemClock.elapsedRealtime() - mLastClickTime > 1000) {
-                findNavController().navigate(
-                    CategoryFragmentDirections.modifyCategory(
-                        true,
-                        -1, null, ""
+                selectedRaceViewModel.getCurrentRace()?.let { race ->
+                    findNavController().navigate(
+                        CategoryFragmentDirections.modifyCategory(
+                            true,
+                            -1, null, "",
+                            race
+                        )
                     )
-                )
+                }
             }
             mLastClickTime = SystemClock.elapsedRealtime()
         }
@@ -100,7 +103,8 @@ class CategoryFragment : Fragment() {
             }
 
             R.id.category_menu_manage_aliases -> {
-                findNavController().navigate(CategoryFragmentDirections.manageAliases())
+                selectedRaceViewModel.getCurrentRace()
+                    ?.let { findNavController().navigate(CategoryFragmentDirections.manageAliases(it.id)) }
                 return true
             }
 
@@ -180,7 +184,7 @@ class CategoryFragment : Fragment() {
         builder.setMessage(getString(R.string.category_delete_confirmation, category.name))
 
         builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
-            selectedRaceViewModel.deleteCategory(category.id)
+            selectedRaceViewModel.deleteCategory(category.id, category.raceId)
             dialog.dismiss()
         }
 
@@ -196,14 +200,19 @@ class CategoryFragment : Fragment() {
         categoryData: CategoryData
     ) {
         when (action) {
-            0 -> findNavController().navigate(
-                CategoryFragmentDirections.modifyCategory(
-                    false,
-                    position,
-                    categoryData.category,
-                    categoryData.category.controlPointsString
-                )
-            )
+            0 -> {
+                selectedRaceViewModel.getCurrentRace()?.let { race ->
+                    findNavController().navigate(
+                        CategoryFragmentDirections.modifyCategory(
+                            false,
+                            position,
+                            categoryData.category,
+                            categoryData.category.controlPointsString,
+                            race
+                        )
+                    )
+                }
+            }
 
             1 -> selectedRaceViewModel.duplicateCategory(categoryData)
             2 -> confirmCategoryDeletion(categoryData.category)

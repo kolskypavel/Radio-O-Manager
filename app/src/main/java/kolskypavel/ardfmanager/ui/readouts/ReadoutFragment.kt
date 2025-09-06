@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class ReadoutFragment : Fragment() {
 
@@ -101,21 +102,26 @@ class ReadoutFragment : Fragment() {
         }
 
         readoutAddFab.setOnClickListener {
-            findNavController().navigate(
-                ReadoutFragmentDirections.editOrCreateReadout(
-                    true,
-                    null,
-                    -1
+            selectedRaceViewModel.getCurrentRace()?.let { race ->
+                findNavController().navigate(
+                    ReadoutFragmentDirections.editOrCreateReadout(
+                        true,
+                        null,
+                        -1,
+                        race.id
+                    )
                 )
-            )
+            }
         }
 
         setResultListener()
         setRecyclerAdapter()
         setBackButton()
 
-        statsJob = getStatsJob()
-        statsJob!!.start()
+        selectedRaceViewModel.getCurrentRace()?.let { race ->
+            statsJob = getStatsJob(race.id)
+            statsJob!!.start()
+        }
     }
 
     private fun setFragmentMenuActions(menuItem: MenuItem): Boolean {
@@ -187,7 +193,7 @@ class ReadoutFragment : Fragment() {
             0 -> {
                 findNavController().navigate(
                     ReadoutFragmentDirections.editOrCreateReadout(
-                        false, resultData, position
+                        false, resultData, position, resultData.result.raceId
                     )
                 )
             }
@@ -198,11 +204,11 @@ class ReadoutFragment : Fragment() {
         }
     }
 
-    private fun getStatsJob(): Job {
+    private fun getStatsJob(raceId: UUID): Job {
         return CoroutineScope(Dispatchers.Main).launch {
             while (true) {
                 val statistics =
-                    selectedRaceViewModel.getStatistics()
+                    selectedRaceViewModel.getStatistics(raceId)
 
                 startedTextView.text = "${statistics.startedCompetitors}/${statistics.competitors}"
                 startedProgressBar.progress = if (statistics.startedCompetitors != 0) {

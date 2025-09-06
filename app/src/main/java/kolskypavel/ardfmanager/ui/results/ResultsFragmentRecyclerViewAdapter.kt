@@ -122,7 +122,6 @@ class ResultsFragmentRecyclerViewAdapter(
 
                 // Set the competitor time
                 val competitor = singleResult.competitorCategory.competitor
-                val startDateTime = selectedRaceViewModel.getCurrentRace().startDateTime
                 val drawnStartTime = competitor.drawnRelativeStartTime
 
                 if (singleResult.readoutData != null) {
@@ -133,11 +132,14 @@ class ResultsFragmentRecyclerViewAdapter(
                 } else if (drawnStartTime != null) {
                     holder.timerJob = CoroutineScope(Dispatchers.Main).launch {
                         while (true) {
-                            holder.competitorTime.text = TimeProcessor.runDurationFromStartString(
-                                startDateTime,
-                                drawnStartTime,
-                                dataProcessor
-                            )
+                            selectedRaceViewModel.getCurrentRace()?.let {
+                                holder.competitorTime.text =
+                                    TimeProcessor.runDurationFromStartString(
+                                        it.startDateTime,
+                                        drawnStartTime,
+                                        dataProcessor
+                                    )
+                            }
                             delay(1000)
                         }
                     }

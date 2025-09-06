@@ -34,8 +34,8 @@ interface CategoryDao {
     @Query("SELECT * FROM category WHERE name=(:name) AND race_id = (:raceId) LIMIT 1")
     suspend fun getCategoryByName(name: String, raceId: UUID): Category?
 
-    @Query("SELECT * FROM category WHERE max_age = (:maxAge) AND race_id = (:raceId) LIMIT 1")
-    suspend fun getCategoryByMaxAge(maxAge: Int, raceId: UUID): Category?
+    @Query("SELECT * FROM category WHERE max_age = (:maxAge) AND is_man=(:isMan) AND race_id = (:raceId) LIMIT 1")
+    suspend fun getCategoryByMaxAge(maxAge: Int, isMan: Boolean, raceId: UUID): Category?
 
     @Query("SELECT * FROM category WHERE race_id=(:raceId) AND is_man = (:isMan) AND (:age) <= max_age ORDER BY max_age ASC LIMIT 1 ")
     suspend fun getCategoryByAge(age: Int, isMan: Boolean, raceId: UUID): Category?

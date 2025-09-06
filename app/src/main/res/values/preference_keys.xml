@@ -6,7 +6,6 @@
     <!--CATEGORIES-->
 
     <!--READOUTS-->
-    <string name="key_readout_duplicate" translatable="false">readout_duplicate</string>
     <string name="key_readout_sounds" translatable="false">readout_sounds</string>
 
     <!--RESULTS-->
@@ -31,6 +30,7 @@
     <string name="key_prints_selected_printer_address" translatable="false">selected_printer_address</string>
     <string name="key_prints_automatic_printout" translatable="false">automatic_printout</string>
     <string name="key_prints_remove_diacritics" translatable="false">remove_diacritics</string>
+    <string name="key_prints_double_print" translatable="false">double_print</string>
 
     <!--HELP-->
     <string name="key_about_app" translatable="false">about_app</string>

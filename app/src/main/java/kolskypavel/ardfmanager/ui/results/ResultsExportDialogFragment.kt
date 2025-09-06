@@ -147,11 +147,14 @@ class ResultsExportDialogFragment : DialogFragment() {
     private fun exportData(uri: Uri) {
 
         try {
-            selectedRaceViewModel.exportData(
-                uri,
-                getCurrentType(),
-                getCurrentFormat()
-            )
+            selectedRaceViewModel.getCurrentRace()?.let {
+                selectedRaceViewModel.exportData(
+                    uri,
+                    getCurrentType(),
+                    getCurrentFormat(),
+                    it.id
+                )
+            }
             errorText.text = ""
             val intent = Intent()
             intent.setAction(Intent.ACTION_VIEW)

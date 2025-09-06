@@ -143,10 +143,13 @@ class DataImportDialogFragment : DialogFragment() {
 
         try {
             runBlocking {
-                data = selectedRaceViewModel.importData(
-                    uri, currType,
-                    format
-                )
+                data = selectedRaceViewModel.getCurrentRace()?.let {
+                    selectedRaceViewModel.importData(
+                        uri, currType,
+                        format,
+                        it.id
+                    )
+                }
             }
 
             dataPreviewRecyclerView.adapter =
@@ -211,7 +214,8 @@ class DataImportDialogFragment : DialogFragment() {
         for (cd in categories) {
 
             //Check if category already exists - if it does, update it
-            val existingCategory = selectedRaceViewModel.getCategoryByName(cd.category.name)
+            val existingCategory = selectedRaceViewModel.getCurrentRace()
+                ?.let { selectedRaceViewModel.getCategoryByName(cd.category.name, it.id) }
             if (existingCategory != null) {
                 cd.category.id = existingCategory.id
 
@@ -221,8 +225,10 @@ class DataImportDialogFragment : DialogFragment() {
             }
             // Update the order for non existent category
             else {
-                cd.category.order =
-                    selectedRaceViewModel.getHighestCategoryOrder(selectedRaceViewModel.getCurrentRace().id) + 1
+                selectedRaceViewModel.getCurrentRace()?.let {
+                    cd.category.order =
+                        selectedRaceViewModel.getHighestCategoryOrder(it.id) + 1
+                }
             }
 
             selectedRaceViewModel.createOrUpdateCategory(cd.category, cd.controlPoints)

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "144338192405",
+    "project_id": "ardf-manager",
+    "storage_bucket": "ardf-manager.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144338192405:android:c9ad18fef7e6b18b93e61c",
+        "android_client_info": {
+          "package_name": "kolskypavel.ardfmanager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiLxpvZvmNKp-fLlNwjW2wurOgjEJvqOo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

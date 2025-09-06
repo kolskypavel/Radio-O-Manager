@@ -33,7 +33,6 @@ import kolskypavel.ardfmanager.backend.wrappers.PunchEditItemWrapper
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kotlinx.coroutines.runBlocking
 import java.time.Duration
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.UUID
 
@@ -113,23 +112,20 @@ class ReadoutEditDialogFragment : DialogFragment() {
             result =
                 Result(
                     UUID.randomUUID(),
-                    selectedRaceViewModel.getCurrentRace().id,
-                    null,
-                    null,
-                    0,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    LocalDateTime.now(),
-                    true,
-                    ResultStatus.NO_RANKING,
-                    0,
-                    Duration.ZERO,
-                    true,
-                    false
+                    args.raceId,
+                    siNumber = null,
+                    cardType = 0,
+                    checkTime = null,
+                    origCheckTime = null,
+                    startTime = null,
+                    origStartTime = null,
+                    finishTime = null,
+                    origFinishTime = null,
+                    automaticStatus = true,
+                    resultStatus = ResultStatus.NO_RANKING,
+                    runTime = Duration.ZERO,
+                    modified = true,
+                    sent = false
                 )
 
             raceStatusPicker.setText(getString(R.string.general_automatic), false)
@@ -157,8 +153,8 @@ class ReadoutEditDialogFragment : DialogFragment() {
                 raceStatusPicker.setText(getString(R.string.general_automatic), false)
             }
 
-            if (result.competitorID != null) {
-                competitor = selectedRaceViewModel.getCompetitor(result.competitorID!!)
+            if (result.competitorId != null) {
+                competitor = selectedRaceViewModel.getCompetitor(result.competitorId!!)
                 competitorPicker.setText(competitor?.getNameWithStartNumber())
             } else {
                 competitorPicker.setText(getString(R.string.readout_unknown_competitor), false)
@@ -210,7 +206,7 @@ class ReadoutEditDialogFragment : DialogFragment() {
                 PunchEditItemWrapper(
                     Punch(
                         UUID.randomUUID(),
-                        dataProcessor.getCurrentRace().id,
+                        args.raceId,
                         null,
                         null,
                         0,
@@ -227,7 +223,7 @@ class ReadoutEditDialogFragment : DialogFragment() {
                 PunchEditItemWrapper(
                     Punch(
                         UUID.randomUUID(),
-                        dataProcessor.getCurrentRace().id,
+                        args.raceId,
                         null,
                         null,
                         0,
@@ -289,7 +285,7 @@ class ReadoutEditDialogFragment : DialogFragment() {
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 competitorPickerLayout.error = ""
                 competitor = getCompetitorFromPicker()
-                result.competitorID = competitor?.id
+                result.competitorId = competitor?.id
 
                 setCategoryPicker()
             }
@@ -350,9 +346,9 @@ class ReadoutEditDialogFragment : DialogFragment() {
         var valid = true
 
         //Check competitor
-        if (result.competitorID != null
-            && origResult?.competitorID != result.competitorID
-            && selectedRaceViewModel.getResultByCompetitor(result.competitorID!!) != null
+        if (result.competitorId != null
+            && origResult?.competitorId != result.competitorId
+            && selectedRaceViewModel.getResultByCompetitor(result.competitorId!!) != null
         ) {
             competitorPickerLayout.error = getString(R.string.readout_competitor_exists)
             valid = false
