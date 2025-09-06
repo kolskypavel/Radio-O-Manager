@@ -338,6 +338,8 @@
     <string name="preferences_prints_select_printer_hint">Select the device you want to print with. Make sure Bluetooth is on and the device is paired.\n[%1$s]</string>
     <string name="preferences_prints_automatic">Automatic ticket printout </string>
     <string name="preferences_prints_automatic_hint">Select when to print the tickets automatically.\n[%1$s] </string>
+    <string name="preferences_prints_double_print">Print finish ticket twice</string>
+    <string name="preferences_prints_double_print_hint">Use this option if you want to print each finish ticket twice</string>
     <string name="preferences_prints_remove_diacritics">Remove diacritics from printing </string>
     <string name="preferences_prints_remove_diacritics_hint">Use this option if you face issues when printing tickets.</string>
     <string name="print_bluetooth_not_supported">Unfortunately, your device does not support Bluetooth.</string>

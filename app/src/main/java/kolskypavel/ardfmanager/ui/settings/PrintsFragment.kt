@@ -153,6 +153,9 @@ class PrintsFragment : PreferenceFragmentCompat() {
             val index = listPref.entryValues.indexOf(address)
             val name = if (index >= 0) listPref.entries[index].toString() else ""
 
+            printerSelectPreference.summary =
+                requireContext().getString(R.string.preferences_prints_select_printer_hint, name)
+
             editor.putString(
                 requireContext().getString(R.string.key_prints_selected_printer_name),
                 name
@@ -162,7 +165,6 @@ class PrintsFragment : PreferenceFragmentCompat() {
                 address
             )
             editor.apply()
-
             true
         }
 
@@ -183,6 +185,18 @@ class PrintsFragment : PreferenceFragmentCompat() {
             true
         }
 
+        val doublePrintPreference =
+            findPreference<CheckBoxPreference>(requireContext().getString(R.string.key_prints_double_print))
+
+        doublePrintPreference?.setOnPreferenceChangeListener { _, doublePrint ->
+            editor.putBoolean(
+                requireContext().getString(R.string.key_prints_double_print),
+                doublePrint as Boolean
+            )
+            editor.apply()
+            true
+        }
+
         val removeDiacriticsPreference =
             findPreference<CheckBoxPreference>(requireContext().getString(R.string.key_prints_remove_diacritics))
 
@@ -195,7 +209,6 @@ class PrintsFragment : PreferenceFragmentCompat() {
             true
         }
     }
-
 
     private fun enableOrDisablePreferences(enable: Boolean) {
         val printerSelectPreference =

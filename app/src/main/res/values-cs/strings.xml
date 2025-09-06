@@ -223,6 +223,9 @@
     <string name="preferences_prints_automatic_hint">Vyberte, kdy tisknout lístečky automaticky.\n[%1$s]</string>
     <string name="preferences_prints_remove_diacritics">Odstranit diakritiku z tisku</string>
     <string name="preferences_prints_remove_diacritics_hint">Použijte tuto možnost, pokud máte problémy s tiskem lístečků.</string>
+    <string name="preferences_prints_double_print">Tisknout lístečky dvakrát</string>
+    <string name="preferences_prints_double_print_hint">Použijte tuto možnost, pokud chcete každý lístek tisknout dvakrát.</string>
+
     <string name="preferences_readout_sounds_hint">Zvolte zvuk po vyčtení čipu.</string>
     <string name="preferences_sounds_enable_sounds">Povolit zvuky</string>
     <string name="preferences_sounds_enable_sounds_hint">Povolte, pokud chcete zvuky po vyčtení čipu</string>

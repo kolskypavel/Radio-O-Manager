@@ -31,6 +31,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:defaultValue="0"
+        android:key="@string/key_prints_double_print"
+        android:summary=""
+        android:title="@string/preferences_prints_double_print"
+        app:iconSpaceReserved="false"
+        app:summary="@string/preferences_prints_double_print_hint" />
+
+    <CheckBoxPreference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="0"
         android:key="@string/key_prints_remove_diacritics"
         android:summary=""
         android:title="@string/preferences_prints_remove_diacritics"

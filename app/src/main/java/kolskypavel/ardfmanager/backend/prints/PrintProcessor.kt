@@ -171,7 +171,18 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
                 "[R]<b>$runTime</b>\n" +
                 "[R]$controls\n"
 
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val doublePrint =
+            sharedPref.getBoolean(
+                context.getString(R.string.key_prints_double_print),
+                false
+            )
+
         print(formatted)
+
+        if (doublePrint) {
+            print(formatted)
+        }
     }
 
     private fun getMaxCompetitorName(competitor: Competitor?): String {
