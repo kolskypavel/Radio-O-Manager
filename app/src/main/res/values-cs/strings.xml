@@ -164,8 +164,6 @@
     <string name="preferences_general">Obecné</string>
     <string name="preferences_prints">Tisk</string>
     <string name="preferences_help">Nápověda</string>
-    <string name="preferences_readout_replace">Nahradit</string>
-    <string name="preferences_readout_keep_original">Ponechat originál</string>
     <string name="preferences_general_keep_screen_open">Zabránit systému v zamykání obrazovky</string>
     <string name="preferences_general_keep_screen_open_hint">Obrazovka se nevypne automaticky po vypršení časového limitu.</string>
     <string name="preferences_general_show_log">Zobrazit log</string>
