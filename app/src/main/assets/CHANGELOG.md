@@ -1,3 +1,10 @@
+## [0.0.2] - 2025-09-XX
+### Added
+- Added JSON export to results
+
+### Fixed
+- Fixed calculation of run times and time to limit
+
 ## [0.0.2] - 2025-09-06
 ### Added
 - Added double result ticket printing option
