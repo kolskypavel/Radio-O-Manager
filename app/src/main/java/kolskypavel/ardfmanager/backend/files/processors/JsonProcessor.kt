@@ -77,7 +77,7 @@ object JsonProcessor : FormatProcessor {
 
     }
 
-    suspend fun importRaceData(inStream: InputStream): RaceData {
+    fun importRaceData(inStream: InputStream): RaceData {
         val jsonString = inStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
 
         val moshi: Moshi = Moshi.Builder()

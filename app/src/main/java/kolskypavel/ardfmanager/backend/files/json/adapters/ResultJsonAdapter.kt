@@ -9,8 +9,8 @@ import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
-import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
+import java.time.LocalDateTime
 import java.util.UUID
 
 class ResultJsonAdapter(val raceId: UUID, val filterStart: Boolean) {
@@ -43,7 +43,8 @@ class ResultJsonAdapter(val raceId: UUID, val filterStart: Boolean) {
                         if (ap.punch.punchType == SIRecordType.FINISH && rawCode == "0") "F" else rawCode
                     punchJsonAdapter.toJson(ap).also { it.code = code }
 
-                }
+                },
+            readoutTime = result.readoutTime
         )
     }
 
@@ -56,15 +57,17 @@ class ResultJsonAdapter(val raceId: UUID, val filterStart: Boolean) {
             cardType = 0, // Not in ResultJson
             checkTime = null, // default/fallback
             origCheckTime = null,
+            points = json.controls_num,
             startTime = null,
             origStartTime = null,
             finishTime = null,
             origFinishTime = null,
             automaticStatus = false,
-            resultStatus = ResultStatus.valueOf(json.result_status),
+            resultStatus = DataProcessor.get().resultStatusStringToEnum(json.result_status),
             runTime = TimeProcessor.minuteStringToDuration(json.run_time), // must match enum exactly
             modified = false,
-            sent = false
+            sent = false,
+            readoutTime = json.readoutTime ?: LocalDateTime.now()
         )
 
 

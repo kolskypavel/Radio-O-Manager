@@ -102,7 +102,7 @@ class ResultsFragmentRecyclerViewAdapter(
                     val res = singleResult.readoutData!!.result
                     competitorPlace.text =
                         if (res.resultStatus == ResultStatus.OK) {
-                            res.place.toString()
+                            "${res.place}."
                         } else {
                             dataProcessor.resultStatusToShortString(res.resultStatus)
                         }

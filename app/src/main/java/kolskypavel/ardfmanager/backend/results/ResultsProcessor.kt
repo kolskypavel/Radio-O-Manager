@@ -322,7 +322,7 @@ object ResultsProcessor {
         val race = dataProcessor.getRace(result.raceId)
 
         // If no start time is found in the SI card, try to get it from the competitor
-        if (result.competitorId != null && result.origStartTime == null) {
+        if (result.competitorId != null && result.startTime == null) {
             dataProcessor.getCompetitor(result.competitorId!!)?.drawnRelativeStartTime?.let { relativeStartTime ->
                 val raceStart = race.startDateTime
                 val startTime =
@@ -444,7 +444,6 @@ object ResultsProcessor {
                 controlPoints,
                 result
             )
-
         }
     }
 
