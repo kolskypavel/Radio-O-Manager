@@ -106,6 +106,7 @@ object JsonProcessor : FormatProcessor {
         withContext(Dispatchers.IO) {
             val moshi: Moshi = Moshi.Builder()
                 .add(ResultJsonAdapter(raceId, true))
+                .add(LocalDateTimeAdapter())
                 .add(KotlinJsonAdapterFactory())
                 .build()
 

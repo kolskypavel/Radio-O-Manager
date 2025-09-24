@@ -216,7 +216,7 @@ class DataProcessor private constructor(context: Context) {
     suspend fun deleteCategory(id: UUID, raceId: UUID) {
         ardfRepository.deleteCategory(id)
         ardfRepository.deleteControlPointsByCategory(id)
-        updateResultsForCategory(id, true, this)
+        updateResultsForCategory(id, this)
         updateCategoryOrder(raceId)
     }
 
@@ -369,7 +369,7 @@ class DataProcessor private constructor(context: Context) {
      */
     suspend fun updateResultsByRace(raceId: UUID) {
         getCategoriesForRace(raceId).forEach { category ->
-            updateResultsForCategory(category.id, false, this)
+            updateResultsForCategory(category.id, this)
         }
         ardfRepository.getUnmatchedCompetitorsByRace(raceId)
             .forEach { comp -> updateResultsForCompetitor(comp.id, this) }

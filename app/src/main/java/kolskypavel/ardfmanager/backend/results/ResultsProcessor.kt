@@ -452,27 +452,12 @@ object ResultsProcessor {
      */
     suspend fun updateResultsForCategory(
         categoryId: UUID,
-        delete: Boolean,
         dataProcessor: DataProcessor
     ) {
-        val category = dataProcessor.getCategory(categoryId)
         val competitors = dataProcessor.getCompetitorsByCategory(categoryId)
 
         competitors.forEach { competitor ->
-
-            val result = dataProcessor.getResultByCompetitor(competitor.id)
-            result?.let {
-                val punches = ArrayList(dataProcessor.getPunchesByResult(result.id))
-
-                if (delete) {
-                    clearEvaluation(punches, result)
-                }
-                val manualStatus = if (!result.automaticStatus) {
-                    result.resultStatus
-                } else null
-
-                calculateResult(result, category, punches, manualStatus, dataProcessor)
-            }
+            updateResultsForCompetitor(competitor.id, dataProcessor)
         }
     }
 
