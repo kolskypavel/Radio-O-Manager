@@ -266,6 +266,6 @@
     <string name="prints_bluetooth_disabled">Bluetooth musí být zapnutý pro tisk!</string>
     <string name="prints_error">Chyba při tisku! %1$s</string>
     <string name="about_app_version">Verze %1$s</string>
-    <string name="about_app_description">ARDF Manager je open-source nástroj pro organizaci soutěží v radiovém (ARDF) orientačním běhu a orientačním běhu.</string>
+    <string name="about_app_description">ARDF Manager je open-source nástroj pro organizaci soutěží v radiovém orientačním běhu (ARDF) a orientačním běhu.</string>
 
 </resources>

@@ -51,6 +51,12 @@ class ReadoutDataRecyclerViewAdapter(
         } else {
             "-"
         }
+
+        holder.clubView.text =
+            if (item.competitorCategory?.competitor?.club?.isNotEmpty() == true) {
+                item.competitorCategory?.competitor?.club?.take(13)
+            } else "-"
+
         holder.runTimeView.text = "${
             TimeProcessor.durationToFormattedString(
                 item.result.runTime,
@@ -114,6 +120,7 @@ class ReadoutDataRecyclerViewAdapter(
     inner class ReadoutViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var competitorView: TextView = view.findViewById(R.id.readout_item_competitor)
         var siNumberView: TextView = view.findViewById(R.id.readout_item_si_number)
+        var clubView: TextView = view.findViewById(R.id.readout_item_club)
         var runTimeView: TextView = view.findViewById(R.id.readout_item_run_time)
         var startTimeView: TextView = view.findViewById(R.id.readout_item_start_time)
         var finishTimeView: TextView = view.findViewById(R.id.readout_item_finish_time)
