@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import kolskypavel.ardfmanager.R
+import kolskypavel.ardfmanager.backend.files.DataImportValidator
 import kolskypavel.ardfmanager.backend.files.FileProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
 import kolskypavel.ardfmanager.backend.files.constants.DataType
@@ -461,102 +462,10 @@ class DataProcessor private constructor(context: Context) {
         val data =
             fileProcessor?.importData(uri, dataType, dataFormat, getRace(raceId), getContext())
 
-        validateDataImport(data!!, raceId, dataType, getContext())
+        DataImportValidator.validateDataImport(data!!, raceId, dataType, this, getContext())
         return data
     }
 
-    @Throws(IllegalArgumentException::class)
-    private fun validateDataImport(
-        data: DataImportWrapper,
-        raceId: UUID,
-        dataType: DataType,
-        context: Context
-    ) {
-        when (dataType) {
-
-            //Name is required for each category and must be unique, categories can be empty
-            DataType.CATEGORIES -> {
-                val names = data.categories.map { it.category.name }
-
-                val duplicates = names.groupingBy { it }.eachCount().filter { it.value > 1 }.keys
-                if (duplicates.isNotEmpty()) {
-                    throw IllegalArgumentException(
-                        context.getString(
-                            R.string.data_import_category_duplicate,
-                            duplicates.joinToString(", ")
-                        )
-                    )
-                }
-            }
-
-            // SI number and start number must be unique
-            DataType.COMPETITORS -> {
-
-                //TODO: add check for duplicate names
-                val startNumbers = HashSet<Int>()
-                val siNumbers = HashSet<Int>()
-                for (comp in data.competitorCategories) {
-                    val siNumber = comp.competitor.siNumber
-                    val startNumber = comp.competitor.startNumber
-
-                    // Check if SI is duplicated in the list or in the database
-                    if (siNumber != null) {
-                        if (siNumbers.contains(siNumber)
-                        ) {
-                            throw IllegalArgumentException(
-                                context.getString(
-                                    R.string.data_import_competitor_duplicate_si_file,
-                                    siNumber
-                                )
-                            )
-                        }
-                        if (checkIfSINumberExists(siNumber, raceId)) {
-                            throw IllegalArgumentException(
-                                context.getString(
-                                    R.string.data_import_competitor_duplicate_si_race,
-                                    siNumber
-                                )
-                            )
-                        }
-                    }
-
-                    // Start number checks
-                    if (startNumbers.contains(startNumber)
-                    ) {
-                        throw IllegalArgumentException(
-                            context.getString(
-                                R.string.data_import_competitor_duplicate_start_number_file,
-                                startNumber
-                            )
-                        )
-                    }
-
-                    if (checkIfStartNumberExists(startNumber, raceId)) {
-                        throw IllegalArgumentException(
-                            context.getString(
-                                R.string.data_import_competitor_duplicate_start_number_race,
-                                startNumber
-                            )
-                        )
-                    }
-
-                    // Add the numbers to the sets
-                    if (siNumber != null) {
-                        siNumbers.add(siNumber)
-                    }
-                    startNumbers.add(startNumber)
-                }
-            }
-
-            DataType.COMPETITOR_STARTS_TIME -> {
-                // TODO: implement - based on settings
-            }
-
-            else -> {
-                throw IllegalArgumentException(context.getString(R.string.data_import_format_not_supported))
-            }
-        }
-    }
 
     suspend fun exportData(
         uri: Uri,
@@ -586,9 +495,10 @@ class DataProcessor private constructor(context: Context) {
         return RaceData(race, categories, aliases, competitorData, unknownReadoutData)
     }
 
+    @Throws(Exception::class)
     suspend fun importRaceData(uri: Uri) {
-        val raceData = fileProcessor?.importRaceData(uri)
-        if (raceData != null) {
+        fileProcessor?.importRaceData(uri, getContext())?.let { raceData ->
+            DataImportValidator.validateRaceDataImport(raceData, getContext())
             ardfRepository.saveRaceData(raceData)
         }
     }

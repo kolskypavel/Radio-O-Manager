@@ -11,7 +11,7 @@ class CsvExportEntityUnitTest {
 
     @Test
     fun testCategoryCsvString() {
-        val category = Category()
+        val category = Category("TEST")
         assertEquals("TEST;1;0;0.0;0.0;0;;;;", category.toCSVString())
     }
 

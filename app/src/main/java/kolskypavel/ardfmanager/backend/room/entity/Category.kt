@@ -18,11 +18,7 @@ import java.util.UUID
         Index(
             value = ["name", "race_id"],
             unique = true
-        ),
-//        Index(
-//            value = ["order", "race_id"],
-//            unique = true        )        // TODO: finish
-                                      ],
+        )],
     foreignKeys = [ForeignKey(
         entity = Race::class,
         parentColumns = arrayOf("id"),
@@ -51,10 +47,10 @@ data class Category(
         return "$name;${isMan.compareTo(false)};${maxAge ?: 0};${length};${climb};${order};${raceType?.value ?: ""};${timeLimit?.toMinutes() ?: ""}}"
     }
 
-    constructor() : this(
+    constructor(name: String) : this(
         UUID.randomUUID(),
         UUID.randomUUID(),
-        "TEST",
+        name,
         true,
         null,
         0F,

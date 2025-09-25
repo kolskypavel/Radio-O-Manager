@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
+import kolskypavel.ardfmanager.backend.sportident.SIConstants
 import kolskypavel.ardfmanager.backend.sportident.SITime
 import java.io.Serializable
 import java.time.Duration
@@ -65,4 +66,25 @@ data class Result(
             runTime.compareTo(other.runTime)
         }
     }
+
+    constructor() : this(
+        id = UUID.randomUUID(),
+        raceId = UUID.randomUUID(),
+        competitorId = null,
+        siNumber = 0,
+        cardType = SIConstants.SI_CARD5,
+        checkTime = SITime(),
+        origCheckTime = SITime(),
+        startTime = SITime(),
+        origStartTime = SITime(),
+        finishTime = SITime(),
+        origFinishTime = SITime(),
+        readoutTime = LocalDateTime.now(),
+        automaticStatus = false,
+        resultStatus = ResultStatus.OK,
+        points = 0,
+        runTime = Duration.ZERO,
+        modified = false,
+        sent = false
+    )
 }

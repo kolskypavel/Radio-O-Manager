@@ -249,6 +249,11 @@
     <string name="data_import_competitor_duplicate_si_race">Číslo SI už existuje v závodě: %1$d</string>
     <string name="data_import_competitor_duplicate_start_number_file">Duplicitní startovní číslo v souboru: %1$d</string>
     <string name="data_import_competitor_duplicate_start_number_race">Startovní číslo už existuje v závodě: %1$d</string>
+    <string name="data_import_race_blank_name">Název závodu nesmí být prázdný!</string>
+    <string name="data_import_alias_name_duplicate">Duplicitní názvy aliasů: %1$s</string>
+    <string name="data_import_alias_code_duplicate">Duplicitní kódy aliasů: %1$s</string>
+    <string name="data_import_readout_multiple_start">Více startovních ražení ve vyčítání: %1$s</string>
+    <string name="data_import_readout_multiple_finish">Více cílových ražení ve vyčítání: %1$s</string>
     <string name="race_export_success">Závod úspěšně exportován</string>
     <string name="race_import_success">Závod úspěšně importován</string>
     <string name="race_import_failure">Chyba při importu závodu</string>

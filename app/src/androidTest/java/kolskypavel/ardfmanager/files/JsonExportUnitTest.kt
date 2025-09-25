@@ -35,7 +35,7 @@ class JsonExportUnitTest {
         val competitorId = UUID.randomUUID()
         val categoryId = UUID.randomUUID()
 
-        val category = Category().apply {
+        val category = Category("").apply {
             id = categoryId
             raceId = raceIdRandom
             name = "M20"

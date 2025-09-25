@@ -73,6 +73,12 @@
     <string name="data_import_competitor_duplicate_start_number_file">Duplicate start number in file: %1$d</string>
     <string name="data_import_competitor_duplicate_start_number_race">Start number already exists in race: %1$d</string>
 
+    <string name="data_import_race_blank_name">Race name can\'t be blank!</string>
+    <string name="data_import_alias_name_duplicate">Duplicate alias names: %1$s</string>
+    <string name="data_import_alias_code_duplicate">Duplicate alias codes: %1$s</string>
+    <string name="data_import_readout_multiple_start">Multiple start punches present at readout: %1$s</string>
+    <string name="data_import_readout_multiple_finish">Multiple finish punches present at readout: %1$s</string>
+
     <!--Race-->
     <string name="race_import_text">Import race from a file</string>
     <string name="race_export_success">Race exported successfully</string>

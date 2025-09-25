@@ -65,18 +65,26 @@ class RaceDataJsonAdapter {
         }
 
         val competitorData = ArrayList<CompetitorData>()
+        var highestStartingNum = raceJson.competitors
+            .maxByOrNull { c -> c.start_number ?: 0 }
+            ?.start_number ?: 0
 
-        for (compJson in raceJson.competitors.withIndex()) {
-            val cd = competitorAdapter.fromJson(compJson.value)
+        for (compJson in raceJson.competitors) {
+            val cd = competitorAdapter.fromJson(compJson)
                 .also { it.competitorCategory.competitor.raceId = race.id }
 
-            if (compJson.value.competitor_category.isNotBlank()) {
+            if (compJson.competitor_category.isNotBlank()) {
                 cd.competitorCategory.competitor.categoryId =
-                    categories.find { compJson.value.competitor_category == it.category.name }?.category?.id
+                    categories.find { compJson.competitor_category == it.category.name }?.category?.id
             }
-            cd.competitorCategory.competitor.startNumber = compJson.index
+
+            if (cd.competitorCategory.competitor.startNumber == 0) {
+                highestStartingNum++
+                cd.competitorCategory.competitor.startNumber = highestStartingNum
+            }
             competitorData.add(cd)
         }
+
         val unmatchedData =
             raceJson.unmatched_results?.map { json -> unmatchedAdapter.fromJson(json) }
 
