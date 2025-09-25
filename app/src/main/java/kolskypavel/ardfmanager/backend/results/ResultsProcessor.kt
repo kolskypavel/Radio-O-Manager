@@ -545,7 +545,7 @@ object ResultsProcessor {
                 category = result.key,
                 subList = result.value.toMutableList()
             )
-        }
+        }.sortedBy { it -> it.category?.order }
     }
 
     fun List<CompetitorData>.groupByCategoryAndSortByPlace(): Map<Category?, List<CompetitorData>> {
