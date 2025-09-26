@@ -83,7 +83,7 @@ class SIPort(
     private fun waitForCardInsert(cardData: CardData): Boolean {
 
         val reply: ByteArray? = readMsg(READ_WRITE_TIMEOUT)
-        if (reply != null && reply.isNotEmpty()) {
+        if (reply != null && reply.size >= 9) {
             when (reply[1]) {
                 SI_CARD5, SI_CARD6, SI_CARD8_9_SIAC -> {
                     cardData.siNumber =
@@ -292,13 +292,20 @@ class SIPort(
         var reply: ByteArray?
 
         //Set the serial ports parameters
-        port.syncOpen()
-        port.setDataBits(UsbSerialInterface.DATA_BITS_8)
-        port.setParity(UsbSerialInterface.PARITY_NONE)
-        port.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
 
-        // Start with determining baud rate
-        port.setBaudRate(SIConstants.BAUDRATE_HIGH)
+        try {
+            port.syncOpen()
+            port.setDataBits(UsbSerialInterface.DATA_BITS_8)
+            port.setParity(UsbSerialInterface.PARITY_NONE)
+            port.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF)
+
+            // Start with determining baud rate
+            port.setBaudRate(SIConstants.BAUDRATE_HIGH)
+
+        } catch (e: Exception) {
+            Log.e("SI", "Failed to set parameters on USB serial port" + e.message)
+            return false
+        }
 
         msg = byteArrayOf(0x4d)
         writeMsg(0xf0.toByte(), msg, true)
