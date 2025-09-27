@@ -573,6 +573,10 @@
                         "type": "string",
                         "description": "Alias or code of the control point"
                       },
+                      "si_code": {
+                        "type": "integer",
+                        "description": "SI code of the control point"
+                      },
                       "control_type": {
                         "type": "string",
                         "enum": [
