@@ -439,21 +439,34 @@ class SIPort(
                     ) shl 8) + byteToUnsignedInt(data[offset + 5])
             }
 
-            cardData.startTime = SITime(
-                ((byteToUnsignedInt(data[offset + 19]) shl 8) + byteToUnsignedInt(
-                    data[offset + 20]
-                )).toLong()
-            )
-            cardData.finishTime = SITime(
-                ((byteToUnsignedInt(data[offset + 21]) shl 8) + byteToUnsignedInt(
-                    data[offset + 22]
-                )).toLong()
-            )
-            cardData.checkTime = SITime(
-                ((byteToUnsignedInt(data[offset + 25]) shl 8) + byteToUnsignedInt(
-                    data[offset + 26]
-                )).toLong()
-            )
+            // Check if START/FINISH punches exist
+
+            cardData.startTime =
+                if (data[offset + 19] != SIConstants.NULL && data[offset + 20] != SIConstants.NULL) {
+                    SITime(
+                        ((byteToUnsignedInt(data[offset + 19]) shl 8) + byteToUnsignedInt(
+                            data[offset + 20]
+                        )).toLong()
+                    )
+                } else null
+
+            cardData.finishTime =
+                if (data[offset + 21] != SIConstants.NULL && data[offset + 22] != SIConstants.NULL) {
+                    SITime(
+                        ((byteToUnsignedInt(data[offset + 21]) shl 8) + byteToUnsignedInt(
+                            data[offset + 22]
+                        )).toLong()
+                    )
+                } else null
+            cardData.checkTime =
+                if (data[offset + 25] != SIConstants.NULL && data[offset + 26] != SIConstants.NULL) {
+                    SITime(
+                        ((byteToUnsignedInt(data[offset + 25]) shl 8) + byteToUnsignedInt(
+                            data[offset + 26]
+                        )).toLong()
+                    )
+                } else null
+
             val punchCount = byteToUnsignedInt(data[offset + 23]) - 1
             run {
                 var i = 0
@@ -499,8 +512,8 @@ class SIPort(
             }
             System.arraycopy(tmpReply, 6, reply, i * 128, 128)
             if (i > 0) {
-                if (tmpReply[124] == 0xee.toByte() && tmpReply[125] == 0xee.toByte() &&
-                    tmpReply[126] == 0xee.toByte() && tmpReply[127] == 0xee.toByte()
+                if (tmpReply[124] == SIConstants.NULL && tmpReply[125] == SIConstants.NULL &&
+                    tmpReply[126] == SIConstants.NULL && tmpReply[127] == SIConstants.NULL
                 ) {
                     break   // Stop reading, no more punches
                 }
@@ -728,7 +741,7 @@ class SIPort(
     private fun parseNewPunch(data: ByteArray): PunchData? {
         val punchData = PunchData(0, SITime())
 
-        if (data[0] == 0xee.toByte() && data[1] == 0xee.toByte() && data[2] == 0xee.toByte() && data[3] == 0xee.toByte()) {
+        if (data[0] == SIConstants.NULL && data[1] == SIConstants.NULL && data[2] == SIConstants.NULL && data[3] == SIConstants.NULL) {
             return null
         }
         punchData.siCode =

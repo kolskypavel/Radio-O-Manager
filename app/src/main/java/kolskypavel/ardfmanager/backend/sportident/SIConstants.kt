@@ -15,6 +15,7 @@ object SIConstants {
     const val GET_SYSTEM_INFO: Byte = 0x83.toByte()
     const val EXTENDED_MODE: Byte = 0x01.toByte()
     const val ZERO: Byte = 0x00
+    const val NULL: Byte = 0xEE.toByte()
 
     const val PERIOD = 200L
     const val READ_WRITE_TIMEOUT = 300

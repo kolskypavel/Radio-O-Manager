@@ -55,10 +55,15 @@ object ResultsProcessor {
     /**
      * Adjust the times for the SI_CARD5, because it operates on 12h mode instead of 24h
      */
-    private fun card5TimeAdjust(result: Result, punches: List<Punch>, zeroTimeBase: LocalTime) {
+    private fun card5TimeAdjust(
+        result: Result,
+        punches: List<Punch>,
+        adjustStart: Boolean,
+        zeroTimeBase: LocalTime
+    ) {
         //Solve start and check
-        if (result.startTime != null) {
-            result.startTime = adjustTime(SITime(zeroTimeBase), result.origStartTime!!)
+        if (result.startTime != null && adjustStart) {
+            result.startTime = adjustTime(SITime(zeroTimeBase), result.startTime!!)
         }
 
         //Adjust the punches
@@ -118,6 +123,7 @@ object ResultsProcessor {
         cardData: CardData,
         raceId: UUID,
         result: Result,
+        adjustStart: Boolean,
         zeroTimeBase: LocalTime
     ): ArrayList<Punch> {
         val punches = ArrayList<Punch>()
@@ -142,7 +148,7 @@ object ResultsProcessor {
         }
 
         if (cardData.cardType == SIConstants.SI_CARD5) {
-            card5TimeAdjust(result, punches, zeroTimeBase)
+            card5TimeAdjust(result, punches, adjustStart, zeroTimeBase)
         }
         return punches
     }
@@ -154,6 +160,26 @@ object ResultsProcessor {
                 punch.split = SITime.split(punches[index - 1].siTime, punch.siTime)
             }
         }
+    }
+
+    // Attempt to get the start time from the competitor's drawn start time
+    // Returns true if start time was found and set, false otherwise
+    suspend fun getStartTimeFromStartList(
+        result: Result,
+        race: Race,
+        dataProcessor: DataProcessor
+    ): Boolean {
+        if (result.competitorId != null) {
+            dataProcessor.getCompetitor(result.competitorId!!)?.drawnRelativeStartTime?.let { relativeStartTime ->
+                val raceStart = race.startDateTime
+                val startTime =
+                    TimeProcessor.getAbsoluteDateTimeFromRelativeTime(raceStart, relativeStartTime)
+                result.startTime =
+                    SITime(startTime.toLocalTime(), SITime.dayOfWeekToSIIndex(startTime.dayOfWeek))
+                return true
+            }
+        }
+        return false
     }
 
     /**
@@ -170,6 +196,8 @@ object ResultsProcessor {
         if (dataProcessor.getResultBySINumber(cardData.siNumber, race.id) == null) {
             val competitor = dataProcessor.getCompetitorBySINumber(cardData.siNumber, race.id)
             val category = competitor?.categoryId?.let { dataProcessor.getCategory(it) }
+
+            var drawnTime = false
 
             //Create the result
             val result =
@@ -192,11 +220,15 @@ object ResultsProcessor {
                     sent = false
                 )
 
+            if (result.startTime == null) {
+                drawnTime = getStartTimeFromStartList(result, race, dataProcessor)
+            }
+
             //Process the punches
             val punches = processCardPunches(
                 cardData,
                 race.id,
-                result,
+                result, drawnTime,
                 race.startDateTime.toLocalTime()
             )
 
@@ -325,17 +357,8 @@ object ResultsProcessor {
         race: Race,
         dataProcessor: DataProcessor
     ) {
-
         // If no start time is found in the SI card, try to get it from the competitor
-        if (result.competitorId != null && result.startTime == null) {
-            dataProcessor.getCompetitor(result.competitorId!!)?.drawnRelativeStartTime?.let { relativeStartTime ->
-                val raceStart = race.startDateTime
-                val startTime =
-                    TimeProcessor.getAbsoluteDateTimeFromRelativeTime(raceStart, relativeStartTime)
-                result.startTime =
-                    SITime(startTime.toLocalTime(), SITime.dayOfWeekToSIIndex(startTime.dayOfWeek))
-            }
-        }
+        getStartTimeFromStartList(result, race, dataProcessor)
 
         if (category != null) {
             evaluatePunches(punches, category, result, race, dataProcessor)
