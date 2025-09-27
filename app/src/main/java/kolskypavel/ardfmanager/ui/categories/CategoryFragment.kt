@@ -86,8 +86,8 @@ class CategoryFragment : Fragment() {
         }
 
         selectedRaceViewModel.race.observe(viewLifecycleOwner) { race ->
-            categoryToolbar.title = race.name
-            categoryToolbar.subtitle = dataProcessor.raceTypeToString(race.raceType)
+            categoryToolbar.title = race?.name
+            race?.let { categoryToolbar.subtitle = dataProcessor.raceTypeToString(it.raceType) }
         }
         setFragmentListener()
         setRecyclerViewAdapter()

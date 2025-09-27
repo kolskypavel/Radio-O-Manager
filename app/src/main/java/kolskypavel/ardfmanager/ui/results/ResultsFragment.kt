@@ -77,8 +77,8 @@ class ResultsFragment : Fragment() {
 
         // Set the toolbar as the action bar
         selectedRaceViewModel.race.observe(viewLifecycleOwner) { race ->
-            resultsToolbar.title = race.name
-            resultsToolbar.subtitle = dataProcessor.raceTypeToString(race.raceType)
+            resultsToolbar.title = race?.name
+            race?.let { resultsToolbar.subtitle = dataProcessor.raceTypeToString(it.raceType) }
         }
 
         resultsSwipeLayout.setOnRefreshListener {

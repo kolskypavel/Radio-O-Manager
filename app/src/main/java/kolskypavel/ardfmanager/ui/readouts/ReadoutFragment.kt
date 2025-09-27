@@ -100,8 +100,8 @@ class ReadoutFragment : Fragment() {
         }
 
         selectedRaceViewModel.race.observe(viewLifecycleOwner) { race ->
-            readoutToolbar.title = race.name
-            readoutToolbar.subtitle = dataProcessor.raceTypeToString(race.raceType)
+            readoutToolbar.title = race?.name
+            race?.let { readoutToolbar.subtitle = dataProcessor.raceTypeToString(it.raceType) }
         }
 
         readoutSwipeLayout.setOnRefreshListener {

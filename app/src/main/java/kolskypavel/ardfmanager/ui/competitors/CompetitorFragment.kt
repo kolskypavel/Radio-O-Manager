@@ -80,8 +80,8 @@ class CompetitorFragment : Fragment() {
         }
 
         selectedRaceViewModel.race.observe(viewLifecycleOwner) { race ->
-            competitorToolbar.title = race.name
-            competitorToolbar.subtitle = dataProcessor.raceTypeToString(race.raceType)
+            competitorToolbar.title = race?.name
+            race?.let { competitorToolbar.subtitle = dataProcessor.raceTypeToString(it.raceType) }
         }
 
         competitorDisplayTypePicker.setOnItemClickListener { _, _, _, pos ->
