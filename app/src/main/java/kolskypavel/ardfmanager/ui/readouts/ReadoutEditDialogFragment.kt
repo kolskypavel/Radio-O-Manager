@@ -23,17 +23,13 @@ import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
-import kolskypavel.ardfmanager.backend.room.entity.Punch
 import kolskypavel.ardfmanager.backend.room.entity.Result
-import kolskypavel.ardfmanager.backend.room.enums.PunchStatus
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
-import kolskypavel.ardfmanager.backend.sportident.SITime
 import kolskypavel.ardfmanager.backend.wrappers.PunchEditItemWrapper
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kotlinx.coroutines.runBlocking
 import java.time.Duration
-import java.time.LocalTime
 import java.util.UUID
 
 class ReadoutEditDialogFragment : DialogFragment() {
@@ -199,47 +195,31 @@ class ReadoutEditDialogFragment : DialogFragment() {
         competitorPicker.setAdapter(competitorAdapter)
 
         // Punches setup
-        var punchWrappers = ArrayList<PunchEditItemWrapper>()
-
-        if (args.create || args.resultData?.punches?.isEmpty() == true) {
-            punchWrappers.add(
-                PunchEditItemWrapper(
-                    Punch(
-                        UUID.randomUUID(),
-                        args.raceId,
-                        null,
-                        null,
-                        0,
-                        SITime(LocalTime.MIN),
-                        SITime(LocalTime.MIN),
-                        SIRecordType.START,
-                        0,
-                        PunchStatus.VALID,
-                        Duration.ZERO
-                    ), true, true, true, true
-                )
-            )
-            punchWrappers.add(
-                PunchEditItemWrapper(
-                    Punch(
-                        UUID.randomUUID(),
-                        args.raceId,
-                        null,
-                        null,
-                        0,
-                        SITime(LocalTime.MIN),
-                        SITime(LocalTime.MIN),
-                        SIRecordType.FINISH,
-                        0,
-                        PunchStatus.VALID,
-                        Duration.ZERO
-                    ), true, true, true, true
-                )
-            )
+        val punchWrappers = if (args.create) {
+            arrayListOf()
         } else {
-            punchWrappers =
-                PunchEditItemWrapper.getWrappers(ArrayList(args.resultData!!.punches))
+            // Filter out controls only
+            val filtered =
+                args.resultData!!.punches.filter { it -> it.punch.punchType == SIRecordType.CONTROL }
+            PunchEditItemWrapper.getWrappers(ArrayList(filtered))
         }
+
+        punchWrappers.add(
+            0,
+            PunchEditItemWrapper.getStartOrFinishWrapper(
+                true,
+                args.resultData?.result,
+                args.raceId
+            )
+        )
+
+        punchWrappers.add(
+            PunchEditItemWrapper.getStartOrFinishWrapper(
+                false,
+                args.resultData?.result,
+                args.raceId
+            )
+        )
 
         punchEditRecyclerView.adapter =
             PunchEditRecyclerViewAdapter(punchWrappers)
