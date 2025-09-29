@@ -382,6 +382,11 @@
                       "required": [],
                       "description": "Status of the result: OK - valid, MP - misspunched, DNS - did not start, DNF - did not finish, NR - no ranking, OVT - overtime, UNF - unofficial, ERR - error"
                     },
+                    "automatic_status": {
+                      "type": "boolean",
+                      "default": false,
+                      "description": "Marks if the status was calculated, or assigned manually."
+                    },
                     "place": {
                       "type": "integer",
                       "minimum": 0,
