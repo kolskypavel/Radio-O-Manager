@@ -612,21 +612,28 @@ class DataProcessor private constructor(context: Context) {
 
     fun resultStatusToString(resultStatus: ResultStatus): String {
         val raceStatusStrings =
-            appContext.get()?.resources?.getStringArray(R.array.race_status_array)
+            appContext.get()?.resources?.getStringArray(R.array.result_status_array)
         return raceStatusStrings?.getOrNull(resultStatus.value) ?: ""
     }
 
     fun resultStatusStringToEnum(string: String): ResultStatus {
         val raceStatusStrings =
-            appContext.get()?.resources?.getStringArray(R.array.race_status_array)
+            appContext.get()?.resources?.getStringArray(R.array.result_status_array)
         val idx = raceStatusStrings?.indexOf(string) ?: -1
         return if (idx >= 0) ResultStatus.getByValue(idx) else ResultStatus.entries.first()
     }
 
     fun resultStatusToShortString(resultStatus: ResultStatus): String {
         val raceStatusStrings =
-            appContext.get()?.resources?.getStringArray(R.array.race_status_array_short)
+            appContext.get()?.resources?.getStringArray(R.array.result_status_short_array)
         return raceStatusStrings?.getOrNull(resultStatus.value) ?: ""
+    }
+
+    fun resultStatusShortStringToEnum(string: String): ResultStatus {
+        val raceStatusStrings =
+            appContext.get()?.resources?.getStringArray(R.array.result_status_short_array)
+        val idx = raceStatusStrings?.indexOf(string) ?: -1
+        return if (idx >= 0) ResultStatus.getByValue(idx) else ResultStatus.entries.first()
     }
 
     fun genderToString(isMan: Boolean?): String {

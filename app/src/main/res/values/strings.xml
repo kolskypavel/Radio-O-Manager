@@ -207,25 +207,25 @@
     <string name="punch_type_start" translatable="false">S</string>
     <string name="punch_type_finish" translatable="false">F</string>
 
-    <string name="race_status_ok">OK</string>
-    <string name="race_status_mispunched">Mispunched</string>
-    <string name="race_status_no_ranking">No ranking</string>
-    <string name="race_status_disqualified">Disqualified</string>
-    <string name="race_status_did_not_start">Did not start</string>
-    <string name="race_status_did_not_finish">Did not finish</string>
-    <string name="race_status_over_limit">Over time limit</string>
-    <string name="race_status_unofficial">Unofficial</string>
-    <string name="race_status_error">Error</string>
+    <string name="result_status_ok">OK</string>
+    <string name="result_status_mispunched">Mispunched</string>
+    <string name="result_status_no_ranking">No ranking</string>
+    <string name="result_status_disqualified">Disqualified</string>
+    <string name="result_status_did_not_start">Did not start</string>
+    <string name="result_status_did_not_finish">Did not finish</string>
+    <string name="result_status_over_limit">Over time limit</string>
+    <string name="result_status_unofficial">Unofficial</string>
+    <string name="result_status_error">Error</string>
 
-    <string name="race_status_valid_short" translatable="false">OK</string>
-    <string name="race_status_mispunched_short" translatable="false">MP</string>
-    <string name="race_status_no_ranking_short" translatable="false">NR</string>
-    <string name="race_status_disqualified_short" translatable="false">DSQ</string>
-    <string name="race_status_did_not_start_short" translatable="false">DNS</string>
-    <string name="race_status_did_not_finish_short" translatable="false">DNF</string>
-    <string name="race_status_over_limit_short" translatable="false">OVT</string>
-    <string name="race_status_unofficial_short" translatable="false">UNF</string>
-    <string name="race_status_error_short" translatable="false">ERR</string>
+    <string name="result_status_valid_short" translatable="false">OK</string>
+    <string name="result_status_mispunched_short" translatable="false">MP</string>
+    <string name="result_status_no_ranking_short" translatable="false">NR</string>
+    <string name="result_status_disqualified_short" translatable="false">DSQ</string>
+    <string name="result_status_did_not_start_short" translatable="false">DNS</string>
+    <string name="result_status_did_not_finish_short" translatable="false">DNF</string>
+    <string name="result_status_over_limit_short" translatable="false">OVT</string>
+    <string name="result_status_unofficial_short" translatable="false">UNF</string>
+    <string name="result_status_error_short" translatable="false">ERR</string>
 
     <!--Results-->
     <string name="results_share">Share results</string>
@@ -450,28 +450,28 @@
         <item>@string/competitor_display_on_the_way</item>
     </string-array>
 
-    <string-array name="race_status_array">
-        <item>@string/race_status_ok</item>
-        <item>@string/race_status_mispunched</item>
-        <item>@string/race_status_no_ranking</item>
-        <item>@string/race_status_disqualified</item>
-        <item>@string/race_status_did_not_start</item>
-        <item>@string/race_status_did_not_finish</item>
-        <item>@string/race_status_over_limit</item>
-        <item>@string/race_status_unofficial</item>
-        <item>@string/race_status_error</item>
+    <string-array name="result_status_array">
+        <item>@string/result_status_ok</item>
+        <item>@string/result_status_mispunched</item>
+        <item>@string/result_status_no_ranking</item>
+        <item>@string/result_status_disqualified</item>
+        <item>@string/result_status_did_not_start</item>
+        <item>@string/result_status_did_not_finish</item>
+        <item>@string/result_status_over_limit</item>
+        <item>@string/result_status_unofficial</item>
+        <item>@string/result_status_error</item>
     </string-array>
 
-    <string-array name="race_status_array_short">
-        <item>@string/race_status_valid_short</item>
-        <item>@string/race_status_mispunched_short</item>
-        <item>@string/race_status_no_ranking_short</item>
-        <item>@string/race_status_disqualified_short</item>
-        <item>@string/race_status_did_not_start_short</item>
-        <item>@string/race_status_did_not_finish_short</item>
-        <item>@string/race_status_over_limit_short</item>
-        <item>@string/race_status_unofficial_short</item>
-        <item>@string/race_status_error_short</item>
+    <string-array name="result_status_short_array">
+        <item>@string/result_status_valid_short</item>
+        <item>@string/result_status_mispunched_short</item>
+        <item>@string/result_status_no_ranking_short</item>
+        <item>@string/result_status_disqualified_short</item>
+        <item>@string/result_status_did_not_start_short</item>
+        <item>@string/result_status_did_not_finish_short</item>
+        <item>@string/result_status_over_limit_short</item>
+        <item>@string/result_status_unofficial_short</item>
+        <item>@string/result_status_error_short</item>
     </string-array>
 
     <string-array name="data_formats">

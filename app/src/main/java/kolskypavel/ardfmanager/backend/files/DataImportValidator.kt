@@ -133,7 +133,7 @@ object DataImportValidator {
         if (catNames.isNotEmpty()) {
             throw IllegalArgumentException(
                 context.getString(
-                    R.string.data_import_category_duplicate_name,
+                    R.string.data_import_category_duplicate,
                     catNames.joinToString(", ")
                 )
             )

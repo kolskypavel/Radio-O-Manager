@@ -348,7 +348,9 @@ object ResultsProcessor {
         )
     }
 
-    // Main method for calculation
+    /* Main method for calculation
+     Manual status marks adjustments done by hand (e.g. disqualification)
+    */
     suspend fun calculateResult(
         result: Result,
         category: Category?,
@@ -523,7 +525,13 @@ object ResultsProcessor {
                 result,
                 punches
             )  // Remove start and finish punches before calculation
-            calculateResult(result, category, punches, null, race, dataProcessor)
+
+            // In case the manual status was previously set, keep it
+            val manualStatus = if (!result.automaticStatus) {
+                result.resultStatus
+            } else null
+
+            calculateResult(result, category, punches, manualStatus, race, dataProcessor)
         }
     }
 

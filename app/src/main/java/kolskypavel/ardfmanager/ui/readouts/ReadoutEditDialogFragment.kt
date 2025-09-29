@@ -312,7 +312,7 @@ class ReadoutEditDialogFragment : DialogFragment() {
                     selectedRaceViewModel.processManualPunchData(
                         result,
                         punches,
-                        getRaceStatusFromPicker(),
+                        getResultStatusFromPicker(),
                         modified
                     )
                 }
@@ -367,14 +367,14 @@ class ReadoutEditDialogFragment : DialogFragment() {
         } else null
     }
 
-    private fun getRaceStatusFromPicker(): ResultStatus? {
-        val raceStatusString = raceStatusPicker.text.toString()
-        return if (raceStatusString.isNotEmpty()
-            && raceStatusString == requireContext().getString(R.string.general_automatic)
+    private fun getResultStatusFromPicker(): ResultStatus? {
+        val resultStatusString = raceStatusPicker.text.toString()
+        return if (resultStatusString.isNotEmpty()
+            && resultStatusString == requireContext().getString(R.string.general_automatic)
         ) {
             null
         } else {
-            dataProcessor.resultStatusStringToEnum(raceStatusString)
+            dataProcessor.resultStatusStringToEnum(resultStatusString)
         }
     }
 

@@ -22,6 +22,7 @@ data class ResultJson(
     val modified: Boolean,
     val controls_num: Int,
     val result_status: String,
+    val automatic_status: Boolean?,
     val punches: List<PunchJson>
 )
 
