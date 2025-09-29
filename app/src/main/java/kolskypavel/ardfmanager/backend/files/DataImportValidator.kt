@@ -129,12 +129,12 @@ object DataImportValidator {
     fun validateCategories(categories: List<CategoryData>, context: Context) {
         val names = categories.map { it.category.name }
 
-        val duplicates = names.groupingBy { it }.eachCount().filter { it.value > 1 }.keys
-        if (duplicates.isNotEmpty()) {
+        val catNames = names.groupingBy { it }.eachCount().filter { it.value > 1 }.keys
+        if (catNames.isNotEmpty()) {
             throw IllegalArgumentException(
                 context.getString(
-                    R.string.data_import_category_duplicate,
-                    duplicates.joinToString(", ")
+                    R.string.data_import_category_duplicate_name,
+                    catNames.joinToString(", ")
                 )
             )
         }
