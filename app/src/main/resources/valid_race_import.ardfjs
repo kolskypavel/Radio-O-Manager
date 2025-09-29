@@ -150,7 +150,104 @@
       "start_number": null,
       "start_preference": null,
       "competitor_start_time": null,
-      "result": null
+      "result": {
+        "check_time": {
+          "real_time": "05:17:16",
+          "week": 0,
+          "day_of_week": 0
+        },
+        "start_time": {
+          "real_time": "17:24:57",
+          "week": 0,
+          "day_of_week": 0
+        },
+        "finish_time": {
+          "real_time": "18:27:39",
+          "week": 0,
+          "day_of_week": 0
+        },
+        "run_time": "62:42",
+        "place": 8,
+        "readoutTime": "2025-09-23T18:28:20",
+        "modified": false,
+        "controls_num": 5,
+        "result_status": "MP",
+        "automatic_status": false,
+        "punches": [
+          {
+            "code": "2",
+            "si_code": 42,
+            "control_type": "CONTROL",
+            "punch_status": "OK",
+            "si_time": {
+              "real_time": "17:36:59",
+              "week": 0,
+              "day_of_week": 0
+            },
+            "split_time": "12:02"
+          },
+          {
+            "code": "1",
+            "si_code": 41,
+            "control_type": "CONTROL",
+            "punch_status": "OK",
+            "si_time": {
+              "real_time": "17:51:43",
+              "week": 0,
+              "day_of_week": 0
+            },
+            "split_time": "14:44"
+          },
+          {
+            "code": "3",
+            "si_code": 43,
+            "control_type": "CONTROL",
+            "punch_status": "OK",
+            "si_time": {
+              "real_time": "18:03:43",
+              "week": 0,
+              "day_of_week": 0
+            },
+            "split_time": "12:00"
+          },
+          {
+            "code": "5",
+            "si_code": 45,
+            "control_type": "CONTROL",
+            "punch_status": "OK",
+            "si_time": {
+              "real_time": "18:15:37",
+              "week": 0,
+              "day_of_week": 0
+            },
+            "split_time": "11:54"
+          },
+          {
+            "code": "M",
+            "si_code": 99,
+            "control_type": "CONTROL",
+            "punch_status": "OK",
+            "si_time": {
+              "real_time": "18:27:34",
+              "week": 0,
+              "day_of_week": 0
+            },
+            "split_time": "11:57"
+          },
+          {
+            "code": "F",
+            "si_code": 0,
+            "control_type": "FINISH",
+            "punch_status": "OK",
+            "si_time": {
+              "real_time": "18:27:39",
+              "week": 0,
+              "day_of_week": 0
+            },
+            "split_time": "00:05"
+          }
+        ]
+      }
     },
     {
       "first_name": "Eva",
