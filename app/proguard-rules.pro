@@ -21,3 +21,5 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class kolskypavel.ardfmanager.backend.room.entity.** { *; }
+-keep class kolskypavel.ardfmanager.backend.room.enums.** { *; }
+-keep class kolskypavel.ardfmanager.backend.files.json.** { *; }
