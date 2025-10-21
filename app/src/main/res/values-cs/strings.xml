@@ -41,6 +41,7 @@
     <string name="race_end">Ukončit závod</string>
     <string name="race_end_confirmation">Opravdu chcete ukončit závod?</string>
     <string name="race_type_classic">Klasická trať</string>
+    <string name="race_type_short">Krátká trať</string>
     <string name="race_type_orienteering">Orientační běh</string>
     <string name="general_finish">Cíl</string>
     <string name="general_finish_time">Čas cíle</string>
@@ -60,6 +61,7 @@
     <string name="category_create">Vytvořit kategorii</string>
     <string name="category_edit">Upravit kategorii</string>
     <string name="category_delete_confirmation">Opravdu chcete smazat tuto kategorii?\n%1$s</string>
+    <string name="control_point_edit_hint">Zadejte SI kódy, oddělené mezerou. ! značí diváckou (pouze sprint), B maják. Aliasy se spravují v samostatném dialogu.</string>
     <string name="control_point_unknown_specifier">Neznámý specifikátor: %1$s</string>
     <string name="control_point_invalid_range">SI kód mimo rozsah: %1$s. Kód musí být větší než 30 a menší než 256.</string>
     <string name="control_point_two_in_row">Stejná kontrola nemůže být dvakrát za sebou.</string>

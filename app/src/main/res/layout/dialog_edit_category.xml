@@ -205,6 +205,11 @@
                 android:digits="0123456789B! "
                 android:inputType="textVisiblePassword" />
         </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/dialog_hint"
+            android:text="@string/control_point_edit_hint"/>
 
 
         <LinearLayout

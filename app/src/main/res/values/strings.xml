@@ -119,6 +119,7 @@
     <string name="category_same_type">Same type as race</string>
 
     <!--Control points-->
+    <string name="control_point_edit_hint">Input SI codes, separated by space. ! stands for spectator control (sprint only), B for beacon. Aliases are then managed in a separate dialog.</string>
     <string name="control_point_unknown_specifier"> Unknown special control specifier: %1$s</string>
     <string name="control_point_invalid_range"> Invalid SI range: %1$s. The code must be greater than 30 and less than 256 </string>
     <string name="control_point_two_in_row">" Two identical control points can't be in a row."</string>
@@ -383,6 +384,7 @@
 
     <!-- =============================================== DATA ARRAYS ===============================================-->
     <string name="race_type_classic">Classic</string>
+    <string name="race_type_short">Short</string>
     <string name="race_type_sprint" translatable="false">Sprint</string>
     <string name="race_type_foxoring" translatable="false">Foxoring</string>
     <string name="race_type_orienteering">Orienteering</string>
@@ -417,6 +419,7 @@
 
     <string-array name="race_types_array">
         <item>@string/race_type_classic</item>
+        <item>@string/race_type_short</item>
         <item>@string/race_type_sprint</item>
         <item>@string/race_type_foxoring</item>
         <item>@string/race_type_orienteering</item>

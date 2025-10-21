@@ -196,7 +196,7 @@ object ControlPointsHelper {
     ) {
         when (raceType) {
             RaceType.ORIENTEERING -> validateOrienteeringControlSequence(controlPoints, context)
-            RaceType.CLASSIC, RaceType.FOXORING -> validateClassicsControlSequence(
+            RaceType.CLASSIC, RaceType.SHORT, RaceType.FOXORING -> validateClassicsControlSequence(
                 controlPoints,
                 context
             )

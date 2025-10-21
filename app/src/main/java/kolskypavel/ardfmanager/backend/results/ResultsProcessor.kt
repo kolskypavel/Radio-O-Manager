@@ -458,7 +458,7 @@ object ResultsProcessor {
             race.raceType
         }
         when (raceType) {
-            RaceType.CLASSIC, RaceType.FOXORING -> evaluateClassics(
+            RaceType.CLASSIC, RaceType.SHORT, RaceType.FOXORING -> evaluateClassics(
                 punches,
                 controlPoints,
                 result
