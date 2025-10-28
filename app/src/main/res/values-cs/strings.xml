@@ -48,6 +48,7 @@
     <string name="general_run_time">Čas běhu</string>
     <string name="general_required">Požadováno</string>
     <string name="race_level_practice">Trénink</string>
+    <string name="race_level_other">Ostatní</string>
     <string name="general_invalid">Neplatný</string>
     <string name="race_delete_confirmation">Opravdu chcete smazat závod?</string>
     <string name="category_same_type">Stejný typ jako závod</string>

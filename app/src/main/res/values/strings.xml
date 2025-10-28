@@ -417,6 +417,7 @@
     <string name="race_level_regional">Regional</string>
     <string name="race_level_district">District</string>
     <string name="race_level_practice">Practice</string>
+    <string name="race_level_other">Other</string>
 
     <string name="band_80m" translatable="false">80m</string>
     <string name="band_2m" translatable="false">2m</string>
@@ -454,6 +455,7 @@
         <item>@string/race_level_regional</item>
         <item>@string/race_level_district</item>
         <item>@string/race_level_practice</item>
+        <item>@string/race_level_other</item>
     </string-array>
 
     <string-array name="race_bands_array">
