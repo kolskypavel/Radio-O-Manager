@@ -172,6 +172,11 @@
     <string name="preferences_general_language">Jazyk</string>
     <string name="preferences_general_language_hint">Manuálně vybrat jazyk. Aplikace musí být restartována pro projevení změn.\n[%1$s]</string>
     <string name="preferences_readout_sounds">Zvuky</string>
+    <string name="preferences_readout_duplicate_actions">Akce pro duplikátní čip</string>
+    <string name="preferences_readout_duplicate_actions_hint">Zvol, co se má stát pokud je čip vyčten dvakrát.</string>
+    <string name="preferences_readout_duplicate_ignore">Ignorovat</string>
+    <string name="preferences_readout_duplicate_replace">Nahradit</string>
+    <string name="preferences_readout_duplicate_new">Vytvořit nové vyčítání</string>
     <string name="preferences_files_prefer_app_start_time">Nepřepisovat startovní čas</string>
     <string name="preferences_changelog">Seznam změn</string>
     <string name="print_automatic_manually">Tisknout manuálně</string>

@@ -21,7 +21,7 @@
         android:defaultValue="@string/general_automatic"
         android:enabled="false"
         android:entries="@array/preferences_automatic_prints"
-        android:entryValues="@array/preferences_automatic_prints_entries"
+        android:entryValues="@array/preferences_automatic_prints_values"
         android:key="@string/key_prints_automatic_printout"
         android:summary="@string/preferences_prints_automatic_hint"
         android:title="@string/preferences_prints_automatic"

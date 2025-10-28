@@ -46,6 +46,17 @@
         android:title="@string/general_readouts"
         app:iconSpaceReserved="false">
 
+        <ListPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="@string/preferences_readout_duplicate_ignore"
+            android:entries="@array/preferences_readout_duplicate_options"
+            android:entryValues="@array/preferences_readout_duplicate_values"
+            android:key="@string/key_readout_duplicate"
+            android:summary="@string/preferences_readout_duplicate_actions_hint"
+            android:title="@string/preferences_readout_duplicate_actions"
+            app:iconSpaceReserved="false" />
+
         <Preference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,9 +96,9 @@
         <ListPreference
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:defaultValue="@string/preferences_result_service_matched_entry"
+            android:defaultValue="@string/preferences_result_service_matched_value"
             android:entries="@array/preferences_result_service_options"
-            android:entryValues="@array/preferences_result_service_entries"
+            android:entryValues="@array/preferences_result_service_values"
             android:key="@string/key_result_service"
             android:summary="@string/preferences_results_service_hint"
             android:title="@string/preferences_results_service"

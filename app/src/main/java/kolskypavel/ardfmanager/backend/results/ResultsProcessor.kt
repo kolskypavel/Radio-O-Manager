@@ -192,82 +192,105 @@ object ResultsProcessor {
         dataProcessor: DataProcessor
     ): Boolean {
 
-        //Check if result already exists
-        if (dataProcessor.getResultBySINumber(cardData.siNumber, race.id) == null) {
-            val competitor = dataProcessor.getCompetitorBySINumber(cardData.siNumber, race.id)
-            val category = competitor?.categoryId?.let { dataProcessor.getCategory(it) }
-
-            var drawnTime = false
-
-            //Create the result
-            val result =
-                Result(
-                    UUID.randomUUID(),
-                    race.id,
-                    competitor?.id,
-                    cardData.siNumber,
-                    cardData.cardType,
-                    cardData.checkTime,
-                    cardData.checkTime,
-                    cardData.startTime,
-                    cardData.startTime,
-                    cardData.finishTime,
-                    cardData.finishTime,
-                    automaticStatus = false,
-                    resultStatus = ResultStatus.NO_RANKING,
-                    runTime = Duration.ZERO,
-                    modified = false,
-                    sent = false
-                )
-
-            if (result.startTime == null) {
-                drawnTime = getStartTimeFromStartList(result, race, dataProcessor)
-            }
-
-            //Process the punches
-            val punches = processCardPunches(
-                cardData,
-                race.id,
-                result, drawnTime,
-                race.startDateTime.toLocalTime()
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val preference =
+            sharedPref.getString(
+                context.getString(R.string.key_readout_duplicate),
+                context.getString(R.string.preferences_readout_duplicate_ignore_value)
             )
+        val existingResult = dataProcessor.getResultBySINumber(cardData.siNumber, race.id)
+        val exist = (existingResult != null)
 
-            calculateResult(
-                result,
-                category,
-                punches,
-                null,
-                race,
-                dataProcessor
-            )
+        // Select action if the readout already exists
+        if (exist) {
+            when (preference) {
+                context.getString(R.string.preferences_readout_duplicate_new_value) -> {
+                    cardData.siNumber = 0
+                }
 
-            // Add printing based on option
-            if (isToPrintFinishTicket(competitor, category, context)) {
-                dataProcessor.getRace(result.raceId)?.let { race ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        dataProcessor.printFinishTicket(
-                            dataProcessor.getResultData(result.id),
-                            race
+                // Duplicate exists and it should be replaced
+                context.getString(R.string.preferences_readout_duplicate_replace_value) -> {
+                    dataProcessor.deleteResult(existingResult.id)
+                }
+
+                // create a new readout
+                else -> {
+                    //Run on the main UI thread
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Toast.makeText(
+                            context,
+                            context.getText(R.string.readout_si_exists),
+                            Toast.LENGTH_LONG
                         )
+                            .show()
                     }
+                    return false
                 }
             }
-            return true
         }
-        //Duplicate result
-        else {
 
-            //Run on the main UI thread
-            CoroutineScope(Dispatchers.Main).launch {
-                Toast.makeText(
-                    context,
-                    context.getText(R.string.readout_si_exists),
-                    Toast.LENGTH_LONG
-                )
-                    .show()
-            }
-            return false
+        val competitor = if (cardData.siNumber != 0) {
+            dataProcessor.getCompetitorBySINumber(cardData.siNumber, race.id)
+        } else null
+
+        val category = competitor?.categoryId?.let { dataProcessor.getCategory(it) }
+
+        var drawnTime = false
+
+        //Create the result
+        val result =
+            Result(
+                UUID.randomUUID(),
+                race.id,
+                competitor?.id,
+                if (cardData.siNumber != 0) cardData.siNumber else null,
+                cardData.cardType,
+                cardData.checkTime,
+                cardData.checkTime,
+                cardData.startTime,
+                cardData.startTime,
+                cardData.finishTime,
+                cardData.finishTime,
+                automaticStatus = false,
+                resultStatus = ResultStatus.NO_RANKING,
+                runTime = Duration.ZERO,
+                modified = false,
+                sent = false
+            )
+
+        if (result.startTime == null) {
+            drawnTime = getStartTimeFromStartList(result, race, dataProcessor)
         }
+
+        //Process the punches
+        val punches = processCardPunches(
+            cardData,
+            race.id,
+            result, drawnTime,
+            race.startDateTime.toLocalTime()
+        )
+
+        calculateResult(
+            result,
+            category,
+            punches,
+            null,
+            race,
+            dataProcessor
+        )
+
+        // Add printing based on option
+        if (isToPrintFinishTicket(competitor, category, context)) {
+            dataProcessor.getRace(result.raceId)?.let { race ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    dataProcessor.printFinishTicket(
+                        dataProcessor.getResultData(result.id),
+                        race
+                    )
+                }
+            }
+        }
+        return true
     }
 
     // Returns if the ticket should be printed based on the current settings
@@ -284,12 +307,12 @@ object ResultsProcessor {
             )
 
         when (preference) {
-            context.getString(R.string.print_automatic_manually_entry) -> return true
-            context.getString(R.string.print_automatic_competitor_matched_entry) -> {
+            context.getString(R.string.print_automatic_manually_value) -> return true
+            context.getString(R.string.print_automatic_competitor_matched_value) -> {
                 return competitor != null
             }
 
-            context.getString(R.string.print_automatic_category_matched_entry) -> {
+            context.getString(R.string.print_automatic_category_matched_value) -> {
                 return competitor != null && category != null
             }
 
@@ -310,7 +333,7 @@ object ResultsProcessor {
 
         if (result.competitorId != null) {
             competitor = dataProcessor.getCompetitor(result.competitorId!!)
-        } else if (result.siNumber != null) {
+        } else if (result.siNumber != null && result.siNumber != 0) {
             competitor = dataProcessor.getCompetitorBySINumber(result.siNumber!!, result.raceId)
 
             if (competitor != null) {

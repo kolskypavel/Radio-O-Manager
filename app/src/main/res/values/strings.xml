@@ -301,6 +301,29 @@
     <string name="preferences_sounds_unknown_competitor">Unknown competitor</string>
     <string name="preferences_sounds_unknown_competitor_hint">Competitor wasn\'t natched by SI number\n[%1$s]</string>
 
+    <!--Preferences:readouts-->
+    <string name="preferences_readout_duplicate_actions">Duplicate SI card actions</string>
+    <string name="preferences_readout_duplicate_actions_hint">Select what should be performed when a card is read twice.</string>
+    <string name="preferences_readout_duplicate_ignore">Ignore</string>
+    <string name="preferences_readout_duplicate_replace">Replace</string>
+    <string name="preferences_readout_duplicate_new">Create new readout</string>
+
+    <string name="preferences_readout_duplicate_ignore_value" translatable="false">ignore</string>
+    <string name="preferences_readout_duplicate_replace_value" translatable="false">replace</string>
+    <string name="preferences_readout_duplicate_new_value" translatable="false">new</string>
+
+    <string-array name="preferences_readout_duplicate_options">
+        <item>@string/preferences_readout_duplicate_ignore</item>
+        <item>@string/preferences_readout_duplicate_replace</item>
+        <item>@string/preferences_readout_duplicate_new</item>
+    </string-array>
+
+    <string-array name="preferences_readout_duplicate_values">
+        <item>@string/preferences_readout_duplicate_ignore_value</item>
+        <item>@string/preferences_readout_duplicate_replace_value</item>
+        <item>@string/preferences_readout_duplicate_new_value</item>
+    </string-array>
+
     <!--Preferences:results-->
     <string name="preferences_results_time_format">Time format</string>
     <string name="preferences_results_time_format_hint">Time format used in results display. Either mm:ss or hh:mm:ss\n[%1$s]</string>
@@ -314,8 +337,8 @@
     <string name="preferences_result_service_matched">When competitor matched</string>
     <string name="preferences_result_service_always">Always</string>
 
-    <string name="preferences_result_service_matched_entry" translatable="false">competitor_matched</string>
-    <string name="preferences_result_service_always_entry" translatable="false">always</string>
+    <string name="preferences_result_service_matched_value" translatable="false">competitor_matched</string>
+    <string name="preferences_result_service_always_value" translatable="false">always</string>
 
     <string-array name="preferences_results_time_format_options">
         <item>@string/preferences_results_time_format_minutes</item>
@@ -327,9 +350,9 @@
         <item>@string/preferences_result_service_always</item>
     </string-array>
 
-    <string-array name="preferences_result_service_entries">
-        <item>@string/preferences_result_service_matched_entry</item>
-        <item>@string/preferences_result_service_always_entry</item>
+    <string-array name="preferences_result_service_values">
+        <item>@string/preferences_result_service_matched_value</item>
+        <item>@string/preferences_result_service_always_value</item>
     </string-array>
 
     <!--Preferences:files-->
@@ -356,10 +379,10 @@
     <string name="print_automatic_competitor_matched">Print when competitor is matched to the readout</string>
     <string name="print_automatic_always">Always print automatic</string>
 
-    <string name="print_automatic_manually_entry" translatable="false">manually</string>
-    <string name="print_automatic_category_matched_entry" translatable="false">category_matched</string>
-    <string name="print_automatic_competitor_matched_entry" translatable="false">competitor_matched</string>
-    <string name="print_automatic_always_entry" translatable="false">allways</string>
+    <string name="print_automatic_manually_value" translatable="false">manually</string>
+    <string name="print_automatic_category_matched_value" translatable="false">category_matched</string>
+    <string name="print_automatic_competitor_matched_value" translatable="false">competitor_matched</string>
+    <string name="print_automatic_always_value" translatable="false">allways</string>
 
     <array name="preferences_automatic_prints">
         <item>@string/print_automatic_manually</item>
@@ -368,11 +391,11 @@
         <item>@string/print_automatic_always</item>
     </array>
 
-    <array name="preferences_automatic_prints_entries">
-        <item>@string/print_automatic_manually_entry</item>
-        <item>@string/print_automatic_category_matched_entry</item>
-        <item>@string/print_automatic_competitor_matched_entry</item>
-        <item>@string/print_automatic_always_entry</item>
+    <array name="preferences_automatic_prints_values">
+        <item>@string/print_automatic_manually_value</item>
+        <item>@string/print_automatic_category_matched_value</item>
+        <item>@string/print_automatic_competitor_matched_value</item>
+        <item>@string/print_automatic_always_value</item>
     </array>
 
     <!--Preferences: about the app-->

@@ -89,6 +89,9 @@ class ReadoutDataRecyclerViewAdapter(
         if (item.result.resultStatus == ResultStatus.ERROR) {
             holder.itemView.setBackgroundResource(R.color.red_result_err)
         }
+        else if (item.result.competitorId==null){
+            holder.itemView.setBackgroundResource(R.color.orange_reading)
+        }
 
         //Set context menu
         holder.moreBtn.setOnClickListener {

@@ -7,6 +7,7 @@
 
     <!--READOUTS-->
     <string name="key_readout_sounds" translatable="false">readout_sounds</string>
+    <string name="key_readout_duplicate" translatable="false">readout_duplicate</string>
 
     <!--RESULTS-->
     <string name="key_results_time_format" translatable="false">results_time_format</string>
