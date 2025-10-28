@@ -33,6 +33,8 @@ class ResultJsonAdapter(
             modified = result.modified,
             run_time = TimeProcessor.durationToFormattedString(result.runTime, true),
             place = result.place,
+            // Use new punch_count field and also populate deprecated controls_num for backward compatibility
+            punch_count = result.points,
             controls_num = result.points,
             result_status = dataProcessor
                 .resultStatusToShortString(result.resultStatus),
@@ -49,8 +51,11 @@ class ResultJsonAdapter(
         )
     }
 
+    @Suppress("DEPRECATION")
     @FromJson
     fun fromJson(resultJson: ResultJson): ReadoutData {
+        val pointsFromJson = resultJson.punch_count ?: resultJson.controls_num ?: 0
+
         val result = Result(
             id = UUID.randomUUID(),
             raceId = raceId,
@@ -62,7 +67,7 @@ class ResultJsonAdapter(
                     resultJson.check_time
                 )
             },
-            points = resultJson.controls_num,
+            points = pointsFromJson,
             startTime = resultJson.start_time?.let { time -> siTimeJsonAdapter.fromJson(resultJson.start_time) },
             origStartTime = resultJson.start_time?.let { time ->
                 siTimeJsonAdapter.fromJson(

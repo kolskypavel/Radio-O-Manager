@@ -1,5 +1,6 @@
 package kolskypavel.ardfmanager.backend.files.json.temps
 
+import com.squareup.moshi.Json
 import java.time.LocalDateTime
 
 
@@ -20,7 +21,12 @@ data class ResultJson(
     val place: Int,
     val readoutTime: LocalDateTime?,
     val modified: Boolean,
-    val controls_num: Int,
+    // New preferred field for JSON output/input
+    val punch_count: Int?,
+    // Backwards-compatible field: older JSON may contain controls_num.
+    @Deprecated("Use punch_count instead")
+    @Json(ignore = true)
+    val controls_num: Int? = null,
     val result_status: String,
     val automatic_status: Boolean?,
     val punches: List<PunchJson>

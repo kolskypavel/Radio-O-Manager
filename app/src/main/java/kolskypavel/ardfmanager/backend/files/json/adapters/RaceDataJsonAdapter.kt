@@ -10,6 +10,8 @@ import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
+import kolskypavel.ardfmanager.backend.room.enums.RaceBand
+import kolskypavel.ardfmanager.backend.room.enums.RaceLevel
 import java.time.Duration
 import java.util.UUID
 
@@ -28,6 +30,7 @@ class RaceDataJsonAdapter(val dataProcessor: DataProcessor) {
             race_band = race.raceBand,
             race_level = race.raceLevel,
             race_time_limit = race.timeLimit.toMinutes().toString(),
+            race_api_key = race.apiKey,
             categories = raceData.categories.map { cat -> categoryAdapter.toJson(cat) },
             aliases = raceData.aliases.map { al -> AliasJson(al.siCode, al.name) },
             competitors = raceData.competitorData.map { cd -> competitorAdapter.toJson(cd) },
@@ -41,12 +44,12 @@ class RaceDataJsonAdapter(val dataProcessor: DataProcessor) {
         val race = Race(
             id = UUID.randomUUID(),
             name = raceJson.race_name,
-            apiKey = "",
+            apiKey = raceJson.race_api_key ?: "",
             startDateTime = raceJson.race_start,
             raceType = raceJson.race_type,
-            raceBand = raceJson.race_band,
-            raceLevel = raceJson.race_level,
-            timeLimit = Duration.ofMinutes(raceJson.race_time_limit.toLong())
+            raceBand = raceJson.race_band?: RaceBand.M80,
+            raceLevel = raceJson.race_level?: RaceLevel.PRACTICE,
+            timeLimit = Duration.ofMinutes(raceJson.race_time_limit?.toLong() ?:120)
         )
         val categoryAdapter = CategoryJsonAdapter(race.id)
         val competitorAdapter = CompetitorJsonAdapter(race.id, dataProcessor)

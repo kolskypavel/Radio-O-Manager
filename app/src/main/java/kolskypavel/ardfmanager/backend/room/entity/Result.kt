@@ -41,7 +41,7 @@ data class Result(
     @ColumnInfo(name = "finish_time") var finishTime: SITime?,
     @ColumnInfo(name = "orig_finish_time") var origFinishTime: SITime?, // Immutable copy of original SI Time, used mainly for SI 5 cards
     @ColumnInfo(name = "readout_time") var readoutTime: LocalDateTime = LocalDateTime.now(),
-    @ColumnInfo(name = "automatic_status") var automaticStatus: Boolean,
+    @ColumnInfo(name = "automatic_status") var automaticStatus: Boolean = true,
     @ColumnInfo(name = "result_status") var resultStatus: ResultStatus,
     @ColumnInfo(name = "points") var points: Int = 0,
     @ColumnInfo(name = "run_time") var runTime: Duration,
@@ -80,7 +80,7 @@ data class Result(
         finishTime = SITime(),
         origFinishTime = SITime(),
         readoutTime = LocalDateTime.now(),
-        automaticStatus = false,
+        automaticStatus = true,
         resultStatus = ResultStatus.OK,
         points = 0,
         runTime = Duration.ZERO,

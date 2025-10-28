@@ -18,8 +18,9 @@
   "place": 0,
   "readoutTime": "2025-09-25T14:18:24",
   "modified": false,
-  "controls_num": 0,
+  "punch_count": 0,
   "result_status": "OK",
+  "automatic_status": true,
   "punches": [
     {
       "code": "1",

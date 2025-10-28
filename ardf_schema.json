@@ -1,5 +1,5 @@
 {
-  "title": "ARDF JSON v1.0b",
+  "title": "ARDF JSON v1.1b",
   "description": "Data standard for storing ARDF competition data",
   "type": "object",
   "properties": {
@@ -80,6 +80,7 @@
               "COMBINED",
               "NONE"
             ],
+            "default": "M80",
             "description": "Band of the race"
           },
           "race_level": {
@@ -92,13 +93,18 @@
               "PRACTICE",
               "OTHER"
             ],
-            "required": [],
+            "default": "PRACTICE",
             "description": "Level of the race"
           },
           "race_time_limit": {
             "type": "integer",
             "minimum": 0,
+            "default": 120,
             "description": "Time limit in minutes"
+          },
+          "race_api_key": {
+            "type": "string",
+            "description": "API key of the race"
           },
           "categories": {
             "type": "array",
@@ -384,7 +390,7 @@
                     },
                     "automatic_status": {
                       "type": "boolean",
-                      "default": false,
+                      "default": true,
                       "description": "Marks if the status was calculated, or assigned manually."
                     },
                     "place": {
@@ -396,7 +402,7 @@
                       "type": "boolean",
                       "description": "Marks if the readout was modified - e.g referee's decision"
                     },
-                    "controls_num": {
+                    "punch_count": {
                       "type": "integer",
                       "minimum": 0,
                       "description": "Number of control points found"
