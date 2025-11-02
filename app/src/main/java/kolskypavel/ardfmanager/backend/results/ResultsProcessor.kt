@@ -200,12 +200,13 @@ object ResultsProcessor {
             )
         val existingResult = dataProcessor.getResultBySINumber(cardData.siNumber, race.id)
         val exist = (existingResult != null)
+        var createNewReadout = false
 
         // Select action if the readout already exists
         if (exist) {
             when (preference) {
                 context.getString(R.string.preferences_readout_duplicate_new_value) -> {
-                    cardData.siNumber = 0
+                    createNewReadout = true
                 }
 
                 // Duplicate exists and it should be replaced
@@ -229,7 +230,7 @@ object ResultsProcessor {
             }
         }
 
-        val competitor = if (cardData.siNumber != 0) {
+        val competitor = if (!createNewReadout) {
             dataProcessor.getCompetitorBySINumber(cardData.siNumber, race.id)
         } else null
 
@@ -243,7 +244,7 @@ object ResultsProcessor {
                 UUID.randomUUID(),
                 race.id,
                 competitor?.id,
-                if (cardData.siNumber != 0) cardData.siNumber else null,
+                if (!createNewReadout) cardData.siNumber else null,
                 cardData.cardType,
                 cardData.checkTime,
                 cardData.checkTime,

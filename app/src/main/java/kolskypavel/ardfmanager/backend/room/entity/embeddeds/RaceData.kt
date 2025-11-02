@@ -5,7 +5,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Race
 
 // Contains all data of one race
 data class RaceData(
-    val race: Race,
+    var race: Race,
     val categories: List<CategoryData>,
     val aliases: List<Alias>,
     val competitorData: List<CompetitorData>,

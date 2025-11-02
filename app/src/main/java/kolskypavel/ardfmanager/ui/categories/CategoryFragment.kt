@@ -116,7 +116,7 @@ class CategoryFragment : Fragment() {
             R.id.category_menu_edit_race -> {
                 findNavController().navigate(
                     BottomNavDirections.modifyRaceProperties(
-                        false,
+                        RaceEditDialogFragment.RaceEditAcctions.EDIT,
                         0,
                         selectedRaceViewModel.race.value
                     )

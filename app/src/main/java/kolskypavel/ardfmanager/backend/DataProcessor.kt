@@ -515,15 +515,19 @@ class DataProcessor private constructor(context: Context) {
     }
 
     @Throws(Exception::class)
-    suspend fun importRaceData(uri: Uri) {
+    suspend fun importRaceData(uri: Uri): RaceData? {
         fileProcessor?.importRaceData(uri, getContext())?.let { raceData ->
             DataImportValidator.validateRaceDataImport(raceData, getContext())
-            ardfRepository.saveRaceData(raceData)
+            return raceData
         }
+        return null
     }
 
     suspend fun exportRaceData(uri: Uri, raceId: UUID) =
         fileProcessor?.exportRaceData(uri, raceId)
+
+    suspend fun saveRaceData(raceData: RaceData) =
+        ardfRepository.saveRaceData(raceData)
 
     suspend fun saveDataImportWrapper(
         data: DataImportWrapper

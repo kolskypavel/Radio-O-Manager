@@ -229,8 +229,8 @@
         android:name="kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment"
         android:label="RaceCreateDialogFragment">
         <argument
-            android:name="create"
-            app:argType="boolean" />
+            android:name="action"
+            app:argType="kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment$RaceEditAcctions" />
         <argument
             android:name="position"
             app:argType="integer" />

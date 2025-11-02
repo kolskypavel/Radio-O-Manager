@@ -350,12 +350,6 @@ class SelectedRaceViewModel : ViewModel() {
         )
     }
 
-    fun importRaceData(
-        uri: Uri
-    ) = runBlocking {
-        dataProcessor.importRaceData(uri)
-    }
-
     fun exportData(
         uri: Uri, dataType: DataType, dataFormat: DataFormat, raceId: UUID
     ) = runBlocking {
@@ -363,13 +357,6 @@ class SelectedRaceViewModel : ViewModel() {
             uri, dataType, dataFormat, raceId
         )
     }
-
-    fun exportRaceData(
-        uri: Uri, raceId: UUID
-    ) = runBlocking {
-        dataProcessor.exportRaceData(uri, raceId)
-    }
-
 
     fun saveDataImportWrapper(
         dataImportWrapper: DataImportWrapper

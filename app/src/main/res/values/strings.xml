@@ -95,6 +95,7 @@
 
     <string name="race_create">Create race</string>
     <string name="race_edit">Edit race</string>
+    <string name="race_import">Import race</string>
     <string name="race_delete">Delete race</string>
     <string name="race_delete_confirmation">Do you really want to delete this race?</string>
     <string name="race_export">Export race</string>

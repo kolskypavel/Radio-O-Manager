@@ -24,6 +24,7 @@
     <string name="race_export">Exportovat závod</string>
     <string name="race_delete">Odstranit závod</string>
     <string name="race_edit">Upravit závod</string>
+    <string name="race_import">Importovat závod</string>
     <string name="general_cancel">Zrušit</string>
     <string name="race_api_key">ROBis API klíč</string>
     <string name="race_limit_hint">Limit (min)</string>

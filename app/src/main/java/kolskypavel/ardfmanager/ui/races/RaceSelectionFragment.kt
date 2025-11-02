@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.room.entity.Race
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -43,6 +44,7 @@ class RaceSelectionFragment : Fragment() {
 
     private val raceViewModel: RaceViewModel by activityViewModels()
     private val selectedRaceViewModel: SelectedRaceViewModel by activityViewModels()
+    private var raceData: RaceData? = null
 
     // Race export
     private val getResult = registerForActivityResult(
@@ -81,7 +83,11 @@ class RaceSelectionFragment : Fragment() {
             //Prevent accidental double click
             if (SystemClock.elapsedRealtime() - mLastClickTime > 1500) {
                 findNavController().navigate(
-                    RaceSelectionFragmentDirections.raceCreateOfModify(true, -1, null)
+                    RaceSelectionFragmentDirections.raceCreateOfModify(
+                        RaceEditDialogFragment.RaceEditAcctions.CREATE,
+                        -1,
+                        null
+                    )
                 )
             }
             mLastClickTime = SystemClock.elapsedRealtime()
@@ -118,7 +124,16 @@ class RaceSelectionFragment : Fragment() {
 
     private fun setFragmentListener() {
         setFragmentResultListener(RaceEditDialogFragment.REQUEST_RACE_MODIFICATION) { _, bundle ->
-            val create = bundle.getBoolean(RaceEditDialogFragment.BUNDLE_KEY_CREATE)
+            val action =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) bundle.getSerializable(
+                    RaceEditDialogFragment.BUNDLE_KEY_ACTIONS,
+                    RaceEditDialogFragment.RaceEditAcctions::class.java
+                )
+                else {
+                    bundle.getSerializable(RaceEditDialogFragment.BUNDLE_KEY_ACTIONS) as Race
+
+                }
+
             val position = bundle.getInt(RaceEditDialogFragment.BUNDLE_KEY_POSITION)
 
             val race: Race = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -131,13 +146,22 @@ class RaceSelectionFragment : Fragment() {
             }
 
             //create new race
-            if (create) {
-                raceViewModel.createRace(race)
-            }
-            //Edit an existing race
-            else {
-                raceViewModel.updateRace(race)
-                recyclerView.adapter?.notifyItemChanged(position)
+            when (action) {
+                RaceEditDialogFragment.RaceEditAcctions.CREATE -> {
+                    raceViewModel.createRace(race)
+                }
+                //Edit an existing race
+                RaceEditDialogFragment.RaceEditAcctions.EDIT -> {
+                    raceViewModel.updateRace(race)
+                    recyclerView.adapter?.notifyItemChanged(position)
+                }
+
+                else -> {
+                    raceData?.let { raceData ->
+                        raceData.race = race
+                        raceViewModel.saveRaceData(raceData)
+                    }
+                }
             }
         }
     }
@@ -146,7 +170,7 @@ class RaceSelectionFragment : Fragment() {
         when (action) {
             0 -> findNavController().navigate(
                 RaceSelectionFragmentDirections.raceCreateOfModify(
-                    false, position, race
+                    RaceEditDialogFragment.RaceEditAcctions.EDIT, position, race
                 )
             )
 
@@ -167,7 +191,7 @@ class RaceSelectionFragment : Fragment() {
 
     private fun exportImportRaceData(uri: Uri) {
         if (exportData && selectedRaceId != null) {
-            selectedRaceViewModel.exportRaceData(uri, selectedRaceId!!)
+            raceViewModel.exportRaceData(uri, selectedRaceId!!)
 
             // Inform user about successful export
             Toast.makeText(
@@ -178,14 +202,12 @@ class RaceSelectionFragment : Fragment() {
 
         } else {
             try {
-                selectedRaceViewModel.importRaceData(uri)
-
-                // Inform user about successful import
-                Toast.makeText(
-                    requireContext(),
-                    requireContext().getText(R.string.race_import_success),
-                    Toast.LENGTH_SHORT
-                ).show()
+                raceData = raceViewModel.importRaceData(uri)
+                findNavController().navigate(
+                    RaceSelectionFragmentDirections.raceCreateOfModify(
+                        RaceEditDialogFragment.RaceEditAcctions.IMPORT, -1, raceData!!.race
+                    )
+                )
 
             } catch (e: Exception) {
                 displayAlert(e.message.toString())

@@ -114,21 +114,30 @@ class RaceEditDialogFragment : DialogFragment() {
     private fun populateFields() {
 
         //Create new race
-        if (args.create) {
-            dialog?.setTitle(R.string.race_create)
-            race = Race(
-                UUID.randomUUID(),
-                "", "",
-                LocalDateTime.now(),
-                RaceType.CLASSIC,
-                RaceLevel.PRACTICE,
-                RaceBand.M80,
-                Duration.ofMinutes(120)
-            )
-        } else {
-            race = args.race!!
-            dialog?.setTitle(R.string.race_edit)
-            nameEditText.setText(race.name)
+        when (args.action) {
+            RaceEditAcctions.CREATE -> {
+                dialog?.setTitle(R.string.race_create)
+                race = Race(
+                    UUID.randomUUID(),
+                    "", "",
+                    LocalDateTime.now(),
+                    RaceType.CLASSIC,
+                    RaceLevel.PRACTICE,
+                    RaceBand.M80,
+                    Duration.ofMinutes(120)
+                )
+            }
+            RaceEditAcctions.EDIT -> {
+                race = args.race!!
+                dialog?.setTitle(R.string.race_edit)
+                nameEditText.setText(race.name)
+            }
+            else -> {
+                race = args.race!!
+                dialog?.setTitle(R.string.race_import)
+                nameEditText.setText(race.name)
+
+            }
         }
 
         dateView.setText(race.startDateTime.toLocalDate().toString())
@@ -167,7 +176,7 @@ class RaceEditDialogFragment : DialogFragment() {
 
                 setFragmentResult(
                     REQUEST_RACE_MODIFICATION, bundleOf(
-                        BUNDLE_KEY_CREATE to args.create,
+                        BUNDLE_KEY_ACTIONS to args.action,
                         BUNDLE_KEY_RACE to race
                     )
                 )
@@ -221,8 +230,14 @@ class RaceEditDialogFragment : DialogFragment() {
 
     companion object {
         const val REQUEST_RACE_MODIFICATION = "REQUEST_RACE_MODIFICATION"
-        const val BUNDLE_KEY_CREATE = "BUNDLE_KEY_CREATE"
+        const val BUNDLE_KEY_ACTIONS = "BUNDLE_KEY_ACTIONS"
         const val BUNDLE_KEY_RACE = "BUNDLE_KEY_RACE"
         const val BUNDLE_KEY_POSITION = "BUNDLE_KEY_POSITION"
+    }
+
+    enum class RaceEditAcctions {
+        CREATE,
+        EDIT,
+        IMPORT
     }
 }
