@@ -103,7 +103,6 @@
     <string name="category_exists">Kategorie už existuje!</string>
     <string name="control_points">Kontroly</string>
     <string name="nonexistent_year">Nevalidní rok</string>
-    <string name="invalid_max_age">Maximální věk je duplicitní s kategoriíí  %1$s? !</string>
     <string name="category_climb_title">Převýšení (m)</string>
     <string name="competitor_delete">Smazat závodníka</string>
     <string name="category_duplicate">Duplikovat kategorii</string>

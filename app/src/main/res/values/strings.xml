@@ -116,7 +116,6 @@
     <string name="category_exists">Category already exists!</string>
     <string name="control_points">Control points</string>
     <string name="nonexistent_year">Invalid year</string>
-    <string name="invalid_max_age">Max age is already taken for category %1$s!</string>
     <string name="category_same_type">Same type as race</string>
 
     <!--Control points-->
@@ -145,9 +144,6 @@
     <string name="competitor_edit">Edit competitor</string>
     <string name="competitor_delete">Delete competitor</string>
     <string name="competitor_delete_all">Delete all competitors</string>
-    <string name="competitor_assign_categories_automatically">Assign categories automatically</string>
-    <string name="competitor_assign_categories_automatically_confirmation">Do you really want to assign categories to competitors automatically (based on age)? Only the competitors without category and will be modified.</string>
-    <string name="competitor_assign_categories_toast">Automatic categories assigned successfully.</string>
     <string name="competitor_delete_confirmation">Do you really want to delete this competitor?\n%1$s</string>
     <string name="competitor_delete_readout_data">Also delete readout data (if exist)</string>
     <string name="competitor_delete_all_confirmation">Do you really want to delete all competitors? This action CAN\'T be undone!</string>

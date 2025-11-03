@@ -9,9 +9,6 @@
         android:title="@string/data_import_data"
         app:showAsAction="always" />
     <item
-        android:id="@+id/competitor_menu_add_categories_automatically"
-        android:title="@string/competitor_assign_categories_automatically" />
-    <item
         android:id="@+id/competitor_menu_delete_all_competitors"
         android:title="@string/competitor_delete_all" />
     <item

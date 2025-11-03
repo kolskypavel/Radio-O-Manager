@@ -158,7 +158,8 @@ class SelectedRaceViewModel : ViewModel() {
     // get current locale
     fun getCurrentLocale(context: Context): Locale {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val preference = sharedPref.getString(context.getString(R.string.key_app_language), "en") ?: "en"
+        val preference =
+            sharedPref.getString(context.getString(R.string.key_app_language), "en") ?: "en"
 
         // Use forLanguageTag to avoid deprecated Locale constructor and handle nullability
         return Locale.forLanguageTag(preference)
@@ -171,12 +172,6 @@ class SelectedRaceViewModel : ViewModel() {
     fun getCategoryByName(string: String, raceId: UUID): Category? {
         return runBlocking {
             return@runBlocking dataProcessor.getCategoryByName(string, raceId)
-        }
-    }
-
-    fun getCategoryByMaxAge(maxAge: Int, isMan: Boolean, raceId: UUID): Category? {
-        return runBlocking {
-            return@runBlocking dataProcessor.getCategoryByMaxAge(maxAge, isMan, raceId)
         }
     }
 
@@ -249,12 +244,6 @@ class SelectedRaceViewModel : ViewModel() {
             dataProcessor.deleteAllCompetitorsByRace(
                 it.id
             )
-        }
-    }
-
-    fun addCategoriesAutomatically(raceId: UUID) {
-        CoroutineScope(Dispatchers.IO).launch {
-            dataProcessor.addCategoriesAutomatically(raceId)
         }
     }
 

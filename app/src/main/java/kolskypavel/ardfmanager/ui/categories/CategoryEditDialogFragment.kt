@@ -231,20 +231,6 @@ class CategoryEditDialogFragment : DialogFragment() {
             }
         }
 
-        if (maxAgeEditText.text.toString().isNotBlank()) {
-            val maxYear: String = maxAgeEditText.text.toString().trim()
-
-            val orig = selectedRaceViewModel.getCategoryByMaxAge(
-                maxYear.toInt(),
-                getGenderFromPicker(),
-                args.race.id
-            )
-            if (orig != null && orig.id != category.id) {
-                maxAgeEditText.error = getString(R.string.invalid_max_age, orig.name)
-                valid = false
-            }
-        }
-
         if (controlPointsEditText.text.toString().isNotBlank()) {
             val text = controlPointsEditText.text.toString().trim()
 

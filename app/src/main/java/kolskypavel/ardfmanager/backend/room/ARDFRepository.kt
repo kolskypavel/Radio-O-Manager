@@ -56,12 +56,6 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun getCategoryByName(name: String, raceId: UUID) =
         eventDatabase.categoryDao().getCategoryByName(name, raceId)
 
-    suspend fun getCategoryByMaxAge(maxAge: Int, isMan: Boolean, raceId: UUID) =
-        eventDatabase.categoryDao().getCategoryByMaxAge(maxAge, isMan, raceId)
-
-    suspend fun getCategoryByBirthYear(birthYear: Int, woman: Boolean, raceId: UUID): Category? =
-        eventDatabase.categoryDao().getCategoryByAge(birthYear, woman, raceId)
-
     suspend fun createCategory(category: Category) =
         eventDatabase.categoryDao().createOrUpdateCategory(category)
 

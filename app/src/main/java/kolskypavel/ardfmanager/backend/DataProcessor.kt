@@ -154,15 +154,6 @@ class DataProcessor private constructor(context: Context) {
     suspend fun getCategoryByName(string: String, raceId: UUID): Category? =
         ardfRepository.getCategoryByName(string, raceId)
 
-    private suspend fun getCategoryByBirthYear(
-        birthYear: Int,
-        isMan: Boolean,
-        raceId: UUID
-    ): Category? {
-        //Calculate the age difference
-        val age = LocalDate.now().year - birthYear
-        return ardfRepository.getCategoryByBirthYear(age, isMan, raceId)
-    }
 
     suspend fun getStartTimeForCategory(categoryId: UUID): Duration? {
         val competitors = ardfRepository.getCompetitorsByCategory(categoryId)
@@ -175,9 +166,6 @@ class DataProcessor private constructor(context: Context) {
 
     suspend fun getHighestCategoryOrder(raceId: UUID) =
         ardfRepository.getHighestCategoryOrder(raceId)
-
-    suspend fun getCategoryByMaxAge(maxAge: Int, isMan: Boolean, raceId: UUID) =
-        ardfRepository.getCategoryByMaxAge(maxAge, isMan, raceId)
 
     suspend fun createOrUpdateCategory(category: Category, controlPoints: List<ControlPoint>?) {
         // Update the control points string
@@ -340,17 +328,6 @@ class DataProcessor private constructor(context: Context) {
 
     suspend fun deleteAllCompetitorsByRace(raceId: UUID) {
         ardfRepository.deleteAllCompetitorsByRace(raceId)
-    }
-
-    suspend fun addCategoriesAutomatically(raceId: UUID) {
-        val competitors = ardfRepository.getCompetitorsByRace(raceId)
-
-        for (comp in competitors) {
-            if (comp.categoryId == null && comp.birthYear != null) {
-                comp.categoryId = getCategoryByBirthYear(comp.birthYear!!, comp.isMan, raceId)?.id
-                createOrUpdateCompetitor(comp)
-            }
-        }
     }
 
     //RESULTS

@@ -121,11 +121,6 @@ class CompetitorFragment : Fragment() {
                 return true
             }
 
-            R.id.competitor_menu_add_categories_automatically -> {
-                confirmAutomaticCategories()
-                return true
-            }
-
             R.id.competitor_menu_delete_all_competitors -> {
                 confirmAllCompetitorsDeletion()
                 return true
@@ -350,31 +345,6 @@ class CompetitorFragment : Fragment() {
             dialog.cancel()
         }
 
-        builder.show()
-    }
-
-    private fun confirmAutomaticCategories() {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle(getString(R.string.competitor_assign_categories_automatically))
-        builder.setMessage(R.string.competitor_assign_categories_automatically_confirmation)
-
-        builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
-            selectedRaceViewModel.getCurrentRace()?.let { race ->
-                selectedRaceViewModel.addCategoriesAutomatically(race.id)
-                dialog.dismiss()
-
-                Toast.makeText(
-                    requireContext(),
-                    requireContext().getText(R.string.competitor_assign_categories_toast),
-                    Toast.LENGTH_LONG
-                )
-                    .show()
-            }
-        }
-
-        builder.setNegativeButton(R.string.general_cancel) { dialog, _ ->
-            dialog.cancel()
-        }
         builder.show()
     }
 
