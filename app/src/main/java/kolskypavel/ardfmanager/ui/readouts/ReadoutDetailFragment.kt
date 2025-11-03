@@ -24,6 +24,9 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kolskypavel.ardfmanager.ui.categories.CategoryEditDialogFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
@@ -153,10 +156,12 @@ class ReadoutDetailFragment : Fragment() {
 
                 R.id.readout_detail_menu_print_ticket -> {
                     selectedRaceViewModel.getCurrentRace()?.let { race ->
-                        dataProcessor.printFinishTicket(
-                            resultData,
-                            race
-                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            dataProcessor.printFinishTicket(
+                                resultData,
+                                race
+                            )
+                        }
                     }
                     true
                 }

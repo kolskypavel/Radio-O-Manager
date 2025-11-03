@@ -20,6 +20,7 @@ import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
 import kolskypavel.ardfmanager.backend.wrappers.ResultWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.text.Normalizer
@@ -61,12 +62,10 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
                             printerReady = true
                         } catch (e: Exception) {
                             CoroutineScope(Dispatchers.Main).launch {
-                                Toast.makeText(
-                                    appContext.get(),
+                                makeToast(
                                     appContext.get()!!
                                         .getString(R.string.prints_error_init),
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                )
                             }
                             printerReady = false
                         }
@@ -87,7 +86,6 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
         printerReady = false
     }
 
-    // TODO: add option to remove diacritics from the text
     private fun print(formatted: String) {
         val context = appContext.get()!!
 
@@ -136,7 +134,7 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
         }
     }
 
-    fun printFinishTicket(resultData: ResultData, race: Race) {
+    suspend fun printFinishTicket(resultData: ResultData, race: Race) {
         val context = appContext.get()!!
         val competitor = resultData.competitorCategory?.competitor
         val category = resultData.competitorCategory?.category?.name ?: "?"
@@ -177,10 +175,15 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
                 context.getString(R.string.key_prints_double_print),
                 false
             )
+        val doublePrintDelay =
+            sharedPref.getInt(
+                context.getString(R.string.key_prints_double_print_delay),
+                2
+            )
 
         print(formatted)
-
         if (doublePrint) {
+            delay(doublePrintDelay * 1000L)
             print(formatted)
         }
     }
@@ -189,7 +192,7 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
         val maxLength = getCharactersPerLine()
         val fullName = competitor?.getFullName() ?: "?"
         return if (fullName.length > maxLength) {
-            fullName.substring(0, maxLength)
+            fullName.take(maxLength)
         } else {
             fullName
         }

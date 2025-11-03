@@ -16,6 +16,7 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreference
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
@@ -187,11 +188,27 @@ class PrintsFragment : PreferenceFragmentCompat() {
 
         val doublePrintPreference =
             findPreference<CheckBoxPreference>(requireContext().getString(R.string.key_prints_double_print))
+        val doublePrintDelayPreference =
+            findPreference<SeekBarPreference>(requireContext().getString(R.string.key_prints_double_print_delay))
 
         doublePrintPreference?.setOnPreferenceChangeListener { _, doublePrint ->
             editor.putBoolean(
                 requireContext().getString(R.string.key_prints_double_print),
                 doublePrint as Boolean
+            )
+            doublePrintDelayPreference?.isEnabled = doublePrint
+
+            editor.apply()
+            true
+        }
+
+        // Enable / disable delay if double print is turned off
+        doublePrintDelayPreference?.isEnabled = (doublePrintPreference?.isChecked == true)
+
+        doublePrintDelayPreference?.setOnPreferenceChangeListener { _, doublePrint ->
+            editor.putInt(
+                requireContext().getString(R.string.key_prints_double_print_delay),
+                doublePrint as Int
             )
             editor.apply()
             true

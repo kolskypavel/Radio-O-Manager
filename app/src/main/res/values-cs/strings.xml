@@ -231,6 +231,7 @@
     <string name="preferences_prints_remove_diacritics_hint">Použijte tuto možnost, pokud máte problémy s tiskem lístečků.</string>
     <string name="preferences_prints_double_print">Tisknout lístečky dvakrát</string>
     <string name="preferences_prints_double_print_hint">Použijte tuto možnost, pokud chcete každý lístek tisknout dvakrát.</string>
+    <string name="preferences_prints_double_print_delay">Zpoždění mezi dvojtým tiskem lístků (sekundy)</string>
 
     <string name="preferences_readout_sounds_hint">Zvolte zvuk po vyčtení čipu.</string>
     <string name="preferences_sounds_enable_sounds">Povolit zvuky</string>

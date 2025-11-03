@@ -32,10 +32,18 @@
         android:layout_height="wrap_content"
         android:defaultValue="0"
         android:key="@string/key_prints_double_print"
-        android:summary=""
+        android:summary="@string/preferences_prints_double_print_hint"
         android:title="@string/preferences_prints_double_print"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.SeekBarPreference
+        android:defaultValue="3"
+        android:key="@string/key_prints_double_print_delay"
+        android:title="@string/preferences_prints_double_print_delay"
         app:iconSpaceReserved="false"
-        app:summary="@string/preferences_prints_double_print_hint" />
+        android:max="5"
+        android:min="0"
+        app:showSeekBarValue="true" />
 
     <CheckBoxPreference
         android:layout_width="wrap_content"

@@ -32,6 +32,7 @@
     <string name="key_prints_automatic_printout" translatable="false">automatic_printout</string>
     <string name="key_prints_remove_diacritics" translatable="false">remove_diacritics</string>
     <string name="key_prints_double_print" translatable="false">double_print</string>
+    <string name="key_prints_double_print_delay" translatable="false">double_print_delay</string>
 
     <!--HELP-->
     <string name="key_about_app" translatable="false">about_app</string>
