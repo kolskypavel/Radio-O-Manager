@@ -602,8 +602,8 @@ object ResultsProcessor {
     }
 
 
-    private fun List<CompetitorData>.toResultDisplayWrappers(): List<ResultWrapper> {
-        // Transform each ReadoutData item into a ResultDisplayWrapper
+    fun List<CompetitorData>.toResultWrappers(): List<ResultWrapper> {
+        // Transform each ReadoutData item into a ResultWrapper
         val res = this.groupByCategoryAndSortByPlace()
 
         return res.map { result ->
@@ -611,7 +611,7 @@ object ResultsProcessor {
                 category = result.key,
                 subList = result.value.toMutableList()
             )
-        }.sortedBy { it -> it.category?.order }
+        }.sortedBy { it.category?.order }
     }
 
     fun List<CompetitorData>.groupByCategoryAndSortByPlace(): Map<Category?, List<CompetitorData>> {
@@ -627,7 +627,7 @@ object ResultsProcessor {
         dataProcessor: DataProcessor
     ): Flow<List<ResultWrapper>> {
         return dataProcessor.getCompetitorDataFlowByRace(raceId).map { resultDataList ->
-            resultDataList.toResultDisplayWrappers()
+            resultDataList.toResultWrappers()
         }
     }
 

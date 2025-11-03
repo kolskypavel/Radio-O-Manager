@@ -46,7 +46,7 @@ class RaceJsonTests {
     fun testValidFromJson() {
 
 
-        val stream = this::class.java.classLoader.getResourceAsStream("valid_race_import.ardfjs")
+        val stream = this::class.java.classLoader.getResourceAsStream("json/json_valid_race_import.ardfjs")
         val raceData = JsonProcessor.importRaceData(stream, dataProcessor)
 
         assertEquals("EXAMPLE", raceData.race.name)
@@ -71,7 +71,7 @@ class RaceJsonTests {
 
     @Test
     fun testInvalidFromJson() {
-        val stream = this::class.java.classLoader.getResourceAsStream("invalid_race_import.ardfjs")
+        val stream = this::class.java.classLoader.getResourceAsStream("json/json_invalid_race_import.ardfjs")
         assertThrows(JsonDataException::class.java) {
             JsonProcessor.importRaceData(
                 stream,

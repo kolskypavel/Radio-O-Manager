@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<ResultList xmlns="http://www.orienteering.org/datastandard/3.0" status="complete" iofVersion="3.0">
+    <Event>
+        <Name></Name>
+        <StartDate>
+            <Date dateFormat="YYYY-MM-DD">2025-11-03</Date>
+        </StartDate>
+    </Event>
+    <ClassResult>
+        <Class sex="M">
+            <Name>A</Name>
+        </Class>
+        <PersonResult>
+            <Person>
+                <Id type="CZE">ACT0001</Id>
+                <Name>
+                    <Family>Tester</Family>
+                    <Given>Test</Given>
+                </Name>
+                <ControlCard>123456789</ControlCard>
+                <BibNumber>0</BibNumber>
+            </Person>
+            <Organisation>
+                <Name>AC Test</Name>
+            </Organisation>
+            <Result>
+                <Time>4500</Time>
+                <StartTime>2025-11-09 13:00:00</StartTime>
+                <FinishTime>2025-11-09 14:15:00</FinishTime>
+                <Position>1</Position>
+                <Status>OK</Status>
+            </Result>
+            <SplitTimes>
+                <SplitTime>
+                    <ControlCode>31</ControlCode>
+                    <Time>2100</Time>
+                </SplitTime>
+                <SplitTime>
+                    <ControlCode>32</ControlCode>
+                    <Time>2591</Time>
+                </SplitTime>
+                <SplitTime>
+                    <ControlCode>33</ControlCode>
+                    <Time>3950</Time>
+                </SplitTime>
+                <SplitTime>
+                    <ControlCode>34</ControlCode>
+                    <Time>4222</Time>
+                </SplitTime>
+            </SplitTimes>
+        </PersonResult>
+    </ClassResult>
+</ResultList>

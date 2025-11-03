@@ -74,7 +74,7 @@ object TextProcessor : FormatProcessor {
             )
         }
 
-        var templateType =
+        val templateType =
             if (format == DataFormat.TXT) {
                 FileConstants.TEMPLATE_TEXT_RESULTS
             } else {

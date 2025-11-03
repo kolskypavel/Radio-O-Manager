@@ -1,18 +1,14 @@
-package kolskypavel.ardfmanager.files.json
+package kolskypavel.ardfmanager.files.xml
 
-import ResultJsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import junit.framework.TestCase.assertEquals
 import kolskypavel.ardfmanager.backend.DataProcessor
-import kolskypavel.ardfmanager.backend.files.json.adapters.LocalDateTimeAdapter
-import kolskypavel.ardfmanager.backend.files.json.adapters.RaceDataJsonAdapter
-import kolskypavel.ardfmanager.backend.files.json.temps.ResultJson
+import kolskypavel.ardfmanager.backend.files.processors.IofXmlProcessor
 import kolskypavel.ardfmanager.backend.results.ResultsProcessor
+import kolskypavel.ardfmanager.backend.results.ResultsProcessor.toResultWrappers
 import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.Punch
+import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorCategory
@@ -21,25 +17,32 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
 import kolskypavel.ardfmanager.backend.sportident.SITime
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import java.time.LocalTime
-import java.util.UUID
+import org.robolectric.RobolectricTestRunner
+import java.io.ByteArrayOutputStream
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.LocalTime
+import org.xmlunit.builder.DiffBuilder
+import org.xmlunit.diff.DefaultNodeMatcher
+import org.xmlunit.diff.ElementSelectors
 
-class ResultJsonTests {
-
+@RunWith(RobolectricTestRunner::class)
+class ResultXmlTests {
     @Test
-    fun testToJson() {
+    fun testResultExport() = runTest {
         val dataProcessor = mock(DataProcessor::class.java)
 
-        `when`(dataProcessor.resultStatusToShortString(org.mockito.kotlin.any()))
-            .thenReturn("OK")
+        val race = Race()
 
-        `when`(dataProcessor.punchStatusToShortString(org.mockito.kotlin.any()))
-            .thenReturn("OK")
+        // Mock race retrieval
+        `when`(dataProcessor.getRace(org.mockito.kotlin.any()))
+            .thenReturn(race)
 
         val result = Result()
         result.startTime = SITime(LocalTime.of(13, 0, 0))
@@ -65,23 +68,31 @@ class ResultJsonTests {
         }
         val readoutData = ReadoutData(result, ap)
 
-        val compData = CompetitorData(
-            CompetitorCategory(Competitor(), Category("A")),
-            readoutData
+        val comp = Competitor()
+        val compData = listOf(
+            CompetitorData(
+                CompetitorCategory(comp, Category("A")),
+                readoutData
+            )
         )
-        val json = ResultJsonAdapter(UUID.randomUUID(), dataProcessor).toJson(compData)
 
-        val moshi: Moshi = Moshi.Builder()
-            .add(RaceDataJsonAdapter(dataProcessor))
-            .add(LocalDateTimeAdapter())
-            .add(KotlinJsonAdapterFactory())
-            .build()
-        val out = moshi.adapter(ResultJson::class.java).toJson(json)
+        val out = ByteArrayOutputStream()
+        IofXmlProcessor.exportResults(out, race.id, compData.toResultWrappers(), dataProcessor)
+        val xml = out.toString("UTF-8")
 
         val stream =
-            this::class.java.classLoader.getResourceAsStream("json/json_results_filtered_start.ardfjs")
-        val valid = stream.bufferedReader().use { it.readText() }.filterNot { it.isWhitespace() }
+            this::class.java.classLoader?.getResourceAsStream("xml/xml_results_example.xml")!!
+        val valid = stream.bufferedReader().use { it.readText() }
 
-        assertEquals(valid, out)
+        // Use XMLUnit to compare structure, ignoring whitespace and attribute order
+        val diff = DiffBuilder.compare(valid)
+            .withTest(xml)
+            .ignoreWhitespace()
+            .ignoreComments()
+            .withNodeMatcher(DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes))
+            .checkForSimilar()
+            .build()
+
+        assertEquals("XMLs are different: ${diff.toString()}",false, diff.hasDifferences())
     }
 }

@@ -3,6 +3,7 @@ package kolskypavel.ardfmanager.backend.sportident
 import java.io.Serializable
 import java.time.DayOfWeek
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -117,6 +118,28 @@ class SITime(
         return this.seconds.compareTo(other?.seconds ?: 0)
     }
 
+    /**
+     * Converts SI time to localDateTime when start 00 is provided
+     */
+    fun toLocalDateTime(startZero: LocalDateTime): LocalDateTime {
+        // Start from the startZero date at the SITime's local time
+        var candidateDate = startZero.toLocalDate()
+
+        // Find the first date >= startZero.date that has the same SI day index
+        while (dayOfWeekToSIIndex(candidateDate.dayOfWeek) != this.dayOfWeek) {
+            candidateDate = candidateDate.plusDays(1)
+        }
+
+        var candidate = candidateDate.atTime(time)
+
+        // Account for the week offset encoded in this SITime
+        if (this.week > 0) {
+            candidate = candidate.plusWeeks(this.week.toLong())
+        }
+
+       return candidate
+    }
+
     companion object {
         @Throws(IllegalArgumentException::class)
         fun from(string: String): SITime {
@@ -131,7 +154,7 @@ class SITime(
                 return siTime
 
             } catch (e: Exception) {
-                throw java.lang.IllegalArgumentException("Error when parsing SI time")
+                throw java.lang.IllegalArgumentException("Error when parsing SI time", e)
             }
         }
 
