@@ -7,12 +7,13 @@ import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class SITimeUnitTests {
 
     @Test
-    fun checkBasicSeconds() {
+    fun testBasicSeconds() {
         val time = SITime()
         assertEquals("0", time.getSeconds().toString())
         time.setTime(LocalTime.of(1, 0))
@@ -20,13 +21,13 @@ class SITimeUnitTests {
     }
 
     @Test
-    fun checkToString() {
+    fun testToString() {
         val time = SITime(LocalTime.of(19, 20), 0, 0)
         assertEquals("19:20:00,0,0", time.toString())
     }
 
     @Test
-    fun checkHalfDayAddition() {
+    fun testHalfDayAddition() {
         val time = SITime(LocalTime.of(9, 0))
         assertEquals("32400", time.getSeconds().toString())
 
@@ -48,7 +49,7 @@ class SITimeUnitTests {
     }
 
     @Test
-    fun checkDayChange() {
+    fun testDayChange() {
         val time = SITime(LocalTime.of(23, 59), 6, 0) // Saturday
         assertEquals(6, time.getDayOfWeek())
         assertEquals(0, time.getWeek())
@@ -59,7 +60,7 @@ class SITimeUnitTests {
     }
 
     @Test
-    fun checkWeekChange() {
+    fun testWeekChange() {
         val time = SITime(LocalTime.NOON, 0, 0) // Sunday noon
         for (i in 1..7) {
             time.addDay()
@@ -69,7 +70,7 @@ class SITimeUnitTests {
     }
 
     @Test
-    fun checkSplits() {
+    fun testSplits() {
         val start = SITime(LocalTime.of(10, 0), 0, 0)
         val end = SITime(LocalTime.of(11, 30), 0, 0)
 
@@ -86,7 +87,7 @@ class SITimeUnitTests {
     }
 
     @Test
-    fun checkComparison() {
+    fun testComparison() {
         val t1 = SITime(LocalTime.of(8, 0), 0, 0)
         val t2 = SITime(LocalTime.of(9, 0), 0, 0)
 
@@ -99,7 +100,7 @@ class SITimeUnitTests {
     }
 
     @Test
-    fun checkFromString() {
+    fun testFromString() {
         val time = SITime.from("15:45:30,2,1")
         assertEquals("15:45:30", time.getTimeString())
         assertEquals(2, time.getDayOfWeek())
@@ -107,9 +108,30 @@ class SITimeUnitTests {
     }
 
     @Test
-    fun checkInvalidFromString() {
+    fun testInvalidFromString() {
         assertThrows(IllegalArgumentException::class.java) {
             SITime.from("invalid,string")
         }
+    }
+
+    @Test
+    fun testToLocalDate() {
+        // Use a fixed start date that is a Sunday: 2023-01-01
+        val startZero = LocalDateTime.of(2023, 1, 1, 0, 0)
+
+        // Same-day (Sunday -> Sunday)
+        val siSunday = SITime(LocalTime.of(10, 15), 0, 0)
+        val resSunday = siSunday.toLocalDateTime(startZero)
+        assertEquals(LocalDateTime.of(2023, 1, 1, 10, 15), resSunday)
+
+        // Next day (Monday)
+        val siMonday = SITime(LocalTime.of(9, 0), 1, 0)
+        val resMonday = siMonday.toLocalDateTime(startZero)
+        assertEquals(LocalDateTime.of(2023, 1, 2, 9, 0), resMonday)
+
+        // Same SI day but next week (week offset)
+        val siNextWeek = SITime(LocalTime.of(8, 0), 0, 1)
+        val resNextWeek = siNextWeek.toLocalDateTime(startZero)
+        assertEquals(LocalDateTime.of(2023, 1, 8, 8, 0), resNextWeek)
     }
 }
