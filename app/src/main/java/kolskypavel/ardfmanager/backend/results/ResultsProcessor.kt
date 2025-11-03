@@ -816,7 +816,7 @@ object ResultsProcessor {
         if (result.points == controlPoints.size) {
             result.resultStatus = ResultStatus.OK
         } else {
-            result.resultStatus = ResultStatus.DISQUALIFIED
+            result.resultStatus = ResultStatus.MISPUNCHED
         }
     }
 }

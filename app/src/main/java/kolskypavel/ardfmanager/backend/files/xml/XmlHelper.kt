@@ -6,6 +6,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
+import kolskypavel.ardfmanager.backend.room.enums.PunchStatus
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
 import kolskypavel.ardfmanager.backend.wrappers.ResultWrapper
@@ -161,6 +162,7 @@ object XmlHelper {
             if (res.place > 0) {
                 writeTextElement(serializer, "Position", res.place.toString())
             }
+            writeTextElement(serializer, "ValidPunches", res.points.toString())
             writeTextElement(serializer, "Status", convertResultStatus(res.resultStatus))
         } else {
             writeTextElement(serializer, "Status", "Active")
@@ -175,7 +177,15 @@ object XmlHelper {
         for (p in punches.filter { it.punch.punchType == SIRecordType.CONTROL }) {
             serializer.startTag(null, "SplitTime")
             val control = p.punch.siCode.toString()
-            writeTextElement(serializer, "ControlCode", control)
+
+            // Write punch with status
+            serializer.startTag(null, "ControlCode")
+            if (p.punch.punchStatus == PunchStatus.UNKNOWN) {
+                serializer.attribute(null, "status", "additional")
+            }
+            serializer.text(control)
+            serializer.endTag(null, "ControlCode")
+
             try {
                 cumulativeMillis += p.punch.split.toMillis()
                 val tSeconds = cumulativeMillis / 1000
