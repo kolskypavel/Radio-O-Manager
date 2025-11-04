@@ -1,5 +1,6 @@
 package kolskypavel.ardfmanager.backend.files.processors
 
+import android.content.Context
 import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
 import kolskypavel.ardfmanager.backend.files.constants.DataType
@@ -8,13 +9,13 @@ import kolskypavel.ardfmanager.backend.files.xml.XmlHelper
 import kolskypavel.ardfmanager.backend.results.ResultsProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
-import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.wrappers.ResultWrapper
 import kotlinx.coroutines.flow.first
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.util.UUID
+import kotlin.collections.emptyList
 
 object IofXmlProcessor : FormatProcessor {
 
@@ -25,7 +26,17 @@ object IofXmlProcessor : FormatProcessor {
         dataProcessor: DataProcessor,
         stopOnInvalid: Boolean
     ): DataImportWrapper {
-        TODO("Not yet implemented")
+        return when (dataType) {
+            DataType.CATEGORIES -> importCategories(
+                inStream,
+                race,
+                dataProcessor.getContext()
+            )
+
+            else -> {
+                TODO()
+            }
+        }
     }
 
     override suspend fun exportData(
@@ -53,11 +64,18 @@ object IofXmlProcessor : FormatProcessor {
         race: Race,
         categories: HashSet<CategoryData>
     ): DataImportWrapper {
-        TODO("Not yet implemented")
+        // Competitor import not implemented yet; return empty wrapper
+        return DataImportWrapper(emptyList(), emptyList(), arrayListOf())
     }
 
-    fun importCategories() {
+    fun importCategories(
+        inStream: InputStream,
+        race: Race,
+        context: Context
+    ): DataImportWrapper {
 
+        val cats = XmlHelper.parseCategories(inStream, race, context)
+        return DataImportWrapper(emptyList(), cats, arrayListOf())
     }
 
     fun exportCategories(
@@ -85,7 +103,7 @@ object IofXmlProcessor : FormatProcessor {
 
             // Write each category result with helper
             for (res in results) {
-                XmlHelper.writeCategoryResult(serializer, res,race.startDateTime)
+                XmlHelper.writeCategoryResult(serializer, res, race.startDateTime)
             }
 
             // Finish document

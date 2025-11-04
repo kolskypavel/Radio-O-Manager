@@ -1,20 +1,31 @@
 package kolskypavel.ardfmanager.backend.files.xml
 
+import android.content.Context
+import kolskypavel.ardfmanager.R
+import kolskypavel.ardfmanager.backend.helpers.ControlPointsHelper
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.Race
+import kolskypavel.ardfmanager.backend.room.entity.Category
+import kolskypavel.ardfmanager.backend.room.entity.ControlPoint
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
+import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
+import kolskypavel.ardfmanager.backend.room.enums.ControlPointType
 import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import kolskypavel.ardfmanager.backend.room.enums.SIRecordType
 import kolskypavel.ardfmanager.backend.wrappers.ResultWrapper
 import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
+import org.xmlpull.v1.XmlPullParser
 import java.io.OutputStream
 import java.io.OutputStreamWriter
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
+import java.util.UUID
 
 object XmlHelper {
 
@@ -42,9 +53,150 @@ object XmlHelper {
         }
     }
 
+
+    fun createParser(inStream: InputStream): XmlPullParser {
+        val factory = XmlPullParserFactory.newInstance()
+        val parser = factory.newPullParser()
+        val reader = InputStreamReader(inStream, StandardCharsets.UTF_8)
+        parser.setInput(reader)
+        return parser
+    }
+
     /**
-     * @param resultComplete : marks if the results are complete or temporary
+     * Parse categories (IOF "Class" elements) from the provided input stream.
+     * Produces a list of CategoryData with empty control points and competitors lists.
+     * This is intentionally conservative: missing values are set to sensible defaults.
      */
+    fun parseCategories(inStream: InputStream, race: Race, context: Context): List<CategoryData> {
+        val parser = createParser(inStream)
+        val categories = ArrayList<CategoryData>()
+        var order = 0
+
+        var parserEvent = parser.eventType
+        while (parserEvent != XmlPullParser.END_DOCUMENT) {
+            if (parserEvent == XmlPullParser.START_TAG && parser.name == "RaceCourseData") {
+                // Iterate the contents of RaceCourseData and parse every Course element
+                var innerEvent = parser.next()
+                while (!(innerEvent == XmlPullParser.END_TAG && parser.name == "RaceCourseData")) {
+                    if (innerEvent == XmlPullParser.START_TAG && parser.name == "Course") {
+                        // New course -> new category id and lists
+                        val categoryId = UUID.randomUUID()
+                        var courseEvent = parser.next()
+                        var name = ""
+                        var lengthVal = 0f
+                        var climbVal = 0f
+                        val controlPoints = ArrayList<ControlPoint>()
+
+                        while (!(courseEvent == XmlPullParser.END_TAG && parser.name == "Course")) {
+                            if (courseEvent == XmlPullParser.START_TAG) {
+                                when (parser.name) {
+                                    "Name" -> {
+                                        name = parser.nextText().trim()
+                                    }
+
+                                    "Length" -> {
+                                        lengthVal = parser.nextText().trim().toFloatOrNull() ?: 0f
+                                    }
+
+                                    "Climb" -> {
+                                        climbVal = parser.nextText().trim().toFloatOrNull() ?: 0f
+                                    }
+
+                                    "CourseControl" -> {
+                                        val controlType =
+                                            parser.getAttributeValue(null, "type")?.trim()
+                                                ?: "Control"
+
+                                        if (controlType != "Control") {
+                                            skipCurrentElement(parser)
+                                        } else {
+                                            var siCode = 0
+                                            var evEvent = parser.next()
+                                            while (!(evEvent == XmlPullParser.END_TAG && parser.name == "CourseControl")) {
+                                                if (evEvent == XmlPullParser.START_TAG) {
+                                                    if (parser.name == "Control") {
+                                                        siCode =
+                                                            parser.nextText().trim().toIntOrNull()
+                                                                ?: 0
+                                                    } else {
+                                                        // advance over other nested tags (e.g. LegLength) without using their values
+                                                        parser.nextText()
+                                                    }
+                                                }
+                                                evEvent = parser.next()
+                                            }
+                                            controlPoints.add(
+                                                ControlPoint(
+                                                    UUID.randomUUID(),
+                                                    categoryId,
+                                                    siCode,
+                                                    ControlPointType.CONTROL,
+                                                    controlPoints.size
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            courseEvent = parser.next()
+                        }
+
+                        // Require non-blank category name
+                        if (name.isBlank()) {
+                            val line = try {
+                                parser.lineNumber
+                            } catch (_: Exception) {
+                                -1
+                            }
+                            throw IllegalArgumentException(
+                                context.getString(
+                                    R.string.data_import_category_name_missing,
+                                    line
+                                )
+                            )
+                        }
+
+                        val cat = Category(
+                            categoryId,
+                            race.id,
+                            name,
+                            true,
+                            null,
+                            lengthVal,
+                            climbVal,
+                            order++,
+                            false,
+                            null,
+                            null,
+                            null,
+                            ControlPointsHelper.getStringFromControlPoints(controlPoints)
+                        )
+
+                        // Attach parsed control points for this category
+                        categories.add(CategoryData(cat, controlPoints.toList(), emptyList()))
+                    }
+                    innerEvent = parser.next()
+                }
+            }
+            parserEvent = parser.next()
+        }
+        return categories
+    }
+
+    // Helper: skip the current element completely by matching start/end tags (handles nested elements)
+    private fun skipCurrentElement(parser: XmlPullParser) {
+        var depth = 1
+        var ev = parser.next()
+        while (depth > 0) {
+            when (ev) {
+                XmlPullParser.START_TAG -> depth++
+                XmlPullParser.END_TAG -> depth--
+            }
+            if (depth > 0) ev = parser.next()
+        }
+    }
+
+    // Write root ResultList element and embedded Event information
     fun writeResultListRoot(serializer: XmlSerializer, race: Race) {
         serializer.startTag(null, "ResultList")
         serializer.attribute(null, "xmlns", "http://www.orienteering.org/datastandard/3.0")
@@ -90,6 +242,7 @@ object XmlHelper {
     ) {
         serializer.startTag(null, "PersonResult")
 
+        // Use embedded CompetitorCategory to access the Competitor instance
         writePersonAndClub(serializer, competitorData.competitorCategory.competitor)
 
         writeResult(serializer, competitorData.readoutData, startZero)

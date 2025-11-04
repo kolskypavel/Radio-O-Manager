@@ -251,6 +251,10 @@
     <string name="category_preset_international">Mezinárodní</string>
     <string name="data_import_format_not_supported">Zadaný datový typ není podporován pro import</string>
     <string name="data_import_invalid_line">Neplatná data na řádku %1$d: %2$s</string>
+
+    <string name="data_import_category_duplicate">Duplikátní jména kategorií: %1$s</string>
+    <string name="data_import_category_name_missing">Chybějící jméno kategorie na řádku: %1$d</string>
+
     <string name="data_import_competitor_blank_name">Chybí jméno/příjmení na řádku: %1$d</string>
     <string name="data_import_competitor_invalid_si">Neplatné číslo SI na řádku: %1$d</string>
     <string name="data_import_competitor_duplicate_si_file">Duplicitní číslo SI v souboru: %1$d</string>

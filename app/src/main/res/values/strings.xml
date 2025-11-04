@@ -64,7 +64,9 @@
     <string name="data_import_file_error">Error when opening file!</string>
     <string name="data_import_format_not_supported">Given datatype is not supported for import</string>
     <string name="data_import_invalid_line">Invalid data at line %1$d: %2$s</string>
+
     <string name="data_import_category_duplicate">Duplicate category names: %1$s</string>
+    <string name="data_import_category_name_missing">Category name missing at line: %1$d</string>
 
     <string name="data_import_competitor_blank_name">Missing first/last name at line: %1$d</string>
     <string name="data_import_competitor_invalid_si">Invalid SI number at line: %1$d</string>
