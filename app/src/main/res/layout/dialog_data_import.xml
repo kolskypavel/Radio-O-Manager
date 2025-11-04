@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                app:simpleItems="@array/competitor_data_types" />
+                app:simpleItems="@array/import_data_types" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                app:simpleItems="@array/competitor_data_formats" />
+                app:simpleItems="@array/category_data_formats" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

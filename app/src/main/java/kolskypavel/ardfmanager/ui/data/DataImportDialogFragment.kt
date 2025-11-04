@@ -89,7 +89,23 @@ class DataImportDialogFragment : DialogFragment() {
         cancelButton = view.findViewById(R.id.data_import_cancel)
 
         dataTypePicker.setText(getString(R.string.data_type_categories), false)
+
+        dataTypePicker.setOnItemClickListener { parent, view, position, id ->
+            val type = getCurrentType()
+            val items =
+                when (type) {
+                    DataType.CATEGORIES -> R.array.category_data_formats
+                    DataType.COMPETITORS -> R.array.competitor_data_formats
+                    DataType.COMPETITOR_STARTS -> R.array.competitor_data_formats
+                    else -> {
+                        R.array.category_data_formats
+                    }      //Failsafe - should not happen
+                }
+            dataFormatPicker.setSimpleItems(items)
+        }
+
         dataFormatPicker.setText(getString(R.string.data_format_csv), false)
+
         importButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -198,7 +214,7 @@ class DataImportDialogFragment : DialogFragment() {
                     selectedRaceViewModel.saveDataImportWrapper(data!!)
                 }
 
-                DataType.COMPETITOR_STARTS_TIME -> {
+                DataType.COMPETITOR_STARTS -> {
                     //Save competitor starts - TODO: ADD duplicates check
                     for (compData in data!!.competitorCategories) {
                         selectedRaceViewModel.createOrUpdateCompetitor(compData.competitor)
