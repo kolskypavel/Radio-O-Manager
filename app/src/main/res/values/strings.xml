@@ -426,9 +426,7 @@
 
     <string name="data_type_categories">Categories</string>
     <string name="data_type_competitors">Competitors</string>
-    <string name="data_type_competitor_starts_time">Competitor starts</string>
-    <string name="data_type_competitor_starts_categories">Competitor starts by categories</string>
-    <string name="data_type_competitor_starts_clubs">Competitor starts by clubs</string>
+    <string name="data_type_competitor_starts">Competitor starts</string>
     <string name="data_type_results">Results</string>
     <string name="data_type_readout_data">SI Readout data</string>
 
@@ -510,10 +508,10 @@
         <item>@string/data_format_xml</item>
     </string-array>
 
-    <string-array name="category_data_formats" tools:ignore="UnusedResources">
+    <string-array name="category_data_formats">
         <item>@string/data_format_csv</item>
         <item>@string/data_format_json</item>
-        <!--        <item>@string/data_format_xml</item>-->
+        <item>@string/data_format_xml</item>
     </string-array>
 
     <string-array name="competitor_data_formats">
@@ -526,8 +524,9 @@
         <item>@string/data_format_txt</item>
         <item>@string/data_format_html</item>
         <item>@string/data_format_json</item>
+        <item>@string/data_format_xml</item>
         <!--        <item>@string/data_format_csv</item>-->
-        <!--        <item>@string/data_format_xml</item>-->
+
     </string-array>
 
     <string-array name="readout_data_data_formats">
@@ -537,17 +536,15 @@
     <string-array name="data_types">
         <item>@string/data_type_categories</item>
         <item>@string/data_type_competitors</item>
-        <item>@string/data_type_competitor_starts_time</item>
-        <item>@string/data_type_competitor_starts_categories</item>
-        <item>@string/data_type_competitor_starts_clubs</item>
+        <item>@string/data_type_competitor_starts</item>
         <item>@string/data_type_results</item>
         <item>@string/data_type_readout_data</item>
     </string-array>
 
-    <string-array name="competitor_data_types">
+    <string-array name="import_data_types">
         <item>@string/data_type_categories</item>
         <item>@string/data_type_competitors</item>
-        <item>@string/data_type_competitor_starts_time</item>
+        <item>@string/data_type_competitor_starts</item>
     </string-array>
 
     <string-array name="results_data_types">

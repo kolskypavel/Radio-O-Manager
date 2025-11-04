@@ -188,9 +188,7 @@
     <string name="band_none">Žádné</string>
     <string name="data_type_categories">Kategorie</string>
     <string name="data_type_competitors">Závodníci</string>
-    <string name="data_type_competitor_starts_time">Starty</string>
-    <string name="data_type_competitor_starts_categories">Starty po kategoriích</string>
-    <string name="data_type_competitor_starts_clubs">Starty po klubech</string>
+    <string name="data_type_competitor_starts">Starty</string>
     <string name="data_type_results">Výsledky</string>
     <string name="data_type_readout_data">Data z vyčítání</string>
     <string name="general_race">Závod</string>

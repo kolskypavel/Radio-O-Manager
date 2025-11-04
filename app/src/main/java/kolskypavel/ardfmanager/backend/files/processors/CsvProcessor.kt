@@ -61,7 +61,7 @@ object CsvProcessor : FormatProcessor {
                 dataProcessor.getContext()
             )
 
-            DataType.COMPETITOR_STARTS_TIME -> return importCompetitorStarts(
+            DataType.COMPETITOR_STARTS -> return importCompetitorStarts(
                 inStream,
                 dataProcessor.getCompetitorDataFlowByRace(race.id).first().toHashSet(),
                 stopOnInvalid,
@@ -91,9 +91,7 @@ object CsvProcessor : FormatProcessor {
                 dataProcessor.getCompetitorDataFlowByRace(raceId).first()
             )
 
-            DataType.COMPETITOR_STARTS_TIME,
-            DataType.COMPETITOR_STARTS_CATEGORIES,
-            DataType.COMPETITOR_STARTS_CLUBS -> dataProcessor.getRace(raceId)?.let { race ->
+            DataType.COMPETITOR_STARTS -> dataProcessor.getRace(raceId)?.let { race ->
                 exportStarts(
                     outStream,
                     dataProcessor.getCompetitorDataFlowByRace(raceId).first(),

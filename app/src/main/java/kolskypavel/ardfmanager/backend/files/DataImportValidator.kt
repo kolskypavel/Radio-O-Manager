@@ -95,7 +95,7 @@ object DataImportValidator {
                 }
             }
 
-            DataType.COMPETITOR_STARTS_TIME -> {
+            DataType.COMPETITOR_STARTS -> {
                 // TODO: implement - based on settings
             }
 
