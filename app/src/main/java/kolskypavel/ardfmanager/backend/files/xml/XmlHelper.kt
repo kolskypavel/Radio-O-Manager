@@ -247,8 +247,6 @@ object XmlHelper {
 
         writeResult(serializer, competitorData.readoutData, startZero)
 
-        writeSplitTimes(serializer, competitorData.readoutData?.punches)
-
         serializer.endTag(null, "PersonResult")
     }
 
@@ -311,19 +309,20 @@ object XmlHelper {
                 }
             } catch (_: Exception) {
             }
-            if (res.place > 0) {
+            if (res.place > 0 && res.resultStatus == ResultStatus.OK) {
                 writeTextElement(serializer, "Position", res.place.toString())
             }
             writeTextElement(serializer, "Status", convertResultStatus(res.resultStatus))
         } else {
             writeTextElement(serializer, "Status", "Active")
         }
+
+        writeSplitTimes(serializer, readout?.punches)
         serializer.endTag(null, "Result")
     }
 
     private fun writeSplitTimes(serializer: XmlSerializer, punches: List<AliasPunch>?) {
         if (punches == null || punches.isEmpty()) return
-        serializer.startTag(null, "SplitTimes")
         var cumulativeMillis: Long = 0
         for (p in punches.filter { it.punch.punchType == SIRecordType.CONTROL }) {
             serializer.startTag(null, "SplitTime")
@@ -337,7 +336,6 @@ object XmlHelper {
             }
             serializer.endTag(null, "SplitTime")
         }
-        serializer.endTag(null, "SplitTimes")
     }
 
     // Converts result status to the IOF version
