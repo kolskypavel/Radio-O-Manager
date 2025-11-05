@@ -550,7 +550,7 @@ class DataProcessor private constructor(context: Context) {
         printProcessor.printFinishTicket(resultData, race)
 
 
-    fun printResults(results: List<ResultWrapper>, race: Race) =
+   suspend fun printResults(results: List<ResultWrapper>, race: Race) =
         printProcessor.printResults(results, race)
 
     //============================= GENERAL HELPER METHODS =========================================

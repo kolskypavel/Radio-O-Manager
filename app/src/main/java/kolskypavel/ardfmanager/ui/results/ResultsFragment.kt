@@ -28,6 +28,8 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ResultData
 import kolskypavel.ardfmanager.databinding.FragmentResultsBinding
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
 import kolskypavel.ardfmanager.ui.races.RaceEditDialogFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ResultsFragment : Fragment() {
@@ -126,10 +128,12 @@ class ResultsFragment : Fragment() {
 
             R.id.result_menu_print_results -> {
                 selectedRaceViewModel.getCurrentRace()?.let { race ->
-                    dataProcessor.printResults(
-                        selectedRaceViewModel.resultWrappers.value,
-                        race
-                    )
+                    CoroutineScope(Dispatchers.IO).launch {
+                        dataProcessor.printResults(
+                            selectedRaceViewModel.resultWrappers.value,
+                            race
+                        )
+                    }
                 }
             }
 

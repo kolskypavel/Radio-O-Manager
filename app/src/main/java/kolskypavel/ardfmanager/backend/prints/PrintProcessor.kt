@@ -86,7 +86,7 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
         printerReady = false
     }
 
-    private fun print(formatted: String) {
+    private suspend fun print(formatted: String) {
         val context = appContext.get()!!
 
         if (!printerReady) {
@@ -112,10 +112,12 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
             try {
                 printer!!.printFormattedText(textToPrint + "\n\n[C]${version}", 100)
             } catch (e: Exception) {
-                makeToast(
-                    appContext.get()?.getString(R.string.prints_error, e.message)
-                        ?: "Failed to print"
-                )
+                CoroutineScope(Dispatchers.Main).launch {
+                    makeToast(
+                        appContext.get()?.getString(R.string.prints_error, e.message)
+                            ?: "Failed to print"
+                    )
+                }
                 printerReady = false
             }
         }
@@ -249,7 +251,7 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
         return "$code$symbol"
     }
 
-    fun printResults(results: List<ResultWrapper>, race: Race) {
+    suspend fun printResults(results: List<ResultWrapper>, race: Race) {
         val formatted = formatResultsHeader(race) + getResultsFormatted(results)
         print(formatted)
     }
