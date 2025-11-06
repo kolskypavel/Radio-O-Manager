@@ -42,10 +42,10 @@ object TextProcessor : FormatProcessor {
         dataType: DataType,
         format: DataFormat,
         dataProcessor: DataProcessor,
-        raceId: UUID
+        race: Race
     ) {
         when (dataType) {
-            DataType.RESULTS -> exportResults(format, outStream, raceId, dataProcessor)
+            DataType.RESULTS -> exportResults(format, outStream, race.id, dataProcessor)
             else -> {
                 TODO()
             }
@@ -138,7 +138,7 @@ object TextProcessor : FormatProcessor {
         params[FileConstants.KEY_GENERATED_WITH] =
             context.getString(
                 R.string.results_generated_with,
-                TimeProcessor.formatLocalDateTime(LocalDateTime.now())
+                TimeProcessor.formatDisplayLocalDateTime(LocalDateTime.now())
             )
         params[FileConstants.KEY_VERSION] = dataProcessor.getAppVersion()
     }

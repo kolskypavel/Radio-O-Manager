@@ -143,8 +143,8 @@ class DataProcessor private constructor(context: Context) {
 
     suspend fun getCategoriesForRace(raceId: UUID) = ardfRepository.getCategoriesForRace(raceId)
 
-    suspend fun getCategoryData(id: UUID, raceId: UUID): CategoryData? {
-        return ardfRepository.getCategoryData(id, raceId)
+    suspend fun getCategoryData(id: UUID): CategoryData? {
+        return ardfRepository.getCategoryData(id)
     }
 
     suspend fun getCategoryDataForRace(raceId: UUID): List<CategoryData> =
@@ -466,13 +466,13 @@ class DataProcessor private constructor(context: Context) {
         uri: Uri,
         dataType: DataType,
         dataFormat: DataFormat,
-        raceId: UUID
+        race: Race
     ) =
         fileProcessor?.exportData(
             uri,
             dataType,
             dataFormat,
-            raceId
+            race
         )
 
     //-----------------------RACE DATA-----------------------

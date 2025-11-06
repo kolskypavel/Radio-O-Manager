@@ -77,37 +77,36 @@ object CsvProcessor : FormatProcessor {
         dataType: DataType,
         format: DataFormat,
         dataProcessor: DataProcessor,
-        raceId: UUID
+        race: Race
     ) {
 
         when (dataType) {
             DataType.CATEGORIES -> exportCategories(
                 outStream,
-                dataProcessor.getCategoryDataForRace(raceId)
+                dataProcessor.getCategoryDataForRace(race.id)
             )
 
             DataType.COMPETITORS -> exportCompetitors(
                 outStream,
-                dataProcessor.getCompetitorDataFlowByRace(raceId).first()
+                dataProcessor.getCompetitorDataFlowByRace(race.id).first()
             )
 
-            DataType.COMPETITOR_STARTS -> dataProcessor.getRace(raceId)?.let { race ->
+            DataType.COMPETITOR_STARTS ->
                 exportStarts(
                     outStream,
-                    dataProcessor.getCompetitorDataFlowByRace(raceId).first(),
+                    dataProcessor.getCompetitorDataFlowByRace(race.id).first(),
                     race
                 )
-            }
 
             DataType.RESULTS -> exportResults(
                 outStream,
-                ResultsProcessor.getResultWrapperFlowByRace(raceId, dataProcessor).first()
+                ResultsProcessor.getResultWrapperFlowByRace(race.id, dataProcessor).first()
             )
 
             DataType.READOUT_DATA -> {
                 exportReadoutData(
                     outStream,
-                    dataProcessor.getResultDataFlowByRace(raceId).first()
+                    dataProcessor.getResultDataFlowByRace(race.id).first()
                 )
             }
 

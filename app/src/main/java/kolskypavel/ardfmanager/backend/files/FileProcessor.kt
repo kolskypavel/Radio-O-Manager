@@ -62,8 +62,7 @@ class FileProcessor(appContext: WeakReference<Context>) {
                     false
                 )
 
-            val formatProcessorFactory = FormatProcessorFactory()
-            val proc = formatProcessorFactory.getFormatProcessor(format)
+            val proc = FormatProcessorFactory.getFormatProcessor(format)
             return proc.importData(inStream, type, race, dataProcessor, stopOnInvalid)
         }
         throw RuntimeException(context.getString(R.string.data_import_file_error))
@@ -80,19 +79,18 @@ class FileProcessor(appContext: WeakReference<Context>) {
         uri: Uri,
         type: DataType,
         format: DataFormat,
-        raceId: UUID,
+        race: Race,
     ) {
         val outStream = openOutputStream(uri)
         if (outStream != null) {
-            val formatProcessorFactory = FormatProcessorFactory()
-            val proc = formatProcessorFactory.getFormatProcessor(format)
+            val proc = FormatProcessorFactory.getFormatProcessor(format)
 
             proc.exportData(
                 outStream,
                 type,
                 format,
                 dataProcessor,
-                raceId
+                race
             )
 
         } else {

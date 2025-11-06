@@ -2,7 +2,7 @@ package kolskypavel.ardfmanager.backend.files.processors
 
 import kolskypavel.ardfmanager.backend.files.constants.DataFormat
 
-class FormatProcessorFactory {
+object FormatProcessorFactory {
     fun getFormatProcessor(dataFormat: DataFormat): FormatProcessor {
         return when (dataFormat) {
             DataFormat.TXT, DataFormat.HTML -> TextProcessor

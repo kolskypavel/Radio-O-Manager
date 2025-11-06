@@ -7,7 +7,6 @@ import kolskypavel.ardfmanager.backend.files.wrappers.DataImportWrapper
 import kolskypavel.ardfmanager.backend.room.entity.Race
 import java.io.InputStream
 import java.io.OutputStream
-import java.util.UUID
 
 interface FormatProcessor {
     suspend fun importData(
@@ -23,6 +22,6 @@ interface FormatProcessor {
         dataType: DataType,
         format: DataFormat,
         dataProcessor: DataProcessor,
-        raceId: UUID
+        race: Race
     )
 }

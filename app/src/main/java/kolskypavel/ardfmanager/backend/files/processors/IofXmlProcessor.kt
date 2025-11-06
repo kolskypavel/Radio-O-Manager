@@ -44,13 +44,13 @@ object IofXmlProcessor : FormatProcessor {
         dataType: DataType,
         format: DataFormat,
         dataProcessor: DataProcessor,
-        raceId: UUID
+        race: Race
     ) {
         when (dataType) {
             DataType.COMPETITORS -> TODO()
             DataType.RESULTS -> exportResults(
                 outStream,
-                raceId, ResultsProcessor.getResultWrapperFlowByRace(raceId, dataProcessor).first()
+                race, ResultsProcessor.getResultWrapperFlowByRace(race.id, dataProcessor).first()
                     .filter { it.category != null },
                 dataProcessor
             )

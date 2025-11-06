@@ -152,7 +152,7 @@ class ResultsExportDialogFragment : DialogFragment() {
                     uri,
                     getCurrentType(),
                     getCurrentFormat(),
-                    it.id
+                    it
                 )
             }
             errorText.text = ""

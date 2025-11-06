@@ -340,10 +340,10 @@ class SelectedRaceViewModel : ViewModel() {
     }
 
     fun exportData(
-        uri: Uri, dataType: DataType, dataFormat: DataFormat, raceId: UUID
+        uri: Uri, dataType: DataType, dataFormat: DataFormat, race: Race
     ) = runBlocking {
         dataProcessor.exportData(
-            uri, dataType, dataFormat, raceId
+            uri, dataType, dataFormat, race
         )
     }
 
