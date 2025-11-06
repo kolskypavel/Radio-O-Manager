@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.first
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.OutputStreamWriter
-import java.util.UUID
 import kotlin.collections.emptyList
 
 object IofXmlProcessor : FormatProcessor {
@@ -85,9 +84,34 @@ object IofXmlProcessor : FormatProcessor {
     ) {
     }
 
+    suspend fun exportStartList(
+        outStream: OutputStream,
+        race: Race,
+        data: List<CategoryData>
+    ) {
+        var writer: OutputStreamWriter? = null
+        try {
+            val (serializer, w) = XmlHelper.createSerializer(outStream)
+            writer = w
+
+            // Use helper to write root and race
+            XmlHelper.writeRootTag(serializer, race, "StartList")
+
+            // Write each category result with helper
+            for (res in data) {
+                XmlHelper.writeCategoryStartList(serializer, res, race.startDateTime)
+            }
+
+            // Finish document
+            XmlHelper.finishSerializer(serializer, writer)
+        } catch (ex: Exception) {
+            throw RuntimeException("Failed to export IOF XML startlist: ${ex.message}", ex)
+        }
+    }
+
     suspend fun exportResults(
         outStream: OutputStream,
-        raceId: UUID,
+        race: Race,
         results: List<ResultWrapper>,
         dataProcessor: DataProcessor
     ) {
@@ -96,10 +120,8 @@ object IofXmlProcessor : FormatProcessor {
             val (serializer, w) = XmlHelper.createSerializer(outStream)
             writer = w
 
-            val race = dataProcessor.getRace(raceId)!!
-
             // Use helper to write root and race
-            XmlHelper.writeResultListRoot(serializer, race)
+            XmlHelper.writeRootTag(serializer, race, "ResultList")
 
             // Write each category result with helper
             for (res in results) {

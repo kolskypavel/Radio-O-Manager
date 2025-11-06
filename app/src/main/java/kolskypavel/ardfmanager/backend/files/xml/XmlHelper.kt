@@ -197,13 +197,14 @@ object XmlHelper {
     }
 
     // Write root ResultList element and embedded Event information
-    fun writeResultListRoot(serializer: XmlSerializer, race: Race) {
-        serializer.startTag(null, "ResultList")
+    fun writeRootTag(serializer: XmlSerializer, race: Race, rootTag: String) {
+        serializer.startTag(null, rootTag)
         serializer.attribute(null, "xmlns", "http://www.orienteering.org/datastandard/3.0")
         serializer.attribute(null, "status", "complete")
         serializer.attribute(null, "iofVersion", "3.0")
         writeRaceTag(serializer, race)
     }
+
 
     fun writeRaceTag(serializer: XmlSerializer, race: Race) {
         serializer.startTag(null, "Event")
@@ -215,6 +216,56 @@ object XmlHelper {
         serializer.endTag(null, "Date")
         serializer.endTag(null, "StartDate")
         serializer.endTag(null, "Event")
+    }
+
+    fun writeCategoryStartList(
+        serializer: XmlSerializer,
+        categoryData: CategoryData,
+        startZero: LocalDateTime
+    ) {
+        serializer.startTag(null, "ClassStart")
+
+        // Class data
+        serializer.startTag(null, "Class")
+        writeTextElement(serializer, "Name", categoryData.category.name)
+        serializer.endTag(null, "Class")
+
+        // Course data
+        serializer.startTag(null, "Course")
+        writeTextElement(serializer, "Length", categoryData.category.length.toString())
+        writeTextElement(serializer, "Climb", categoryData.category.climb.toString())
+        serializer.endTag(null, "Course")
+
+        // Competitor starts
+        for (comp in categoryData.competitors) {
+            writePersonStart(serializer, comp, startZero)
+        }
+        serializer.endTag(null, "ClassStart")
+    }
+
+    fun writePersonStart(
+        serializer: XmlSerializer,
+        competitor: Competitor,
+        startZero: LocalDateTime
+    ) {
+        serializer.startTag(null, "PersonStart")
+        writePersonAndClub(serializer, competitor)
+
+        // Actual start
+        serializer.startTag(null, "Start")
+        val start = startZero + competitor.drawnRelativeStartTime
+        writeTextElement(serializer, "StartTime", TimeProcessor.formatIsoLocalDateTime(start))
+        competitor.siNumber?.let { si ->
+            writeTextElement(
+                serializer,
+                "ControlCard",
+                si.toString()
+            )
+        }
+        writeTextElement(serializer, "BibNumber", competitor.startNumber.toString())
+        serializer.endTag(null, "Start")
+
+        serializer.endTag(null, "PersonStart")
     }
 
     fun writeCategoryResult(
@@ -244,7 +295,6 @@ object XmlHelper {
 
         // Use embedded CompetitorCategory to access the Competitor instance
         writePersonAndClub(serializer, competitorData.competitorCategory.competitor)
-
         writeResult(serializer, competitorData.readoutData, startZero)
 
         serializer.endTag(null, "PersonResult")
@@ -297,14 +347,14 @@ object XmlHelper {
                     writeTextElement(
                         serializer,
                         "StartTime",
-                        TimeProcessor.formatLocalDateTime(it.toLocalDateTime(startZero))
+                        TimeProcessor.formatIsoLocalDateTime(it.toLocalDateTime(startZero))
                     )
                 }
                 res.finishTime?.let {
                     writeTextElement(
                         serializer,
                         "FinishTime",
-                        TimeProcessor.formatLocalDateTime(it.toLocalDateTime(startZero))
+                        TimeProcessor.formatIsoLocalDateTime(it.toLocalDateTime(startZero))
                     )
                 }
             } catch (_: Exception) {

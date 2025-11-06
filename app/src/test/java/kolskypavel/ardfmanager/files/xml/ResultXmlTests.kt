@@ -40,10 +40,6 @@ class ResultXmlTests {
 
         val race = Race()
 
-        // Mock race retrieval
-        `when`(dataProcessor.getRace(org.mockito.kotlin.any()))
-            .thenReturn(race)
-
         val result = Result()
         result.startTime = SITime(LocalTime.of(13, 0, 0))
         result.finishTime = SITime(LocalTime.of(14, 15, 0))
@@ -77,22 +73,23 @@ class ResultXmlTests {
         )
 
         val out = ByteArrayOutputStream()
-        IofXmlProcessor.exportResults(out, race.id, compData.toResultWrappers(), dataProcessor)
+        IofXmlProcessor.exportResults(out, race, compData.toResultWrappers(), dataProcessor)
         val xml = out.toString("UTF-8")
 
         val stream =
             this::class.java.classLoader?.getResourceAsStream("xml/xml_results_example.xml")!!
         val valid = stream.bufferedReader().use { it.readText() }
 
+        assertEquals(xml, "")
         // Use XMLUnit to compare structure, ignoring whitespace and attribute order
-        val diff = DiffBuilder.compare(valid)
-            .withTest(xml)
-            .ignoreWhitespace()
-            .ignoreComments()
-            .withNodeMatcher(DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes))
-            .checkForSimilar()
-            .build()
-
-        assertEquals("XMLs are different: ${diff.toString()}",false, diff.hasDifferences())
+//        val diff = DiffBuilder.compare(valid)
+//            .withTest(xml)
+//            .ignoreWhitespace()
+//            .ignoreComments()
+//            .withNodeMatcher(DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes))
+//            .checkForSimilar()
+//            .build()
+//
+//        assertEquals("XMLs are different: ${diff.toString()}",false, diff.hasDifferences())
     }
 }

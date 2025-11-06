@@ -97,7 +97,7 @@ class RunTimesUnitTests {
 
     @Test
     fun testFormatLocalDateTime() {
-        val formatted = TimeProcessor.formatLocalDateTime(LocalDateTime.of(2025, 9, 19, 10, 0, 0))
+        val formatted = TimeProcessor.formatDisplayLocalDateTime(LocalDateTime.of(2025, 9, 19, 10, 0, 0))
         assertEquals("2025-09-19 10:00:00", formatted)
     }
 
