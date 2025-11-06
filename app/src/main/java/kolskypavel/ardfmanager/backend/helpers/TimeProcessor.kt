@@ -12,8 +12,14 @@ object TimeProcessor {
         return DateTimeFormatter.ofPattern("HH:mm").format(time).toString()
     }
 
-    fun formatLocalDateTime(time: LocalDateTime): String {
+    // Formats the given LocalDateTime to a human readable form
+    fun formatDisplayLocalDateTime(time: LocalDateTime): String {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(time).toString()
+    }
+
+    //  Formats the given LocalDateTime to ISO format
+    fun formatIsoLocalDateTime(time: LocalDateTime): String {
+        return DateTimeFormatter.ISO_DATE_TIME.format(time).toString()
     }
 
     fun formatLocalDate(time: LocalDate): String {
