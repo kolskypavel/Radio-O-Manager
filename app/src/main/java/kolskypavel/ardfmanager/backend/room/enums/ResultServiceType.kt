@@ -2,7 +2,9 @@ package kolskypavel.ardfmanager.backend.room.enums
 
 enum class ResultServiceType(val value: Int) {
     ROBIS(0),
-    ROBIS_TEST(1);
+    ROBIS_TEST(1),
+    ORESULTS(2),
+    OFEED(3);
 
     companion object {
         fun getByValue(value: Int) =

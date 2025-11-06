@@ -201,9 +201,6 @@
     <string name="general_status">Status</string>
     <string name="general_type">Typ</string>
     <string name="competitor_start_number_header" translatable="false">Start #</string>
-    <string name="competitor_assign_categories_automatically">Přiřadit kategorie automaticky</string>
-    <string name="competitor_assign_categories_automatically_confirmation">Opravdu chcete automaticky přiřadit kategorie závodníkům (podle věku)? Pouze závodníci bez kategorie budou upraveni.</string>
-    <string name="competitor_assign_categories_toast">Automatické kategorie úspěšně přiřazeny.</string>
     <string name="competitor_hint_day">D</string>
     <string name="competitor_hint_week" translatable="false">T</string>
     <string name="preferences_results_time_format">Formát času</string>
@@ -242,6 +239,7 @@
     <string name="preferences_sounds_unknown_competitor_hint">Závodník nebyl nalezen podle SI čísla\n[%1$s]</string>
 
     <string name="result_service_status_disabled">Vypnuta</string>
+    <string name="result_service_status_init">Zapínání</string>
     <string name="result_service_status_running">Běží</string>
     <string name="result_service_status_no_network">Bez sítě</string>
     <string name="result_service_status_unauthorized">Neautorizováno</string>

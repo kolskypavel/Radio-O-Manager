@@ -18,12 +18,10 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kolskypavel.ardfmanager.R
 import kolskypavel.ardfmanager.backend.DataProcessor
-import kolskypavel.ardfmanager.backend.results.ResultServiceWorker
-import kolskypavel.ardfmanager.backend.room.entity.Race
+import kolskypavel.ardfmanager.backend.results.ResultServiceProcessor
 import kolskypavel.ardfmanager.backend.room.entity.ResultService
 import kolskypavel.ardfmanager.backend.room.enums.ResultServiceType
 import kolskypavel.ardfmanager.ui.SelectedRaceViewModel
-import kolskypavel.ardfmanager.ui.readouts.ReadoutEditDialogFragmentArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -165,7 +163,7 @@ class ResultServiceDialogFragment : DialogFragment() {
         val url = urlInput.text.toString()
 
         when (serviceType) {
-            ResultServiceType.ROBIS, ResultServiceType.ROBIS_TEST -> {
+            ResultServiceType.ROBIS, ResultServiceType.ROBIS_TEST, ResultServiceType.OFEED, ResultServiceType.ORESULTS -> {
 
                 if (apiKeyInput.text.toString().isEmpty()) {
                     valid = false
@@ -194,7 +192,7 @@ class ResultServiceDialogFragment : DialogFragment() {
         CoroutineScope(Dispatchers.IO).launch {
             dataProcessor.createOrUpdateResultService(resultService)
             dataProcessor.setResultServiceJob(
-                ResultServiceWorker.resultServiceJob(
+                ResultServiceProcessor.resultServiceJob(
                     args.race.id,
                     dataProcessor,
                     requireContext()
