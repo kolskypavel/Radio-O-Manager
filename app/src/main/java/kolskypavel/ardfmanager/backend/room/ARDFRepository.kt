@@ -44,8 +44,8 @@ class ARDFRepository private constructor(context: Context) {
     suspend fun getCategory(id: UUID) =
         eventDatabase.categoryDao().getCategory(id)
 
-    suspend fun getCategoryData(id: UUID, raceId: UUID) =
-        eventDatabase.categoryDao().getCategoryData(id, raceId)
+    suspend fun getCategoryData(id: UUID) =
+        eventDatabase.categoryDao().getCategoryData(id)
 
     suspend fun getCategoryDataForRace(raceId: UUID) =
         eventDatabase.categoryDao().getCategoryDataForRace(raceId)
