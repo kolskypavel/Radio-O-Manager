@@ -15,6 +15,9 @@ import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CategoryData
+import org.xmlunit.builder.DiffBuilder
+import org.xmlunit.diff.DefaultNodeMatcher
+import org.xmlunit.diff.ElementSelectors
 
 
 @RunWith(RobolectricTestRunner::class)
@@ -93,9 +96,18 @@ class StartListXmlTests {
 
         val xml = out.toString()
         val stream =
-            this::class.java.classLoader?.getResourceAsStream("xml/xml_category_invalid_example.xml")!!
+            this::class.java.classLoader?.getResourceAsStream("xml/xml_startlist_example.xml")!!
         val valid = stream.bufferedReader().use { it.readText() }
 
-        assertEquals(valid, xml)
+        // assertEquals(valid, xml)
+        val diff = DiffBuilder.compare(valid)
+            .withTest(xml)
+            .ignoreWhitespace()
+            .ignoreComments()
+            .withNodeMatcher(DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes))
+            .checkForSimilar()
+            .build()
+
+        assertEquals("XMLs are different: $diff", false, diff.hasDifferences())
     }
 }

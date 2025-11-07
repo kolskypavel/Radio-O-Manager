@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<StartList iofVersion="3.0"
+    xmlns="http://www.orienteering.org/datastandard/3.0">
+    <Event>
+        <Name>Test Race</Name>
+        <StartTime>
+            <Date>2023-06-15</Date>
+            <Time>09:30:00</Time>
+        </StartTime>
+    </Event>
+    <ClassStart>
+        <Class>
+            <Name>M21</Name>
+        </Class>
+        <Course>
+            <Length>5.2</Length>
+            <Climb>120.0</Climb>
+        </Course>
+        <PersonStart>
+            <Person>
+                <Id type="CZE">IDX1</Id>
+                <Name>
+                    <Family>Novak</Family>
+                    <Given>Jan</Given>
+                </Name>
+            </Person>
+            <Organisation>
+                <Name>Club A</Name>
+            </Organisation>
+            <Start>
+                <StartTime>2023-06-15T09:30:00</StartTime>
+                <ControlCard>111</ControlCard>
+                <BibNumber>1</BibNumber>
+            </Start>
+        </PersonStart>
+        <PersonStart>
+            <Person>
+                <Id type="CZE">IDX2</Id>
+                <Name>
+                    <Family>Svoboda</Family>
+                    <Given>Petr</Given>
+                </Name>
+            </Person>
+            <Organisation>
+                <Name>Club B</Name>
+            </Organisation>
+            <Start>
+                <StartTime>2023-06-15T09:31:00</StartTime>
+                <ControlCard>222</ControlCard>
+                <BibNumber>2</BibNumber>
+            </Start>
+        </PersonStart>
+    </ClassStart>
+</StartList>

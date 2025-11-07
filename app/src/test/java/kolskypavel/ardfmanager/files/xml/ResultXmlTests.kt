@@ -39,6 +39,8 @@ class ResultXmlTests {
         val dataProcessor = mock(DataProcessor::class.java)
 
         val race = Race()
+        race.name = "TEST"
+        race.startDateTime = LocalDateTime.of(2025, 1, 1, 10, 0, 0)
 
         val result = Result()
         result.startTime = SITime(LocalTime.of(13, 0, 0))
@@ -80,16 +82,17 @@ class ResultXmlTests {
             this::class.java.classLoader?.getResourceAsStream("xml/xml_results_example.xml")!!
         val valid = stream.bufferedReader().use { it.readText() }
 
-        assertEquals(xml, "")
-        // Use XMLUnit to compare structure, ignoring whitespace and attribute order
-//        val diff = DiffBuilder.compare(valid)
-//            .withTest(xml)
-//            .ignoreWhitespace()
-//            .ignoreComments()
-//            .withNodeMatcher(DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes))
-//            .checkForSimilar()
-//            .build()
-//
-//        assertEquals("XMLs are different: ${diff.toString()}",false, diff.hasDifferences())
+       // assertEquals(xml, "") // For debug
+
+        //Use XMLUnit to compare structure, ignoring whitespace and attribute order
+        val diff = DiffBuilder.compare(valid)
+            .withTest(xml)
+            .ignoreWhitespace()
+            .ignoreComments()
+            .withNodeMatcher(DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes))
+            .checkForSimilar()
+            .build()
+
+        assertEquals("XMLs are different: $diff", false, diff.hasDifferences())
     }
 }

@@ -103,6 +103,7 @@ object IofXmlProcessor : FormatProcessor {
             }
 
             // Finish document
+            serializer.endTag(null, "StartList")
             XmlHelper.finishSerializer(serializer, writer)
         } catch (ex: Exception) {
             throw RuntimeException("Failed to export IOF XML startlist: ${ex.message}", ex)
@@ -129,6 +130,7 @@ object IofXmlProcessor : FormatProcessor {
             }
 
             // Finish document
+            serializer.endTag(null, "ResultList")
             XmlHelper.finishSerializer(serializer, writer)
         } catch (ex: Exception) {
             throw RuntimeException("Failed to export IOF XML: ${ex.message}", ex)

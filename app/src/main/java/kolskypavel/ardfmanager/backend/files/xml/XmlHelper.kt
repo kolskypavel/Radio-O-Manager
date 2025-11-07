@@ -40,10 +40,6 @@ object XmlHelper {
 
     fun finishSerializer(serializer: XmlSerializer, writer: OutputStreamWriter) {
         try {
-            serializer.endTag(null, "ResultList")
-        } catch (_: Exception) {
-        }
-        try {
             serializer.endDocument()
         } catch (_: Exception) {
         }
@@ -197,11 +193,19 @@ object XmlHelper {
     }
 
     // Write root ResultList element and embedded Event information
-    fun writeRootTag(serializer: XmlSerializer, race: Race, rootTag: String) {
+    fun writeRootTag(
+        serializer: XmlSerializer,
+        race: Race,
+        rootTag: String
+    ) {
         serializer.startTag(null, rootTag)
         serializer.attribute(null, "xmlns", "http://www.orienteering.org/datastandard/3.0")
-        serializer.attribute(null, "status", "complete")
         serializer.attribute(null, "iofVersion", "3.0")
+
+        // Show result status only with results
+        if (rootTag == "ResultList") {
+            serializer.attribute(null, "status", "complete")
+        }
         writeRaceTag(serializer, race)
     }
 
@@ -209,12 +213,18 @@ object XmlHelper {
     fun writeRaceTag(serializer: XmlSerializer, race: Race) {
         serializer.startTag(null, "Event")
         writeTextElement(serializer, "Name", race.name)
-        serializer.startTag(null, "StartDate")
-        serializer.startTag(null, "Date")
-        serializer.attribute(null, "dateFormat", "YYYY-MM-DD")
-        serializer.text(TimeProcessor.formatLocalDate(race.startDateTime.toLocalDate()))
-        serializer.endTag(null, "Date")
-        serializer.endTag(null, "StartDate")
+        serializer.startTag(null, "StartTime")
+        writeTextElement(
+            serializer,
+            "Date",
+            TimeProcessor.formatLocalDate(race.startDateTime.toLocalDate())
+        )
+        writeTextElement(
+            serializer,
+            "Time",
+            TimeProcessor.formatLocalTime(race.startDateTime.toLocalTime())
+        )
+        serializer.endTag(null, "StartTime")
         serializer.endTag(null, "Event")
     }
 
@@ -318,10 +328,6 @@ object XmlHelper {
         writeTextElement(serializer, "Given", competitor.firstName)
         serializer.endTag(null, "Name")
 
-        if (competitor.siNumber != null) {
-            writeTextElement(serializer, "ControlCard", competitor.siNumber.toString())
-        }
-        writeTextElement(serializer, "BibNumber", competitor.startNumber.toString())
         serializer.endTag(null, "Person")
 
         if (competitor.club.isNotBlank()) {
