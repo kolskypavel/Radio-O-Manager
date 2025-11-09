@@ -29,7 +29,7 @@ import kolskypavel.ardfmanager.backend.room.entity.ResultService
         Punch::class,
         Result::class,
         ResultService::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(DateTimeTypeConverter::class)

@@ -24,6 +24,7 @@ import java.io.OutputStreamWriter
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -79,8 +80,8 @@ object XmlHelper {
                         val categoryId = UUID.randomUUID()
                         var courseEvent = parser.next()
                         var name = ""
-                        var lengthVal = 0f
-                        var climbVal = 0f
+                        var lengthVal = 0
+                        var climbVal = 0
                         val controlPoints = ArrayList<ControlPoint>()
 
                         while (!(courseEvent == XmlPullParser.END_TAG && parser.name == "Course")) {
@@ -91,11 +92,11 @@ object XmlHelper {
                                     }
 
                                     "Length" -> {
-                                        lengthVal = parser.nextText().trim().toFloatOrNull() ?: 0f
+                                        lengthVal = parser.nextText().trim().toIntOrNull() ?: 0
                                     }
 
                                     "Climb" -> {
-                                        climbVal = parser.nextText().trim().toFloatOrNull() ?: 0f
+                                        climbVal = parser.nextText().trim().toIntOrNull() ?: 0
                                     }
 
                                     "CourseControl" -> {
@@ -263,7 +264,7 @@ object XmlHelper {
 
         // Actual start
         serializer.startTag(null, "Start")
-        val start = startZero + competitor.drawnRelativeStartTime
+        val start = startZero + (competitor.drawnRelativeStartTime ?: Duration.ZERO)
         writeTextElement(serializer, "StartTime", TimeProcessor.formatIsoLocalDateTime(start))
         competitor.siNumber?.let { si ->
             writeTextElement(

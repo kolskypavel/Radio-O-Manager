@@ -117,8 +117,8 @@ class CategoryEditDialogFragment : DialogFragment() {
                 race.id,
                 "", isMan = false,
                 null,
-                0F,
-                0F,
+                0,
+                0,
                 order,
                 false,
                 race.raceType,
@@ -153,11 +153,11 @@ class CategoryEditDialogFragment : DialogFragment() {
                 maxAgeEditText.setText(category.maxAge.toString())
             }
 
-            if (category.length != 0F) {
+            if (category.length != 0) {
                 lengthEditText.setText(category.length.toString())
             }
 
-            if (category.climb != 0F) {
+            if (category.climb != 0) {
                 climbEditText.setText(category.climb.toString())
             }
 
@@ -304,10 +304,10 @@ class CategoryEditDialogFragment : DialogFragment() {
                 }
 
                 if (lengthEditText.text?.isBlank() == false) {
-                    category.length = lengthEditText.text.toString().trim().toFloat()
+                    category.length = lengthEditText.text.toString().trim().toInt()
                 }
                 if (climbEditText.text?.isBlank() == false) {
-                    category.climb = climbEditText.text.toString().trim().toFloat()
+                    category.climb = climbEditText.text.toString().trim().toInt()
                 }
 
                 //Set the data from pickers

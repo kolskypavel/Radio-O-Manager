@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.withTransaction
 import kolskypavel.ardfmanager.backend.room.database.EventDatabase
+import kolskypavel.ardfmanager.backend.room.database.MIGRATION_1_2
 import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
@@ -25,6 +26,7 @@ class ARDFRepository private constructor(context: Context) {
             EventDatabase::class.java,
             "event-database"
         )
+        .addMigrations(MIGRATION_1_2)
         .build()
 
     //-------------------Races-------------------

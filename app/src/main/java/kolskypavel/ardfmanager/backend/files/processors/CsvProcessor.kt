@@ -144,11 +144,11 @@ object CsvProcessor : FormatProcessor {
                         val isMan = row[1].trim() == "1"
                         val maxAge = row[2].trim().toInt()
                         val length = if (row[3].isNotBlank()) {
-                            row[3].trim().toFloat()
-                        } else 0f
+                            row[3].trim().toInt()
+                        } else 0
                         val climb = if (row[4].isNotBlank()) {
-                            row[4].trim().toFloat()
-                        } else 0f
+                            row[4].trim().toInt()
+                        } else 0
                         val followRacePresets = row[5].trim() == "1"
 
                         //Check validity
@@ -250,8 +250,8 @@ object CsvProcessor : FormatProcessor {
                     split[0].trim(),
                     split[1].trim() == "1",
                     split[2].trim().toInt(),
-                    0F,
-                    0F,
+                    0,
+                    0,
                     line.index,
                     false,
                     null,
@@ -301,8 +301,8 @@ object CsvProcessor : FormatProcessor {
                                 row[4].trim(),
                                 false,
                                 null,
-                                0F,
-                                0F,
+                                0,
+                                0,
                                 currOrder,
                                 false,
                                 null,

@@ -31,11 +31,11 @@ class CategoryXmlTests {
 
         assertEquals(2, wrapper.categories.size)
         assertEquals("A", catA.category.name)
-        assertEquals(2960f, catA.category.length)
-        assertEquals(95f, catA.category.climb)
+        assertEquals(2960, catA.category.length)
+        assertEquals(95, catA.category.climb)
         assertEquals("B", catB.category.name)
-        assertEquals(2960f, catB.category.length)
-        assertEquals(95f, catB.category.climb)
+        assertEquals(2960, catB.category.length)
+        assertEquals(95, catB.category.climb)
 
         val cpA = catA.controlPoints
         val cpB = catB.controlPoints
