@@ -46,7 +46,6 @@ class ReadoutFragment : Fragment() {
 
     private var statsJob: Job? = null
 
-    private lateinit var readoutSwipeLayout: SwipeRefreshLayout
     private lateinit var readoutToolbar: Toolbar
     private lateinit var startedTextView: TextView
     private lateinit var limitTextView: TextView
@@ -82,7 +81,6 @@ class ReadoutFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        readoutSwipeLayout = view.findViewById(R.id.readouts_swipe_layout)
         readoutToolbar = view.findViewById(R.id.readouts_toolbar)
         readoutRecyclerView = view.findViewById(R.id.readout_recycler_view)
 
@@ -102,12 +100,6 @@ class ReadoutFragment : Fragment() {
         selectedRaceViewModel.race.observe(viewLifecycleOwner) { race ->
             readoutToolbar.title = race?.name
             race?.let { readoutToolbar.subtitle = dataProcessor.raceTypeToString(it.raceType) }
-        }
-
-        readoutSwipeLayout.setOnRefreshListener {
-            selectedRaceViewModel.getCurrentRace()
-                ?.let { race -> selectedRaceViewModel.updateResultsByRace(race.id) }
-            readoutSwipeLayout.isRefreshing = false
         }
 
         readoutAddFab.setOnClickListener {
@@ -136,6 +128,12 @@ class ReadoutFragment : Fragment() {
     private fun setFragmentMenuActions(menuItem: MenuItem): Boolean {
 
         when (menuItem.itemId) {
+
+            R.id.readout_menu_recalculate_results -> {
+                selectedRaceViewModel.getCurrentRace()
+                    ?.let { race -> selectedRaceViewModel.updateResultsByRace(race.id) }
+                return true
+            }
 
             R.id.readout_menu_delete_all_readouts -> {
                 confirmAllReadoutDeletion()

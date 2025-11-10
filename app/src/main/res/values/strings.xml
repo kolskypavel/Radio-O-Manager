@@ -233,6 +233,7 @@
     <string name="results_export_error">Error when exporting data: %1$s</string>
     <string name="results_generated_with">Results generated at %1$s with</string>
     <string name="results_splits">Results with splits</string>
+    <string name="results_recalculate">Recalculate all results</string>
 
     <string name="data_format_txt" translatable="false">TXT</string>
     <string name="data_format_csv" translatable="false">CSV</string>

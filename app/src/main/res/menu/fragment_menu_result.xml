@@ -19,7 +19,9 @@
         android:icon="@drawable/ic_print"
         android:title="@string/general_print"
         app:showAsAction="always" />
-    
+    <item
+        android:id="@+id/result_menu_recalculate_results"
+        android:title="@string/results_recalculate" />
     <item
         android:id="@+id/result_menu_edit_race"
         android:title="@string/race_edit" />
