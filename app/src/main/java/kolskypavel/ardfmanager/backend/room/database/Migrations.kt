@@ -46,6 +46,8 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
 
         // 4) recreate indices expected by Room
         db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_category_name_race_id` ON `category` (`name`, `race_id`)")
+
+        // 5) add `interval` column to result_service (Duration stored as text). Use default 'PT2S' for existing rows.
+        db.execSQL("ALTER TABLE result_service ADD COLUMN `interval` TEXT NOT NULL DEFAULT 'PT10S'")
     }
 }
-

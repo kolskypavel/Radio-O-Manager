@@ -89,7 +89,7 @@
     <string name="race_toolbar_title">Races overview</string>
     <string name="race_level">Level</string>
     <string name="race_type">Race type</string>
-    <string name="race_api_key">ROBis API key</string>
+    <string name="race_api_key">API key</string>
     <string name="race_limit_hint">Limit (min)</string>
     <string name="race_start_time_hint">Start time (hh:mm)</string>
     <string name="race_relative_start_time_hint">Relative start time (mm:ss)</string>
@@ -248,9 +248,11 @@
 
     <!-- Result service -->
     <string name="result_service_enable">Enable results service</string>
+    <string name="result_service_interval">Interval of export (s)</string>
     <string name="result_service_send_again">Send results again</string>
-    <string name="result_service_api_key_missing">API key must be set in race for ROBis</string>
-    <string name="result_service_status_text">%1$s, sent %2$d/%3$d</string>
+    <string name="result_service_api_key_missing">API key must be set.</string>
+    <string name="result_service_status_text">%1$s, sent at %2$s</string>
+    <string name="result_service_status_text_counter">, results %1$d/%2$d</string>
     <string name="result_service_invalid_result">Invalid result: %1$s, SI: %2$d, Index: %3$s, Cause: %4$s</string>
 
     <!-- Prints -->
@@ -432,9 +434,10 @@
 
     <string name="result_service_type_robis" translatable="false">ROBis</string>
     <string name="result_service_type_robis_test" translatable="false">ROBis test</string>
+    <string name="result_service_type_oresults" translatable="false">OResults</string>
+    <string name="result_service_type_ofeed" translatable="false">OFeed</string>
 
     <string name="result_service_status_disabled">Disabled</string>
-    <string name="result_service_status_init">Init</string>
     <string name="result_service_status_running">Running</string>
     <string name="result_service_status_no_network">No network</string>
     <string name="result_service_status_unauthorized">Unauthorized</string>
@@ -556,11 +559,11 @@
     <string-array name="result_service_types">
         <item>@string/result_service_type_robis</item>
         <item>@string/result_service_type_robis_test</item>
+        <item>@string/result_service_type_oresults</item>
     </string-array>
 
     <string-array name="result_service_status">
         <item>@string/result_service_status_disabled</item>
-        <item>@string/result_service_status_init</item>
         <item>@string/result_service_status_running</item>
         <item>@string/result_service_status_no_network</item>
         <item>@string/result_service_status_unauthorized</item>

@@ -2,9 +2,8 @@ package kolskypavel.ardfmanager.backend.room.enums
 
 enum class ResultServiceStatus(val value: Int) {
     DISABLED(0),
-    INIT(1),
-    RUNNING(2),
-    NO_NETWORK(3),
-    UNAUTHORIZED(4),
-    ERROR(5);
+     RUNNING(1),
+    NO_NETWORK(2),
+    UNAUTHORIZED(3),
+    ERROR(4);
 }

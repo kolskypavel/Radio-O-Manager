@@ -23,4 +23,6 @@ object OFeedWorker: ResultServiceWorker {
     ) {
         TODO("Not yet implemented")
     }
+
+    const val LOG_TAG = "SERVICE OFEED"
 }

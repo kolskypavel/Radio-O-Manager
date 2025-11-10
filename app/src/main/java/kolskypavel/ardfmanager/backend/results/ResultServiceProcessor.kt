@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.delay
 import okhttp3.OkHttpClient
 import java.util.UUID
 
@@ -41,20 +42,36 @@ object ResultServiceProcessor {
                         updateResultService(dataProcessor, resultService)
                         continue
                     }
-
-                    // Main result sending
                     dataProcessor.getRace(raceId)?.let { race ->
                         val worker = ResultWorkerFactory.getResultWorker(resultService.serviceType)
-                        worker.exportResults(
-                            resultService,
-                            race,
-                            httpClient,
-                            dataProcessor
-                        )
+
+                        // Init the service
+                        if (resultService.status == ResultServiceStatus.DISABLED) {
+                            worker.init(
+                                resultService,
+                                race,
+                                httpClient,
+                                dataProcessor
+                            )
+                        }
+
+                        // Redo the check to prevent additional waiting
+                        if (resultService.status != ResultServiceStatus.DISABLED) {
+                            // Main result sending
+                            worker.exportResults(
+                                resultService,
+                                race,
+                                httpClient,
+                                dataProcessor
+                            )
+                        }
                     }
                     updateResultService(dataProcessor, resultService)
+                    delay(resultService.interval)
+                } else {
+                    delay(1000)     // Failsafe - should never occur
                 }
-                delay(ResultsConstants.RESULT_DELAY)
+
             }
         }
     }

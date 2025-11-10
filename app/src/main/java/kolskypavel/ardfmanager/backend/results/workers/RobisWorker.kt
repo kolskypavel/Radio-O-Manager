@@ -22,6 +22,7 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
+import java.time.LocalTime
 
 object RobisWorker : ResultServiceWorker {
 
@@ -32,6 +33,7 @@ object RobisWorker : ResultServiceWorker {
         httpClient: OkHttpClient,
         dataProcessor: DataProcessor
     ) {
+        resultService.status = ResultServiceStatus.RUNNING
     }
 
     override suspend fun exportResults(
@@ -94,6 +96,7 @@ object RobisWorker : ResultServiceWorker {
                         )
                         updateSentResults(dataProcessor, filteredResults)
                         resultService.status = ResultServiceStatus.RUNNING
+                        resultService.sentAt = LocalTime.now()
                         resultService.sent += filteredResults.size
                     }
 

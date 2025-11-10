@@ -26,7 +26,7 @@
     <string name="race_edit">Upravit závod</string>
     <string name="race_import">Importovat závod</string>
     <string name="general_cancel">Zrušit</string>
-    <string name="race_api_key">ROBis API klíč</string>
+    <string name="race_api_key">API klíč</string>
     <string name="race_limit_hint">Limit (min)</string>
     <string name="race_start_time_hint">Startovní čas (hh:mm)</string>
     <string name="race_relative_start_time_hint">Relativní startovní čas (mm:ss)</string>
@@ -136,7 +136,8 @@
     <string name="general_points">Body</string>
     <string name="general_place">Umístění</string>
     <string name="readout_edit_readout">Upravit vyčítání</string>
-    <string name="result_service_status_text">%1$s, odesláno %2$d/%3$d</string>
+    <string name="result_service_status_text">%1$s, odesláno v %2%s</string>
+    <string name="result_service_status_text_counter">, výsledků %1$d/%2$d</string>
     <string name="prints_result_ticket">Vytisknout lísteček</string>
     <string name="readout_delete_readout">Smazat vyčítání</string>
     <string name="readout_delete_readout_confirmation">Opravdu chcete smazat data čipu %1$d?</string>
@@ -239,7 +240,6 @@
     <string name="preferences_sounds_unknown_competitor_hint">Závodník nebyl nalezen podle SI čísla\n[%1$s]</string>
 
     <string name="result_service_status_disabled">Vypnuta</string>
-    <string name="result_service_status_init">Zapínání</string>
     <string name="result_service_status_running">Běží</string>
     <string name="result_service_status_no_network">Bez sítě</string>
     <string name="result_service_status_unauthorized">Neautorizováno</string>
@@ -268,9 +268,10 @@
     <string name="results_generated_with">Výsledky vygenerovány v %1$s pomocí</string>
     <string name="results_splits">Výsledky s mezičasy</string>
     <string name="result_service_enable">Zapnout výsledkovou službu</string>
+    <string name="result_service_interval">Interval exportu (s)</string>
     <string name="result_service_invalid_result">Nevalidní výsledek: %1$s, SI: %2$d, Index: %3$s, Důvod: %4$s</string>
     <string name="result_service_send_again">Odeslat výsledky znovu</string>
-    <string name="result_service_api_key_missing">API klíč musí být nastaven v závodě pro ROBis</string>
+    <string name="result_service_api_key_missing">API klíč musí být nastaven.</string>
     <string name="prints_bluetooth_disabled">Bluetooth musí být zapnutý pro tisk!</string>
     <string name="prints_error">Chyba při tisku! %1$s</string>
     <string name="about_app_version">Verze %1$s</string>
