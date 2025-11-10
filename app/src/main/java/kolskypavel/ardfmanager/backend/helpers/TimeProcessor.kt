@@ -67,7 +67,7 @@ object TimeProcessor {
         val seconds = parts[1].toLongOrNull() ?: throw IllegalArgumentException("Invalid seconds")
 
         if (minutes < 0 || seconds < 0 || seconds >= 60) {
-            throw IllegalArgumentException("Invalid time values")
+            throw IllegalArgumentException("Invalid time values in input: $string")
         }
 
         return Duration.ofMinutes(minutes).plusSeconds(seconds)
