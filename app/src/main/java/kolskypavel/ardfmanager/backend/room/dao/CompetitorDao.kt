@@ -47,6 +47,9 @@ interface CompetitorDao {
     @Query("DELETE FROM competitor WHERE id =(:id)")
     suspend fun deleteCompetitor(id: UUID)
 
+    @Query("DELETE FROM competitor WHERE category_id =(:categoryId)")
+    suspend fun deleteCompetitorsByCategory(categoryId: UUID)
+
     @Query("DELETE FROM competitor WHERE race_id =(:raceId)")
     suspend fun deleteAllCompetitorsByRace(raceId: UUID)
 }

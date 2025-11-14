@@ -198,11 +198,12 @@ class SelectedRaceViewModel : ViewModel() {
         }
     }
 
-    fun deleteCategory(categoryId: UUID, raceId: UUID) = CoroutineScope(Dispatchers.IO).launch {
-        dataProcessor.deleteCategory(
-            categoryId, raceId
-        )
-    }
+    fun deleteCategory(categoryId: UUID, raceId: UUID, deleteCompetitors: Boolean) =
+        CoroutineScope(Dispatchers.IO).launch {
+            dataProcessor.deleteCategory(
+                categoryId, raceId, deleteCompetitors
+            )
+        }
 
 
     fun getControlPointsByCategory(categoryId: UUID): ArrayList<ControlPoint> {

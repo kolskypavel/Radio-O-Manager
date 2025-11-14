@@ -113,6 +113,7 @@
     <string name="category_duplicate">Duplicate category</string>
     <string name="category_delete">Delete category</string>
     <string name="category_delete_confirmation">Do you really want to delete this category?\n%1$s</string>
+    <string name="category_delete_competitors">Also delete competitors in this category</string>
     <string name="category_length_title">Length (km)</string>
     <string name="category_climb_title">Climb (m)</string>
     <string name="category_exists">Category already exists!</string>

@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -180,11 +182,26 @@ class CategoryFragment : Fragment() {
 
     private fun confirmCategoryDeletion(category: Category) {
         val builder = AlertDialog.Builder(context)
+
+        val inflater = LayoutInflater.from(context)
+        val dialogView = inflater.inflate(R.layout.dialog_delete_category, null)
+
+        // Set dynamic message text
+        val messageTextView = dialogView.findViewById<TextView>(R.id.delete_category_message)
+        messageTextView.text = getString(R.string.category_delete_confirmation, category.name)
+
+        val deleteCompetitorsCheckbox =
+            dialogView.findViewById<CheckBox>(R.id.delete_category_checkbox)
+
         builder.setTitle(getString(R.string.category_delete))
-        builder.setMessage(getString(R.string.category_delete_confirmation, category.name))
+        builder.setView(dialogView)
 
         builder.setPositiveButton(R.string.general_ok) { dialog, _ ->
-            selectedRaceViewModel.deleteCategory(category.id, category.raceId)
+            selectedRaceViewModel.deleteCategory(
+                category.id,
+                category.raceId,
+                deleteCompetitorsCheckbox.isChecked
+            )
             dialog.dismiss()
         }
 

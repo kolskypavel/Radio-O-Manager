@@ -206,7 +206,11 @@ class DataProcessor private constructor(context: Context) {
         }
     }
 
-    suspend fun deleteCategory(categoryId: UUID, raceId: UUID) {
+    suspend fun deleteCategory(categoryId: UUID, raceId: UUID, deleteCompetitors: Boolean) {
+        if (deleteCompetitors) {
+            ardfRepository.deleteCompetitorsByCategory(categoryId)
+        }
+
         ardfRepository.deleteCategory(categoryId)
         ardfRepository.deleteControlPointsByCategory(categoryId)
         getRace(raceId)?.let { race -> updateResultsForCategory(categoryId, race, this) }
@@ -549,7 +553,7 @@ class DataProcessor private constructor(context: Context) {
         printProcessor.printFinishTicket(resultData, race)
 
 
-   suspend fun printResults(results: List<ResultWrapper>, race: Race) =
+    suspend fun printResults(results: List<ResultWrapper>, race: Race) =
         printProcessor.printResults(results, race)
 
     //============================= GENERAL HELPER METHODS =========================================
