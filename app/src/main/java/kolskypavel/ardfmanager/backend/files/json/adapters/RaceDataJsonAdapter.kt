@@ -12,15 +12,17 @@ import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.RaceData
 import kolskypavel.ardfmanager.backend.room.enums.RaceBand
 import kolskypavel.ardfmanager.backend.room.enums.RaceLevel
+import kolskypavel.ardfmanager.backend.room.enums.RaceType
 import java.time.Duration
+import java.time.LocalDateTime
 import java.util.UUID
 
 class RaceDataJsonAdapter(val dataProcessor: DataProcessor) {
     @ToJson
     fun toJson(raceData: RaceData): RaceJson {
         val categoryAdapter = CategoryJsonAdapter(raceData.race.id)
-        val competitorAdapter = CompetitorJsonAdapter(raceData.race.id, dataProcessor)
-        val unmatchedAdapter = UnmatchedResultJsonAdapter(raceData.race.id, dataProcessor)
+        val competitorAdapter = CompetitorJsonAdapter(raceData.race, dataProcessor)
+        val unmatchedAdapter = UnmatchedResultJsonAdapter(raceData.race, dataProcessor)
 
         val race = raceData.race
         return RaceJson(
@@ -45,15 +47,15 @@ class RaceDataJsonAdapter(val dataProcessor: DataProcessor) {
             id = UUID.randomUUID(),
             name = raceJson.race_name,
             apiKey = raceJson.race_api_key ?: "",
-            startDateTime = raceJson.race_start,
-            raceType = raceJson.race_type,
-            raceBand = raceJson.race_band?: RaceBand.M80,
-            raceLevel = raceJson.race_level?: RaceLevel.PRACTICE,
-            timeLimit = Duration.ofMinutes(raceJson.race_time_limit?.toLong() ?:120)
+            startDateTime = raceJson.race_start ?: LocalDateTime.now(),
+            raceType = raceJson.race_type ?: RaceType.CLASSIC,
+            raceBand = raceJson.race_band ?: RaceBand.M80,
+            raceLevel = raceJson.race_level ?: RaceLevel.PRACTICE,
+            timeLimit = Duration.ofMinutes(raceJson.race_time_limit?.toLong() ?: 120)
         )
         val categoryAdapter = CategoryJsonAdapter(race.id)
-        val competitorAdapter = CompetitorJsonAdapter(race.id, dataProcessor)
-        val unmatchedAdapter = UnmatchedResultJsonAdapter(race.id, dataProcessor)
+        val competitorAdapter = CompetitorJsonAdapter(race, dataProcessor)
+        val unmatchedAdapter = UnmatchedResultJsonAdapter(race, dataProcessor)
 
         val categories = raceJson.categories.mapIndexed { index, catJson ->
             categoryAdapter.fromJson(catJson).also {

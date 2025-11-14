@@ -1,19 +1,7 @@
 {
-  "check_time": {
-    "real_time": "00:00:00",
-    "week": 0,
-    "day_of_week": 0
-  },
-  "start_time": {
-    "real_time": "13:00:00",
-    "week": 0,
-    "day_of_week": 0
-  },
-  "finish_time": {
-    "real_time": "14:15:00",
-    "week": 0,
-    "day_of_week": 0
-  },
+  "check_time": "2025-11-16T00:00:00",
+  "start_time": "2025-11-16T13:00:00",
+  "finish_time": "2025-11-16T14:15:00",
   "run_time": "75:00",
   "place": 0,
   "readoutTime": "2025-09-25T14:18:24",
@@ -27,11 +15,6 @@
       "si_code": 31,
       "control_type": "CONTROL",
       "punch_status": "OK",
-      "si_time": {
-        "real_time": "13:35:00",
-        "week": 0,
-        "day_of_week": 0
-      },
       "split_time": "35:00"
     },
     {
@@ -39,11 +22,6 @@
       "si_code": 32,
       "control_type": "CONTROL",
       "punch_status": "OK",
-      "si_time": {
-        "real_time": "13:43:11",
-        "week": 0,
-        "day_of_week": 0
-      },
       "split_time": "08:11"
     },
     {
@@ -51,11 +29,6 @@
       "si_code": 33,
       "control_type": "CONTROL",
       "punch_status": "OK",
-      "si_time": {
-        "real_time": "14:05:50",
-        "week": 0,
-        "day_of_week": 0
-      },
       "split_time": "22:39"
     },
     {
@@ -63,11 +36,6 @@
       "si_code": 34,
       "control_type": "CONTROL",
       "punch_status": "OK",
-      "si_time": {
-        "real_time": "14:10:22",
-        "week": 0,
-        "day_of_week": 0
-      },
       "split_time": "04:32"
     }
   ]

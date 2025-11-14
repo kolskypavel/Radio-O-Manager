@@ -7,12 +7,14 @@ import kolskypavel.ardfmanager.backend.DataProcessor
 import kolskypavel.ardfmanager.backend.files.json.temps.CompetitorJson
 import kolskypavel.ardfmanager.backend.helpers.TimeProcessor
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
+import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorCategory
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorData
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.ReadoutData
+import kolskypavel.ardfmanager.backend.room.enums.ResultStatus
 import java.util.UUID
 
-class CompetitorJsonAdapter(val raceId: UUID, val dataProcessor: DataProcessor) {
+class CompetitorJsonAdapter(val race: Race, val dataProcessor: DataProcessor) {
     @ToJson
     fun toJson(competitorData: CompetitorData): CompetitorJson {
         val competitor = competitorData.competitorCategory.competitor
@@ -33,8 +35,10 @@ class CompetitorJsonAdapter(val raceId: UUID, val dataProcessor: DataProcessor) 
                     it, true
                 )
             } ?: "",
-            result = if (competitorData.readoutData != null) {
-                ResultJsonAdapter(raceId, dataProcessor).toJson(competitorData)
+            result = if (competitorData.readoutData != null &&
+                competitorData.readoutData!!.result.resultStatus != ResultStatus.ERROR      // Do not serialize when start/finish time is missing
+            ) {
+                ResultJsonAdapter(race, dataProcessor).toJson(competitorData)
             } else null
         )
     }
@@ -43,7 +47,7 @@ class CompetitorJsonAdapter(val raceId: UUID, val dataProcessor: DataProcessor) 
     fun fromJson(competitorJson: CompetitorJson): CompetitorData {
         val competitor = Competitor(
             id = UUID.randomUUID(),
-            raceId = raceId,
+            raceId = race.id,
             categoryId = null,
             firstName = competitorJson.first_name,
             lastName = competitorJson.last_name,
@@ -60,7 +64,7 @@ class CompetitorJsonAdapter(val raceId: UUID, val dataProcessor: DataProcessor) 
         )
         if (competitorJson.result != null) {
             val resultData = ResultJsonAdapter(
-                raceId,
+                race,
                 dataProcessor
             ).fromJson(competitorJson.result)
             resultData.result.competitorId = competitor.id

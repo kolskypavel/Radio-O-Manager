@@ -134,4 +134,31 @@ class SITimeUnitTests {
         val resNextWeek = siNextWeek.toLocalDateTime(startZero)
         assertEquals(LocalDateTime.of(2023, 1, 8, 8, 0), resNextWeek)
     }
+
+    @Test
+    fun testConstructorFromLocalDate() {
+        // startZero is Sunday 2023-01-01 00:00
+        val startZero = LocalDateTime.of(2023, 1, 1, 0, 0)
+
+        // Same day
+        val time1 = LocalDateTime.of(2023, 1, 1, 10, 15)
+        val s1 = SITime(time1, startZero)
+        assertEquals("10:15:00", s1.getTimeString())
+        assertEquals(0, s1.getDayOfWeek())
+        assertEquals(0, s1.getWeek())
+
+        // Next day (Monday)
+        val time2 = LocalDateTime.of(2023, 1, 2, 9, 0)
+        val s2 = SITime(time2, startZero)
+        assertEquals("09:00:00", s2.getTimeString())
+        assertEquals(1, s2.getDayOfWeek())
+        assertEquals(0, s2.getWeek())
+
+        // 8 days later -> week = 1, day = Monday
+        val time3 = LocalDateTime.of(2023, 1, 9, 8, 0)
+        val s3 = SITime(time3, startZero)
+        assertEquals("08:00:00", s3.getTimeString())
+        assertEquals(1, s3.getDayOfWeek())
+        assertEquals(1, s3.getWeek())
+    }
 }

@@ -69,6 +69,7 @@ class RaceJsonTests {
 
     }
 
+    // Should throw exception, since the required start time is missing
     @Test
     fun testInvalidFromJson() {
         val stream = this::class.java.classLoader.getResourceAsStream("json/json_invalid_race_import.ardfjs")

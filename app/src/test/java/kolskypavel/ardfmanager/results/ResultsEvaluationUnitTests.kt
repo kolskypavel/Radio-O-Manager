@@ -564,7 +564,7 @@ class ResultsEvaluationUnitTests {
         }
         punches[2].siCode = 44
         ResultsProcessor.evaluateOrienteering(punches, controlPoints, result)
-        assertEquals(ResultStatus.DISQUALIFIED, result.resultStatus)
+        assertEquals(ResultStatus.MISPUNCHED, result.resultStatus)
     }
 
     @Test

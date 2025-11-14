@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 
 data class RaceJson(
     val race_name: String,
-    val race_start: LocalDateTime,
-    val race_type: RaceType,
+    val race_start: LocalDateTime?,
+    val race_type: RaceType?,
     val race_band: RaceBand?,
     val race_level: RaceLevel?,
     val race_time_limit: String?,

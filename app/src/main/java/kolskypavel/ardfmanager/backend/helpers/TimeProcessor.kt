@@ -80,6 +80,7 @@ object TimeProcessor {
         return startDateTime.plusSeconds(relativeStartTime.seconds)
     }
 
+
     /**
      * If a competitor is started or not
      */

@@ -151,26 +151,14 @@
       "start_preference": null,
       "competitor_start_time": null,
       "result": {
-        "check_time": {
-          "real_time": "05:17:16",
-          "week": 0,
-          "day_of_week": 0
-        },
-        "start_time": {
-          "real_time": "17:24:57",
-          "week": 0,
-          "day_of_week": 0
-        },
-        "finish_time": {
-          "real_time": "18:27:39",
-          "week": 0,
-          "day_of_week": 0
-        },
+        "check_time": "2025-11-28T05:17:16",
+        "start_time": "2025-11-28T17:24:57",
+        "finish_time": "2025-11-28T18:27:39",
         "run_time": "62:42",
         "place": 8,
         "readoutTime": "2025-09-23T18:28:20",
         "modified": false,
-        "controls_num": 5,
+        "punch_count": 5,
         "result_status": "MP",
         "automatic_status": false,
         "punches": [

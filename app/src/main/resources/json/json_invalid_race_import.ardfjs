@@ -1,9 +1,8 @@
 {
-  "race_id": 324,
-  "race_name": "EXAMPLE",
+  "race_name": "TEST",
   "race_date": "2025-11-28",
   "race_location": "",
-  "race_start": "2025-11-28T13:00:00",
+  "race_start": "",
   "race_type": "CLASSIC",
   "race_band": "M80",
   "race_level": "DISTRICT",

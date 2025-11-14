@@ -13,6 +13,7 @@ import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
 import kolskypavel.ardfmanager.backend.room.entity.Punch
+import kolskypavel.ardfmanager.backend.room.entity.Race
 import kolskypavel.ardfmanager.backend.room.entity.Result
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.AliasPunch
 import kolskypavel.ardfmanager.backend.room.entity.embeddeds.CompetitorCategory
@@ -34,6 +35,7 @@ class ResultJsonTests {
     @Test
     fun testToJson() {
         val dataProcessor = mock(DataProcessor::class.java)
+        val race = Race()
 
         `when`(dataProcessor.resultStatusToShortString(org.mockito.kotlin.any()))
             .thenReturn("OK")
@@ -69,7 +71,7 @@ class ResultJsonTests {
             CompetitorCategory(Competitor(), Category("A")),
             readoutData
         )
-        val json = ResultJsonAdapter(UUID.randomUUID(), dataProcessor).toJson(compData)
+        val json = ResultJsonAdapter(race, dataProcessor).toJson(compData)
 
         val moshi: Moshi = Moshi.Builder()
             .add(RaceDataJsonAdapter(dataProcessor))

@@ -16,6 +16,13 @@ class LocalDateTimeAdapter : JsonAdapter<LocalDateTime>() {
 
     @FromJson
     override fun fromJson(reader: JsonReader): LocalDateTime? {
+        // Handle explicit JSON nulls gracefully
+        val peek = reader.peek()
+        if (peek == JsonReader.Token.NULL) {
+            reader.nextNull<Unit>()
+            return null
+        }
+
         val string = reader.nextString()
         if (string.isNullOrBlank()) return null
 
@@ -26,7 +33,7 @@ class LocalDateTimeAdapter : JsonAdapter<LocalDateTime>() {
             try {
                 // Fallback: old format
                 LocalDateTime.parse(string, legacyFormatter)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 throw JsonDataException("Invalid date format: $string")
             }
         }

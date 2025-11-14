@@ -107,7 +107,7 @@ object JsonProcessor : FormatProcessor {
     ) {
         withContext(Dispatchers.IO) {
             val moshi: Moshi = Moshi.Builder()
-                .add(ResultJsonAdapter(race.id, dataProcessor))
+                .add(ResultJsonAdapter(race, dataProcessor))
                 .add(LocalDateTimeAdapter())
                 .add(KotlinJsonAdapterFactory())
                 .build()
@@ -129,7 +129,7 @@ object JsonProcessor : FormatProcessor {
                     last_name = competitor.lastName,
                     first_name = competitor.firstName,
                     category_name = category.name,
-                    result = ResultJsonAdapter(race.id, dataProcessor).toJson(rd)
+                    result = ResultJsonAdapter(race, dataProcessor).toJson(rd)
                 )
             }
 

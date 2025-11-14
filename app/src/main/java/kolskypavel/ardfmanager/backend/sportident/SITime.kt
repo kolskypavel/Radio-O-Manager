@@ -26,16 +26,23 @@ class SITime(
         calculateSeconds()
     }
 
-    constructor(orig: Long) : this() {
-        this.seconds = orig
+    constructor(origSeconds: Long) : this() {
+        this.seconds = origSeconds
         this.time = LocalTime.of(
-            ((orig / 3600) % 24).toInt(),   // max 24 hours in a day
-            ((orig / 60) % 60).toInt(),     // max 60 minutes in an hour
-            (orig % 60).toInt()             // max 60 seconds in a minute
+            ((origSeconds / 3600) % 24).toInt(),   // max 24 hours in a day
+            ((origSeconds / 60) % 60).toInt(),     // max 60 minutes in an hour
+            (origSeconds % 60).toInt()             // max 60 seconds in a minute
         )
-        this.week = (orig / SIConstants.SECONDS_WEEK).toInt()    //Weeks from SI synchronization
+        this.week =
+            (origSeconds / SIConstants.SECONDS_WEEK).toInt()    //Weeks from SI synchronization
         this.dayOfWeek =
-            ((orig / SIConstants.SECONDS_DAY) % 7).toInt()  //Days from SI synchronization
+            ((origSeconds / SIConstants.SECONDS_DAY) % 7).toInt()  //Days from SI synchronization
+    }
+
+    constructor(time: LocalDateTime, startZero: LocalDateTime) : this() {
+        this.time = time.toLocalTime()
+        this.dayOfWeek = dayOfWeekToSIIndex(time.dayOfWeek)
+        this.week = ((Duration.between(startZero, time)).seconds / SIConstants.SECONDS_WEEK).toInt()    //Assume that start 00 is at week 0
     }
 
     private fun calculateSeconds() {
@@ -75,6 +82,19 @@ class SITime(
             week++
             dayOfWeek %= 7
         }
+    }
+
+    fun addTime(duration: Duration) {
+        this.seconds += duration.seconds
+        this.time = LocalTime.of(
+            ((seconds / 3600) % 24).toInt(),   // max 24 hours in a day
+            ((seconds / 60) % 60).toInt(),     // max 60 minutes in an hour
+            (seconds % 60).toInt()             // max 60 seconds in a minute
+        )
+        this.week =
+            (seconds / SIConstants.SECONDS_WEEK).toInt()    //Weeks from SI synchronization
+        this.dayOfWeek =
+            ((seconds / SIConstants.SECONDS_DAY) % 7).toInt()  //Days from SI synchronization
     }
 
     //Getters and setters
@@ -137,7 +157,7 @@ class SITime(
             candidate = candidate.plusWeeks(this.week.toLong())
         }
 
-       return candidate
+        return candidate
     }
 
     companion object {
