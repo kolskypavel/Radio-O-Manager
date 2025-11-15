@@ -291,7 +291,7 @@ object XmlHelper {
         writeTextElement(serializer, "Name", res.category.name)
         serializer.endTag(null, "Class")
 
-        for (cd in res.subList) {
+        for (cd in res.competitorData) {
             writePersonResult(serializer, cd, startZero)
         }
         serializer.endTag(null, "ClassResult")

@@ -10,7 +10,8 @@ import java.io.Serializable
 data class ResultWrapper(
     val category: Category? = null,
     var isChild: Int = 0,
-    var subList: MutableList<CompetitorData> = ArrayList(),
+    var competitorData: MutableList<CompetitorData> = ArrayList(),
     var isExpanded: Boolean = false,
-    var childPosition: Int = 0
+    var childPosition: Int = 0,
+    var finished: Int   //How many people have finished
 ) : Serializable

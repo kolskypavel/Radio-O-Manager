@@ -64,14 +64,14 @@ class ResultsFragmentRecyclerViewAdapter(
             holder.apply {
                 if (dataList.category != null) {
                     categoryName.text =
-                        "${dataList.category.name} (${
-                            dataList.subList.size
+                        "${dataList.category.name} (${dataList.finished}/${
+                            dataList.competitorData.size
                         })"
                 } else {
                     categoryName.text =
-                        "${context.getText(R.string.no_category)} (${dataList.subList.size})"
+                        "${context.getText(R.string.no_category)} (${dataList.finished}/${dataList.competitorData.size})"
                 }
-                if (dataList.subList.isNotEmpty()) {
+                if (dataList.competitorData.isNotEmpty()) {
                     expandButton.visibility = View.VISIBLE
 
                     //Set on click expansion + icon
@@ -95,7 +95,7 @@ class ResultsFragmentRecyclerViewAdapter(
             holder as CompetitorViewHolder
 
             holder.apply {
-                val singleResult = dataList.subList.first()
+                val singleResult = dataList.competitorData.first()
 
                 //Set the competitor place
                 if (singleResult.readoutData != null) {
@@ -188,14 +188,14 @@ class ResultsFragmentRecyclerViewAdapter(
 
     private fun expandParentRow(position: Int) {
         val currentBoardingRow = values[position]
-        val competitors = currentBoardingRow.subList
+        val competitors = currentBoardingRow.competitorData
         currentBoardingRow.isExpanded = true
         var nextPosition = position
         if (currentBoardingRow.isChild == 0) {
 
             competitors.forEachIndexed { index, service ->
-                val parentModel = ResultWrapper(null, 1, ArrayList(), false, index)
-                parentModel.subList.add(service)
+                val parentModel = ResultWrapper(isChild = 1, childPosition = index, finished = 0)
+                parentModel.competitorData.add(service)
                 values.add(++nextPosition, parentModel)
             }
             notifyDataSetChanged()
@@ -204,7 +204,7 @@ class ResultsFragmentRecyclerViewAdapter(
 
     private fun collapseParentRow(position: Int) {
         val currentBoardingRow = values[position]
-        val services = currentBoardingRow.subList
+        val services = currentBoardingRow.competitorData
         values[position].isExpanded = false
         if (values[position].isChild == 0) {
             services.forEach { _ ->

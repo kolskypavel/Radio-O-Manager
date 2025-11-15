@@ -609,7 +609,8 @@ object ResultsProcessor {
         return res.map { result ->
             ResultWrapper(
                 category = result.key,
-                subList = result.value.toMutableList()
+                competitorData = result.value.toMutableList(),
+                finished = result.value.count { it.readoutData != null }
             )
         }.sortedBy { it.category?.order }
     }

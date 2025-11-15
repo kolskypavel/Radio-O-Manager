@@ -282,7 +282,7 @@ object TextProcessor : FormatProcessor {
                 )
                 output += "\n"
 
-                for (rd in result.subList) {
+                for (rd in result.competitorData) {
                     if (rd.readoutData != null) {
                         val competitorData =
                             generateTxtCompetitorData(dataProcessor, context, rd, generateSplits)
@@ -317,7 +317,7 @@ object TextProcessor : FormatProcessor {
                     race
                 )
 
-                for (rd in result.value.subList.withIndex()) {
+                for (rd in result.value.competitorData.withIndex()) {
                     if (rd.value.readoutData != null) {
                         val competitorData =
                             generateHtmlCompetitorData(dataProcessor, context, rd.value)

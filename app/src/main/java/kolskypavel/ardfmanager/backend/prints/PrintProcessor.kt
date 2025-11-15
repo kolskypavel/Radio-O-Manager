@@ -272,7 +272,7 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
                 sb.append(formatCategoryHeader(result))
 
                 // Format each competitor's result
-                result.subList.forEach { competitorData ->
+                result.competitorData.forEach { competitorData ->
                     if (competitorData.readoutData?.result != null) {
 
                         // Format the single result
