@@ -137,7 +137,7 @@
     <string name="general_points">Body</string>
     <string name="general_place">Umístění</string>
     <string name="readout_edit_readout">Upravit vyčítání</string>
-    <string name="result_service_status_text">%1$s, odesláno v %2%s</string>
+    <string name="result_service_status_text">%1$s, odesláno v %2$s</string>
     <string name="result_service_status_text_counter">, výsledků %1$d/%2$d</string>
     <string name="prints_result_ticket">Vytisknout lísteček</string>
     <string name="readout_delete_readout">Smazat vyčítání</string>
