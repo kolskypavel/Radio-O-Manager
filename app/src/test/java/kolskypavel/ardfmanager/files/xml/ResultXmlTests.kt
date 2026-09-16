@@ -76,14 +76,14 @@ class ResultXmlTests {
         )
 
         val out = ByteArrayOutputStream()
-        IofXmlProcessor.exportResults(out, race, compData.toResultWrappers(), dataProcessor)
+        IofXmlProcessor.exportResults(out, race, compData.toResultWrappers(), dataProcessor, true)
         val xml = out.toString("UTF-8")
 
         val stream =
             this::class.java.classLoader?.getResourceAsStream("xml/xml_results_example.xml")!!
         val valid = stream.bufferedReader().use { it.readText() }
 
-       // assertEquals(xml, "") // For debug
+        // assertEquals(xml, "") // For debug
 
         //Use XMLUnit to compare structure, ignoring whitespace and attribute order
         val diff = DiffBuilder.compare(valid)

@@ -199,7 +199,8 @@ object XmlHelper {
         serializer: XmlSerializer,
         race: Race,
         rootTag: String,
-        dataProcessor: DataProcessor
+        dataProcessor: DataProcessor,
+        resultsFinal: Boolean
     ) {
         serializer.startTag(null, rootTag)
         serializer.attribute(null, "xmlns", "http://www.orienteering.org/datastandard/3.0")
@@ -208,7 +209,11 @@ object XmlHelper {
 
         // Show result status only with results
         if (rootTag == "ResultList") {
-            serializer.attribute(null, "status", "Complete")
+            if (resultsFinal) {
+                serializer.attribute(null, "status", "Complete")
+            } else {
+                serializer.attribute(null, "status", "Snapshot")
+            }
         }
         writeRaceTag(serializer, race)
     }
