@@ -49,8 +49,7 @@ object CsvProcessor : FormatProcessor {
                 DataType.CATEGORIES -> importCategories(
                     inStream,
                     race,
-                    dataProcessor,
-                    context
+                    dataProcessor
                 )
 
                 DataType.COMPETITORS -> importCompetitorData(
@@ -122,11 +121,10 @@ object CsvProcessor : FormatProcessor {
         return CsvReader(context)
     }
 
-    private fun importCategories(
+    fun importCategories(
         inStream: InputStream,
         race: Race,
-        dataProcessor: DataProcessor,
-        context: Context
+        dataProcessor: DataProcessor
     ): DataImportWrapper {
         val readData = getReader().readAll(inStream)
         val categories = ArrayList<CategoryData>()
@@ -136,10 +134,9 @@ object CsvProcessor : FormatProcessor {
 
             for (csvRow in readData.withIndex()) {
                 val row = csvRow.value
-                if (row.size == FileConstants.CATEGORY_CSV_COLUMNS) {
+                if (row.size >= FileConstants.CATEGORY_CSV_COLUMNS) {
 
                     try {
-
                         val categoryName = row[0].trim()
                         val isMan = row[1].trim() == "1"
                         val maxAge = row[2].trim().toInt()
@@ -152,7 +149,7 @@ object CsvProcessor : FormatProcessor {
                         val followRacePresets = row[5].trim() == "1"
 
                         //Check validity
-                        if (categoryName.isEmpty() || maxAge <= 0 || length <= 0 || climb < 0) {
+                        if (categoryName.isEmpty() || maxAge <= 0 || length < 0 || climb < 0) {
                             throw IllegalArgumentException("Invalid category data: $row")
                         }
 
@@ -176,12 +173,17 @@ object CsvProcessor : FormatProcessor {
                         if (!followRacePresets) {
                             val raceType = RaceType.valueOf(row[6].trim())
                             val timeLimit = row[7].trim().toLong()
-                            val band = row[8].trim()
+
+                            if (timeLimit <= 0) {
+                                throw IllegalArgumentException("Invalid time limit: $timeLimit at row $row")
+                            }
+
+                            val band = dataProcessor.raceBandStringToEnum(row[8].trim())
 
                             category.differentProperties = true
                             category.raceType = raceType
                             category.timeLimit = Duration.ofMinutes(timeLimit)
-                            category.categoryBand = dataProcessor.raceBandStringToEnum(band)
+                            category.categoryBand = band
                         }
 
                         val controlPointString = row[9].trim()
@@ -207,7 +209,7 @@ object CsvProcessor : FormatProcessor {
                             "CSV import",
                             "Failed to import category: ${row.joinToString(", ")}\n" + e.stackTraceToString()
                         )
-                        invalidLines.add(Pair(csvRow.index, e.message ?: ""))
+                        invalidLines.add(Pair(csvRow.index + 1, e.message ?: ""))
                     }
                 }
             }
@@ -261,11 +263,10 @@ object CsvProcessor : FormatProcessor {
         return categories.toList()
     }
 
-    private suspend fun importCompetitorData(
+    suspend fun importCompetitorData(
         inStream: InputStream,
         race: Race,
         categories: HashSet<CategoryData>,
-
         dataProcessor: DataProcessor,
         context: Context
     ): DataImportWrapper {
@@ -447,31 +448,29 @@ object CsvProcessor : FormatProcessor {
         )
     }
 
-
-    // ------------- TODO: To be finished - non priority exports
-
     @Throws(IOException::class)
     suspend fun exportCategories(outStream: OutputStream, categories: List<CategoryData>) {
 
         withContext(Dispatchers.IO) {
             val writer = outStream.bufferedWriter()
-            for (data in categories) {
+            for (cd in categories.withIndex()) {
+                val data = cd.value
 
                 writer.write(data.category.toCSVString())
-                writer.write(";")
-                writer.write(data.controlPoints.size.toString())
                 writer.write(";")
 
                 //Write all control points
                 for (cp in data.controlPoints.withIndex()) {
                     writer.write(cp.value.toCsvString())
 
-                    //Separate control points by comma
+                    //Separate control points by space
                     if (cp.index < data.controlPoints.size - 1) {
-                        writer.write(",")
+                        writer.write(" ")
                     }
                 }
-                writer.newLine()
+                if (cd.index < categories.size - 1) {
+                    writer.newLine()
+                }
             }
             writer.flush()
         }
@@ -485,13 +484,17 @@ object CsvProcessor : FormatProcessor {
         val writer = outStream.bufferedWriter()
         withContext(Dispatchers.IO) {
 
-            for (com in competitorData) {
+            for (comdata in competitorData.withIndex()) {
+
+                val com = comdata.value.competitorCategory
                 writer.write(
-                    com.competitorCategory.competitor.toSimpleCsvString(
-                        com.competitorCategory.category?.name ?: ""
+                    com.competitor.toSimpleCsvString(
+                        com.category?.name ?: ""
                     )
                 )
-                writer.newLine()
+                if (comdata.index < competitorData.size - 1) {
+                    writer.newLine()
+                }
             }
             writer.flush()
         }
@@ -505,14 +508,17 @@ object CsvProcessor : FormatProcessor {
     ) {
         val writer = outStream.bufferedWriter()
         withContext(Dispatchers.IO) {
-            for (com in competitorData) {
-                val category = com.competitorCategory.category
+            for (comdata in competitorData.withIndex()) {
+                val com = comdata.value.competitorCategory
+                val category = com.category
                 writer.write(
-                    com.competitorCategory.competitor.toStartCsvString(
+                    com.competitor.toStartCsvString(
                         category?.name ?: ""
                     )
                 )
-                writer.newLine()
+                if (comdata.index < competitorData.size - 1) {
+                    writer.newLine()
+                }
             }
             writer.flush()
         }
@@ -522,14 +528,18 @@ object CsvProcessor : FormatProcessor {
     suspend fun exportReadoutData(outStream: OutputStream, readoutData: List<ResultData>) {
         val writer = outStream.bufferedWriter()
         withContext(Dispatchers.IO) {
-            for (rd in readoutData) {
-                writer.write(rd.toReadoutCSVString())
-                writer.newLine()
+            for (rd in readoutData.withIndex()) {
+                writer.write(rd.value.toReadoutCSVString())
+
+                if (rd.index < readoutData.size - 1) {
+                    writer.newLine()
+                }
             }
             writer.flush()
         }
     }
 
+    // ------------- TODO: Finish CSV export of results
     @Throws(IOException::class)
     suspend fun exportResults(outStream: OutputStream, results: List<ResultWrapper>) {
         val writer = outStream.bufferedWriter()

@@ -48,8 +48,13 @@ data class Category(
     @ColumnInfo(name = "color") var color: Int? = null
 ) : Serializable {
 
+    // CSV string export - control points are purposely missing -> should be generated from actual CPs to prevent inconsistencies
     fun toCSVString(): String {
-        return "$name;${isMan.compareTo(false)};${maxAge ?: 0};${length};${climb};${order};${raceType?.value ?: ""};${timeLimit?.toMinutes() ?: ""}}"
+        return "$name;${isMan.compareTo(false)};${maxAge ?: 100};${length};${climb};${
+            differentProperties.compareTo(
+                false
+            )
+        };${raceType?.value ?: ""};${timeLimit?.toMinutes() ?: ""};${categoryBand?.name ?: ""}"
     }
 
     constructor(name: String) : this(

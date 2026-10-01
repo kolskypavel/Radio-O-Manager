@@ -3,7 +3,7 @@ package kolskypavel.ardfmanager.backend.files.constants
 object FileConstants {
 
     const val OCM_START_CSV_COLUMNS = 3
-    const val CATEGORY_CSV_COLUMNS = 11
+    const val CATEGORY_CSV_COLUMNS = 10
 
     const val TEMPLATE_TEXT_STARTLIST = "templates/textStartlistTemplate.tmpl"
     const val TEMPLATE_TEXT_STARTLIST_ROW = "templates/textStartlistRow.tmpl"
