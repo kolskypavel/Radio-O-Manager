@@ -25,7 +25,9 @@ data class Race(
     @ColumnInfo(name = "race_type") var raceType: RaceType,
     @ColumnInfo(name = "race_level") var raceLevel: RaceLevel,
     @ColumnInfo(name = "race_band") var raceBand: RaceBand,
-    @ColumnInfo(name = "time_limit") var timeLimit: Duration
+    @ColumnInfo(name = "time_limit") var timeLimit: Duration,
+    @ColumnInfo(name = "start_time_rounding_enabled", defaultValue = "0") var startTimeRoundingEnabled: Boolean = false,
+    @ColumnInfo(name = "start_time_rounding_interval", defaultValue = "5") var startTimeRoundingInterval: Int = 5
 ) : Serializable {
     constructor() : this(
         UUID.randomUUID(),

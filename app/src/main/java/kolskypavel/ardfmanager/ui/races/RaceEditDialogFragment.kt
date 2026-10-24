@@ -11,6 +11,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import kolskypavel.ardfmanager.R
@@ -40,6 +41,8 @@ class RaceEditDialogFragment : DialogFragment() {
     private lateinit var raceTypePicker: MaterialAutoCompleteTextView
     private lateinit var raceLevelPicker: MaterialAutoCompleteTextView
     private lateinit var raceBandPicker: MaterialAutoCompleteTextView
+    private lateinit var startRoundingCheckBox: MaterialCheckBox
+    private lateinit var startRoundingIntervalPicker: MaterialAutoCompleteTextView
 
     private lateinit var okButton: Button
     private lateinit var cancelButton: Button
@@ -66,6 +69,8 @@ class RaceEditDialogFragment : DialogFragment() {
         raceTypePicker = view.findViewById(R.id.category_dialog_type)
         raceLevelPicker = view.findViewById(R.id.race_dialog_level)
         raceBandPicker = view.findViewById(R.id.race_dialog_band)
+        startRoundingCheckBox = view.findViewById(R.id.race_dialog_start_rounding_enabled)
+        startRoundingIntervalPicker = view.findViewById(R.id.race_dialog_start_rounding_interval)
         cancelButton = view.findViewById(R.id.race_dialog_cancel)
         okButton = view.findViewById(R.id.race_dialog_ok)
 
@@ -148,6 +153,15 @@ class RaceEditDialogFragment : DialogFragment() {
         raceTypePicker.setText(dataProcessor.raceTypeToString(race.raceType), false)
         raceLevelPicker.setText(dataProcessor.raceLevelToString(race.raceLevel), false)
         raceBandPicker.setText(dataProcessor.raceBandToString(race.raceBand), false)
+        startRoundingCheckBox.isChecked = race.startTimeRoundingEnabled
+        startRoundingIntervalPicker.setText(race.startTimeRoundingInterval.toString(), false)
+        startRoundingIntervalPicker.isEnabled = race.startTimeRoundingEnabled
+        startRoundingCheckBox.setOnCheckedChangeListener { _, checked ->
+            startRoundingIntervalPicker.isEnabled = checked
+        }
+        requireView().findViewById<View>(R.id.race_dialog_start_rounding_row)?.setOnClickListener {
+            startRoundingCheckBox.isChecked = !startRoundingCheckBox.isChecked
+        }
 
     }
 
@@ -173,6 +187,9 @@ class RaceEditDialogFragment : DialogFragment() {
                 race.raceBand =
                     dataProcessor.raceBandStringToEnum(raceBandPicker.text.toString())
                 race.timeLimit = Duration.ofMinutes(limitEditText.text.toString().trim().toLong())
+                race.startTimeRoundingEnabled = startRoundingCheckBox.isChecked
+                race.startTimeRoundingInterval = startRoundingIntervalPicker.text.toString().toIntOrNull()
+                    ?.takeIf { it == 1 || it == 2 || it == 5 } ?: 5
 
                 setFragmentResult(
                     REQUEST_RACE_MODIFICATION, bundleOf(

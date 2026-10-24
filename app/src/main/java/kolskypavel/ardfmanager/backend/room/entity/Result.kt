@@ -46,6 +46,8 @@ data class Result(
     @ColumnInfo(name = "modified") var modified: Boolean,
     @ColumnInfo(name = "sent") var sent: Boolean,      //Marked as sent to the server
     @ColumnInfo(name = "start_time_source") var startTimeSource: StartTimeSource = StartTimeSource.PUNCHED,
+    // Preserve the original SportIdent START punch independently from the effective result start time.
+    @ColumnInfo(name = "original_start_punch_time") var originalStartPunchTime: SITime? = null,
 ) : Serializable, Comparable<Result> {
     @Ignore
     var place: Int = 0
