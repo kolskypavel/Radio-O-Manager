@@ -531,9 +531,7 @@ object CsvProcessor : FormatProcessor {
             for (rd in readoutData.withIndex()) {
                 writer.write(rd.value.toReadoutCSVString())
 
-                if (rd.index < readoutData.size - 1) {
-                    writer.newLine()
-                }
+                writer.newLine()
             }
             writer.flush()
         }
