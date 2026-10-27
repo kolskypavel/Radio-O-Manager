@@ -52,7 +52,7 @@ class PunchRecyclerViewAdapter(
                 holder.punchOrder.text = position.toString()
                 var cpDisplay = item.punch.siCode.toString()
 
-                if (item.alias != null) {
+                if (item.alias != null && dataProcessor.isToUseAliases()) {
                     cpDisplay += " (${item.alias!!.name})"
                 }
                 holder.punchSiCode.text = cpDisplay

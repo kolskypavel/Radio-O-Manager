@@ -240,14 +240,22 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
         val context = appContext.get()!!
 
         val symbol = when (aliasPunch.punch.punchStatus) {
-            PunchStatus.VALID -> context.getString(R.string.punch_status_valid)
-            PunchStatus.INVALID -> context.getString(R.string.punch_status_invalid)
+            PunchStatus.VALID -> ""
+            PunchStatus.INVALID -> context.getString(R.string.punch_status_invalid_print)
             PunchStatus.DUPLICATE -> context.getString(R.string.punch_status_duplicate)
             PunchStatus.UNKNOWN -> context.getString(R.string.punch_status_unknown)
         }
-        val code =
-            "${aliasPunch.punch.order} (${aliasPunch.alias?.name ?: aliasPunch.punch.siCode})"
-        return "$code$symbol"
+
+        // Display alias if exists and is allowed in the settings
+        val displayCode = if (dataProcessor.isToUseAliases() && aliasPunch.alias != null) {
+            aliasPunch.alias?.name
+        } else {
+            aliasPunch.punch.siCode
+        }
+
+        val formatted =
+            "${aliasPunch.punch.order} (${displayCode})"
+        return "$formatted$symbol"
     }
 
     suspend fun printResults(results: List<ResultWrapper>, race: Race) {

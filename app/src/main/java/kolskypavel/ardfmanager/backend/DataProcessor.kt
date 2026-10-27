@@ -270,6 +270,12 @@ class DataProcessor private constructor(context: Context) {
         }
     }
 
+    fun isToUseAliases(): Boolean {
+        val context = getContext() ?: return false
+        return PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(context.getString(R.string.key_results_use_aliases), false)
+    }
+
     //COMPETITORS
     fun getCompetitorDataFlowByRace(raceId: UUID) =
         ardfRepository.getCompetitorDataFlowByRace(raceId)
