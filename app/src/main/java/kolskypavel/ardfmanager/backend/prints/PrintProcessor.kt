@@ -224,7 +224,7 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
                         }"
             }
 
-            SIRecordType.CONTROL -> {
+            SIRecordType.CONTROL, SIRecordType.BEACON, SIRecordType.SEPARATOR -> {
                 return "[L]${formatCodeString(aliasPunch)}" +
                         "[C]${aliasPunch.punch.siTime.getTimeString()}" +
                         "[R]${

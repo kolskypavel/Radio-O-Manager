@@ -273,7 +273,7 @@ object ControlPointsHelper {
     fun getStringFromPunches(punches: List<Punch>): String {
         var string = ""
         for (punch in punches) {
-            if (punch.punchType == SIRecordType.CONTROL) {
+            if (punch.punchType != SIRecordType.START && punch.punchType != SIRecordType.FINISH) {
                 string += "${punch.siCode} "
             }
         }
@@ -287,7 +287,7 @@ object ControlPointsHelper {
             sharedPref.getBoolean(context.getString(R.string.key_results_use_aliases), true)
 
         for ((index, aliasPunch) in punches.withIndex()) {
-            if (aliasPunch.punch.punchType == SIRecordType.CONTROL) {
+            if (aliasPunch.punch.punchType != SIRecordType.START && aliasPunch.punch.punchType != SIRecordType.FINISH) {
 
                 //Use alias if available and enabled
                 string += if (useAlias && aliasPunch.alias != null) {

@@ -33,7 +33,7 @@ class PunchJsonAdapter(val raceId: UUID, val dataProcessor: DataProcessor) {
             raceId = raceId,
             resultId = UUID.randomUUID(),
             cardNumber = 0,
-            siCode = if (punchType == SIRecordType.CONTROL) {
+            siCode = if (punchType != SIRecordType.START && punchType != SIRecordType.FINISH) {
                 if (punchJson.si_code != null) {
                     punchJson.si_code!!
                 } else punchJson.code.toInt()
