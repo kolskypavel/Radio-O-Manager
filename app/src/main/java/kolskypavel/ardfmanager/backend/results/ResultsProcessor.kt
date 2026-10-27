@@ -301,11 +301,20 @@ object ResultsProcessor {
 
         // Add printing based on option
         if (isToPrintFinishTicket(competitor, category, context)) {
+
+            // Check if double printing is enabled
+            val doublePrint =
+                sharedPref.getBoolean(
+                    context.getString(R.string.key_prints_double_print),
+                    false
+                )
+
             dataProcessor.getRace(result.raceId)?.let { race ->
                 CoroutineScope(Dispatchers.IO).launch {
                     dataProcessor.printFinishTicket(
                         dataProcessor.getResultData(result.id),
-                        race
+                        race,
+                        doublePrint
                     )
                 }
             }

@@ -613,8 +613,8 @@ class DataProcessor private constructor(context: Context) {
         printProcessor.disablePrinter()
     }
 
-    suspend fun printFinishTicket(resultData: ResultData, race: Race) =
-        printProcessor.printFinishTicket(resultData, race)
+    suspend fun printFinishTicket(resultData: ResultData, race: Race, doublePrint: Boolean) =
+        printProcessor.printFinishTicket(resultData, race, doublePrint)
 
 
     suspend fun printResults(results: List<ResultWrapper>, race: Race) =
