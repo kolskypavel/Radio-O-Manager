@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id("androidx.navigation.safeargs")
     id("com.google.gms.google-services")
@@ -19,8 +18,8 @@ android {
         applicationId = "kolskypavel.ardfmanager"
         minSdk = 26
         targetSdk = 36
-        versionCode = 8
-        versionName = "0.3.0"
+        versionCode = 10
+        versionName = "0.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -54,9 +53,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -74,6 +71,7 @@ android {
     }
 
     testOptions {
+        unitTests.returnDefaultValues = true
         unitTests.all {
             jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
         }
