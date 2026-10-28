@@ -232,6 +232,7 @@
 
     <string name="punch_status_valid" translatable="false">✓</string>
     <string name="punch_status_invalid" translatable="false">✖</string>
+    <string name="punch_status_invalid_print" translatable="false">x</string>
     <string name="punch_status_duplicate" translatable="false">+</string>
     <string name="punch_status_unknown" translatable="false">\?</string>
 
