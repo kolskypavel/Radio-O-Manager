@@ -149,19 +149,40 @@ object TextProcessor : FormatProcessor {
         generateSplits: Boolean
     ): String {
         val output = StringBuilder()
-        for (result in results) {
+        val filteredResults = results.filter { rw -> rw.competitorData.any { it.readoutData != null } }
+
+        for (rwWrapper in filteredResults.withIndex()) {
+            val result = rwWrapper.value
             val category = result.category ?: continue
-            
+
             // Category Header
-            output.append(generateResCategoryHeader(FileConstants.TEMPLATE_TEXT_RES_CATEGORY, dataProcessor, context, category, race)).append("\n")
+            output.append(
+                generateResCategoryHeader(
+                    FileConstants.TEMPLATE_TEXT_RES_CATEGORY,
+                    dataProcessor,
+                    context,
+                    category,
+                    race
+                )
+            ).append("\n")
 
             // Competitor Rows
             for (rd in result.competitorData) {
                 if (rd.readoutData != null) {
-                    output.append(generateTxtResCompData(dataProcessor, context, rd, generateSplits)).append("\n")
+                    output.append(
+                        generateTxtResCompData(
+                            dataProcessor,
+                            context,
+                            rd,
+                            generateSplits
+                        )
+                    ).append("\n")
                 }
             }
-            output.append("\n\n")
+
+            if (rwWrapper.index < filteredResults.size - 1) {
+                output.append("\n\n")
+            }
         }
         return output.toString()
     }
@@ -177,7 +198,7 @@ object TextProcessor : FormatProcessor {
         for (catWrapper in categoryData.withIndex()) {
             val cd = catWrapper.value
             val sortedComp = cd.competitors.sortedBy { it.drawnRelativeStartTime }
-            
+
             output.append(cd.category.name).append("\n")
             output.append("-".repeat(FileConstants.LINE_LENGTH)).append("\n")
 
@@ -212,7 +233,8 @@ object TextProcessor : FormatProcessor {
             competitorData.readoutData!!.punches,
             context
         )
-        params[FileConstants.KEY_COMP_SPLITS] = getSplitsString(competitorData.readoutData!!.punches, dataProcessor)
+        params[FileConstants.KEY_COMP_SPLITS] =
+            getSplitsString(competitorData.readoutData!!.punches, dataProcessor)
 
         return TemplateProcessor.processTemplate(template, params)
     }
@@ -231,11 +253,21 @@ object TextProcessor : FormatProcessor {
         race: Race
     ): String {
         val output = StringBuilder()
-        for (resultWrapper in results.withIndex()) {
+        val filteredResults = results.filter { rw -> rw.competitorData.any { it.readoutData != null } }
+
+        for (resultWrapper in filteredResults.withIndex()) {
             val result = resultWrapper.value
             val category = result.category ?: continue
 
-            output.append(generateResCategoryHeader(FileConstants.TEMPLATE_HTML_RES_CATEGORY, dataProcessor, context, category, race))
+            output.append(
+                generateResCategoryHeader(
+                    FileConstants.TEMPLATE_HTML_RES_CATEGORY,
+                    dataProcessor,
+                    context,
+                    category,
+                    race
+                )
+            )
 
             for (rd in result.competitorData) {
                 if (rd.readoutData != null) {
@@ -244,7 +276,7 @@ object TextProcessor : FormatProcessor {
             }
             output.append(FileConstants.HTML_TABLE_END)
 
-            if (resultWrapper.index < results.size - 1) {
+            if (resultWrapper.index < filteredResults.size - 1) {
                 output.append(FileConstants.HTML_DOUBLE_BREAK)
             }
         }
@@ -285,14 +317,21 @@ object TextProcessor : FormatProcessor {
         context: Context,
         competitorData: CompetitorData
     ): String {
-        val template = TemplateProcessor.loadTemplate(FileConstants.TEMPLATE_HTML_RES_COMPETITOR, context)
+        val template =
+            TemplateProcessor.loadTemplate(FileConstants.TEMPLATE_HTML_RES_COMPETITOR, context)
         val params = getCompetitorParams(competitorData, dataProcessor)
 
-        params[FileConstants.KEY_COMP_SPLITS] = generateHtmlCompetitorSplits(
-            competitorData.readoutData!!.punches,
-            context,
-            dataProcessor
-        )
+        val resultStatus = competitorData.readoutData?.result?.resultStatus
+
+        // generate splits only if finish reached
+        params[FileConstants.KEY_COMP_SPLITS] =
+            if (resultStatus != ResultStatus.DID_NOT_START && resultStatus != ResultStatus.DID_NOT_FINISH) {
+                generateHtmlCompetitorSplits(
+                    competitorData.readoutData!!.punches,
+                    context,
+                    dataProcessor
+                )
+            } else ""
 
         return TemplateProcessor.processTemplate(template, params)
     }
@@ -307,23 +346,31 @@ object TextProcessor : FormatProcessor {
     ): String {
         val output = StringBuilder()
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val useAlias = sharedPref.getBoolean(context.getString(R.string.key_results_use_aliases), true)
+        val useAlias =
+            sharedPref.getBoolean(context.getString(R.string.key_results_use_aliases), true)
+        val useMinuteFormat = dataProcessor.useMinuteTimeFormat()
 
         for (split in splits) {
-            if (split.punch.punchType == SIRecordType.CONTROL) {
-                val aliasCode = if (useAlias && split.alias != null) split.alias!!.name else split.punch.siCode.toString()
-                output.append(
-                    TemplateProcessor.processTemplate(
-                        FileConstants.HTML_SPLITS_CODE,
-                        mapOf(
-                            FileConstants.KEY_COMP_SPLIT_CODE to aliasCode,
-                            FileConstants.KEY_COMP_SPLIT_TIME to TimeProcessor.durationToFormattedString(
-                                split.punch.split, dataProcessor.useMinuteTimeFormat()
-                            )
+            val punch = split.punch
+            if (punch.punchType == SIRecordType.START) continue
+
+            val aliasCode = when {
+                punch.punchType == SIRecordType.FINISH -> "F"
+                useAlias && split.alias != null -> split.alias?.name ?: punch.siCode.toString()
+                else -> punch.siCode.toString()
+            }
+
+            output.append(
+                TemplateProcessor.processTemplate(
+                    FileConstants.HTML_SPLITS_CODE,
+                    mapOf(
+                        FileConstants.KEY_COMP_SPLIT_CODE to aliasCode,
+                        FileConstants.KEY_COMP_SPLIT_TIME to TimeProcessor.durationToFormattedString(
+                            punch.split, useMinuteFormat
                         )
                     )
                 )
-            }
+            )
         }
         return output.toString()
     }
@@ -344,7 +391,7 @@ object TextProcessor : FormatProcessor {
     ): String {
         val template = TemplateProcessor.loadTemplate(templateName, context)
         val aliases = dataProcessor.getControlPointAliasesByCategory(category.id)
-        
+
         val params = getBaseParams(dataProcessor, context, race)
         params.putAll(getCategoryParams(dataProcessor, category, race, aliases, context))
 
@@ -358,9 +405,10 @@ object TextProcessor : FormatProcessor {
         context: Context,
         category: Category
     ): String {
-        val template = TemplateProcessor.loadTemplate(FileConstants.TEMPLATE_HTML_STARTLIST_CATEGORY, context)
+        val template =
+            TemplateProcessor.loadTemplate(FileConstants.TEMPLATE_HTML_STARTLIST_CATEGORY, context)
         val params = getCategoryParams(null, category, null, null, null)
-        
+
         // Add headers required by the template
         params[FileConstants.KEY_TITLE_CATEGORY] = context.getString(R.string.general_category)
         params[FileConstants.KEY_TITLE_NAME] = context.getString(R.string.general_name)
@@ -381,8 +429,9 @@ object TextProcessor : FormatProcessor {
         dataFormat: DataFormat,
         context: Context
     ): String {
-        val templateName = if (dataFormat == DataFormat.TXT) FileConstants.TEMPLATE_TEXT_STARTLIST_ROW 
-                           else FileConstants.TEMPLATE_HTML_STARTLIST_ROW
+        val templateName =
+            if (dataFormat == DataFormat.TXT) FileConstants.TEMPLATE_TEXT_STARTLIST_ROW
+            else FileConstants.TEMPLATE_HTML_STARTLIST_ROW
         val template = TemplateProcessor.loadTemplate(templateName, context)
 
         val params = getCompetitorParams(null, null, competitor)
@@ -397,7 +446,12 @@ object TextProcessor : FormatProcessor {
         val nonStartPunches = punches.filter { it.punch.punchType != SIRecordType.START }
 
         for (aliasPunch in nonStartPunches.withIndex()) {
-            output.append(TimeProcessor.durationToFormattedString(aliasPunch.value.punch.split, dataProcessor.useMinuteTimeFormat()))
+            output.append(
+                TimeProcessor.durationToFormattedString(
+                    aliasPunch.value.punch.split,
+                    dataProcessor.useMinuteTimeFormat()
+                )
+            )
             if (aliasPunch.index < nonStartPunches.size - 1) output.append(" ")
         }
         return output.toString()
@@ -406,7 +460,12 @@ object TextProcessor : FormatProcessor {
     /**
      * Processes a template and writes it to the output stream.
      */
-    private fun writeTemplateToStream(templatePath: String, params: Map<String, String>, context: Context, outStream: OutputStream) {
+    private fun writeTemplateToStream(
+        templatePath: String,
+        params: Map<String, String>,
+        context: Context,
+        outStream: OutputStream
+    ) {
         val template = TemplateProcessor.loadTemplate(templatePath, context)
         val out = TemplateProcessor.processTemplate(template, params)
         outStream.write(out.toByteArray())
@@ -420,13 +479,19 @@ object TextProcessor : FormatProcessor {
     /**
      * Initializes a map with basic race info, global UI titles, and metadata.
      */
-    private fun getBaseParams(dataProcessor: DataProcessor, context: Context, race: Race): HashMap<String, String> {
+    private fun getBaseParams(
+        dataProcessor: DataProcessor,
+        context: Context,
+        race: Race
+    ): HashMap<String, String> {
         val params = HashMap<String, String>()
-        
+
         // Race Information
         params[FileConstants.KEY_RACE_NAME] = race.name
-        params[FileConstants.KEY_RACE_DATE] = TimeProcessor.formatLocalDate(race.startDateTime.toLocalDate())
-        params[FileConstants.KEY_RACE_START_TIME] = TimeProcessor.formatLocalTime(race.startDateTime.toLocalTime())
+        params[FileConstants.KEY_RACE_DATE] =
+            TimeProcessor.formatLocalDate(race.startDateTime.toLocalDate())
+        params[FileConstants.KEY_RACE_START_TIME] =
+            TimeProcessor.formatLocalTime(race.startDateTime.toLocalTime())
         params[FileConstants.KEY_RACE_LEVEL] = dataProcessor.raceLevelToString(race.raceLevel)
 
         // General UI Titles
@@ -448,16 +513,20 @@ object TextProcessor : FormatProcessor {
         params[FileConstants.KEY_TITLE_POINTS] = context.getString(R.string.general_points)
         params[FileConstants.KEY_TITLE_RUN_TIME] = context.getString(R.string.general_run_time)
         params[FileConstants.KEY_TITLE_SI_NUMBER] = context.getString(R.string.general_si_number)
-        params[FileConstants.KEY_TITLE_START_NUMBER] = context.getString(R.string.competitor_start_number)
+        params[FileConstants.KEY_TITLE_START_NUMBER] =
+            context.getString(R.string.competitor_start_number)
         params[FileConstants.KEY_TITLE_SPLITS] = context.getString(R.string.general_splits)
         params[FileConstants.KEY_TITLE_RESULTS_SPLITS] = context.getString(R.string.results_splits)
 
         // Generation Metadata
         val now = LocalDateTime.now()
-        params[FileConstants.KEY_GENERATED_WITH] = context.getString(R.string.generated_with, TimeProcessor.formatDisplayLocalDateTime(now))
+        params[FileConstants.KEY_GENERATED_WITH] = context.getString(
+            R.string.generated_with,
+            TimeProcessor.formatDisplayLocalDateTime(now)
+        )
         params[FileConstants.KEY_VERSION] = dataProcessor.getAppVersion()
         params[FileConstants.KEY_CURR_TIME] = TimeProcessor.formatDisplayLocalDateTime(now)
-        
+
         // Support for TAB characters in TXT templates
         params[FileConstants.KEY_TAB] = "\t"
 
@@ -477,16 +546,19 @@ object TextProcessor : FormatProcessor {
         val params = HashMap<String, String>()
         params[FileConstants.KEY_CAT_NAME] = category.name
         params[FileConstants.KEY_CAT_LENGTH] = category.length.toString()
-        
+
         race?.let {
-            params[FileConstants.KEY_CAT_LIMIT] = (category.timeLimit ?: it.timeLimit).toMinutes().toString()
+            params[FileConstants.KEY_CAT_LIMIT] =
+                (category.timeLimit ?: it.timeLimit).toMinutes().toString()
             dataProcessor?.let { dp ->
-                params[FileConstants.KEY_CAT_BAND] = dp.raceBandToString(category.categoryBand ?: it.raceBand)
+                params[FileConstants.KEY_CAT_BAND] =
+                    dp.raceBandToString(category.categoryBand ?: it.raceBand)
             }
         }
 
         if (aliases != null && context != null) {
-            params[FileConstants.KEY_CAT_CONTROLS] = ControlPointsHelper.getStringFromControlPointAliases(aliases, context)
+            params[FileConstants.KEY_CAT_CONTROLS] =
+                ControlPointsHelper.getStringFromControlPointAliases(aliases, context)
         }
         return params
     }
@@ -500,8 +572,9 @@ object TextProcessor : FormatProcessor {
         directCompetitor: Competitor? = null
     ): HashMap<String, String> {
         val params = HashMap<String, String>()
-        val competitor = directCompetitor ?: competitorData?.competitorCategory?.competitor ?: return params
-        
+        val competitor =
+            directCompetitor ?: competitorData?.competitorCategory?.competitor ?: return params
+
         // Competitor Info
         params[FileConstants.KEY_COMP_NAME] = competitor.getFullName()
         params[FileConstants.KEY_COMP_CLUB] = competitor.club
@@ -514,10 +587,22 @@ object TextProcessor : FormatProcessor {
 
         // Result Info (if available)
         competitorData?.readoutData?.result?.let { res ->
-            params[FileConstants.KEY_COMP_PLACE] = if (res.resultStatus == ResultStatus.OK) "${res.place}." 
-                                                   else dataProcessor?.resultStatusToShortString(res.resultStatus).orEmpty()
-            params[FileConstants.KEY_COMP_RUN_TIME] = TimeProcessor.durationToFormattedString(res.runTime, dataProcessor?.useMinuteTimeFormat() ?: false)
-            params[FileConstants.KEY_COMP_POINTS] = res.points.toString()
+            params[FileConstants.KEY_COMP_PLACE] =
+                if (res.resultStatus == ResultStatus.OK) "${res.place}."
+                else dataProcessor?.resultStatusToShortString(res.resultStatus).orEmpty()
+
+            // Display result status only if competitor has finished "normally"
+            params[FileConstants.KEY_COMP_RUN_TIME] =
+                if (ResultStatus.displayRunTime(res.resultStatus)) {
+                    TimeProcessor.durationToFormattedString(
+                        res.runTime,
+                        dataProcessor?.useMinuteTimeFormat() ?: false
+                    )
+                } else "-"
+            params[FileConstants.KEY_COMP_POINTS] =
+                if (ResultStatus.displayRunTime(res.resultStatus)) {
+                    res.points.toString()
+                } else "-"
         }
 
         return params

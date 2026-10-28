@@ -208,7 +208,7 @@ class ReadoutEditDialogFragment : DialogFragment() {
         } else {
             // Filter out controls only
             val filtered =
-                args.resultData!!.punches.filter { it -> it.punch.punchType == SIRecordType.CONTROL }
+                args.resultData!!.punches.filter { it.punch.punchType != SIRecordType.START && it.punch.punchType != SIRecordType.FINISH }
             PunchEditItemWrapper.getWrappers(ArrayList(filtered))
         }
 

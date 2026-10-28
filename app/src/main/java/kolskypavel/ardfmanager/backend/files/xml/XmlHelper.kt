@@ -199,7 +199,8 @@ object XmlHelper {
         serializer: XmlSerializer,
         race: Race,
         rootTag: String,
-        dataProcessor: DataProcessor
+        dataProcessor: DataProcessor,
+        resultsFinal: Boolean
     ) {
         serializer.startTag(null, rootTag)
         serializer.attribute(null, "xmlns", "http://www.orienteering.org/datastandard/3.0")
@@ -208,7 +209,11 @@ object XmlHelper {
 
         // Show result status only with results
         if (rootTag == "ResultList") {
-            serializer.attribute(null, "status", "Complete")
+            if (resultsFinal) {
+                serializer.attribute(null, "status", "Complete")
+            } else {
+                serializer.attribute(null, "status", "Snapshot")
+            }
         }
         writeRaceTag(serializer, race)
     }
@@ -385,7 +390,9 @@ object XmlHelper {
     private fun writeSplitTimes(serializer: XmlSerializer, punches: List<AliasPunch>?) {
         if (punches == null || punches.isEmpty()) return
         var cumulativeMillis: Long = 0
-        for (p in punches.filter { it.punch.punchType == SIRecordType.CONTROL }) {
+
+        // Filter out start and finish punches
+        for (p in punches.filter { it.punch.punchType != SIRecordType.START && it.punch.punchType != SIRecordType.FINISH }) {
             serializer.startTag(null, "SplitTime")
             val control = p.punch.siCode.toString()
             writeTextElement(serializer, "ControlCode", control)

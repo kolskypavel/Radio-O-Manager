@@ -1,3 +1,16 @@
+## [0.3.1] - 2026-10-28
+### Added
+- Distinguishing between final and temp results in the XML export
+- Updated library versions to match GPlay minimal requirements
+
+### Fixed
+- Fixed incorrect handling of BEACON and SEPARATOR punches (not printing, disappearing when editing punches etc.)
+- Fixed HTML result export
+- Fixed automatic printing if not set
+- Fixed unnecessary double printing of finish tickets when printing manually
+- Fixed display of long names in readout detail
+- Fixed CSV imports and exports
+
 ## [0.3.0] - 2026-09-06
 ### Added
 - Added startlist drawing options

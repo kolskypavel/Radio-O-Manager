@@ -71,7 +71,7 @@ object OFeedWorker : ResultServiceWorker {
                 .filter { it.category != null }
 
         val stream = ByteArrayOutputStream()
-        IofXmlProcessor.exportResults(stream, race, results, dataProcessor)
+        IofXmlProcessor.exportResults(stream, race, results, dataProcessor, final)
         val xml = stream.toString()
 
         try {

@@ -140,7 +140,7 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
         }
     }
 
-    suspend fun printFinishTicket(resultData: ResultData, race: Race) {
+    suspend fun printFinishTicket(resultData: ResultData, race: Race, doublePrint: Boolean) {
         val context = appContext.get()!!
         val competitor = resultData.competitorCategory?.competitor
         val category = resultData.competitorCategory?.category?.name ?: "?"
@@ -175,20 +175,16 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
                 "[R]<b>$runTime</b>\n" +
                 "[R]$controls\n"
 
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val doublePrint =
-            sharedPref.getBoolean(
-                context.getString(R.string.key_prints_double_print),
-                false
-            )
-        val doublePrintDelay =
-            sharedPref.getInt(
-                context.getString(R.string.key_prints_double_print_delay),
-                2
-            )
-
         print(formatted)
+
+        // Print twice with delay if required
         if (doublePrint) {
+            val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+            val doublePrintDelay =
+                sharedPref.getInt(
+                    context.getString(R.string.key_prints_double_print_delay),
+                    2
+                )
             delay(doublePrintDelay * 1000L)
             print(formatted)
         }
@@ -224,7 +220,7 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
                         }"
             }
 
-            SIRecordType.CONTROL -> {
+            SIRecordType.CONTROL, SIRecordType.BEACON, SIRecordType.SEPARATOR -> {
                 return "[L]${formatCodeString(aliasPunch)}" +
                         "[C]${aliasPunch.punch.siTime.getTimeString()}" +
                         "[R]${
@@ -244,14 +240,22 @@ class PrintProcessor(context: Context, private val dataProcessor: DataProcessor)
         val context = appContext.get()!!
 
         val symbol = when (aliasPunch.punch.punchStatus) {
-            PunchStatus.VALID -> context.getString(R.string.punch_status_valid)
-            PunchStatus.INVALID -> context.getString(R.string.punch_status_invalid)
+            PunchStatus.VALID -> ""
+            PunchStatus.INVALID -> context.getString(R.string.punch_status_invalid_print)
             PunchStatus.DUPLICATE -> context.getString(R.string.punch_status_duplicate)
             PunchStatus.UNKNOWN -> context.getString(R.string.punch_status_unknown)
         }
-        val code =
-            "${aliasPunch.punch.order} (${aliasPunch.alias?.name ?: aliasPunch.punch.siCode})"
-        return "$code$symbol"
+
+        // Display alias if exists and is allowed in the settings
+        val displayCode = if (dataProcessor.isToUseAliases() && aliasPunch.alias != null) {
+            aliasPunch.alias?.name
+        } else {
+            aliasPunch.punch.siCode
+        }
+
+        val formatted =
+            "${aliasPunch.punch.order} (${displayCode})"
+        return "$formatted$symbol"
     }
 
     suspend fun printResults(results: List<ResultWrapper>, race: Race) {

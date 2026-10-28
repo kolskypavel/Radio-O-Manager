@@ -51,11 +51,19 @@ object IofXmlProcessor : FormatProcessor {
     ) {
         when (dataType) {
             DataType.COMPETITORS -> TODO()
-            DataType.RESULTS_FINAL, DataType.RESULTS_LIVE -> exportResults(
+
+            DataType.RESULTS_LIVE -> exportResults(
                 outStream,
                 race, ResultsProcessor.getResultWrapperFlowByRace(race.id, dataProcessor).first()
                     .filter { it.category != null },
-                dataProcessor
+                dataProcessor, false
+            )
+
+            DataType.RESULTS_FINAL -> exportResults(
+                outStream,
+                race, ResultsProcessor.getResultWrapperFlowByRace(race.id, dataProcessor).first()
+                    .filter { it.category != null },
+                dataProcessor, true
             )
 
             else -> TODO()
@@ -100,7 +108,7 @@ object IofXmlProcessor : FormatProcessor {
             writer = w
 
             // Use helper to write root and race
-            XmlHelper.writeRootTag(serializer, race, "StartList", dataProcessor)
+            XmlHelper.writeRootTag(serializer, race, "StartList", dataProcessor, false)
 
             // Write each category result with helper
             for (res in data) {
@@ -119,7 +127,8 @@ object IofXmlProcessor : FormatProcessor {
         outStream: OutputStream,
         race: Race,
         results: List<ResultWrapper>,
-        dataProcessor: DataProcessor
+        dataProcessor: DataProcessor,
+        resultsFinal: Boolean
     ) {
         var writer: OutputStreamWriter? = null
         try {
@@ -127,7 +136,8 @@ object IofXmlProcessor : FormatProcessor {
             writer = w
 
             // Use helper to write root and race
-            XmlHelper.writeRootTag(serializer, race, "ResultList", dataProcessor)
+            XmlHelper.writeRootTag(serializer, race, "ResultList", dataProcessor, resultsFinal)
+
 
             // Write each category result with helper
             for (res in results) {

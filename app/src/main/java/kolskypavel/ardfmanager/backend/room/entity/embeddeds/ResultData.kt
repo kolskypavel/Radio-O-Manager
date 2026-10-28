@@ -39,7 +39,7 @@ data class ResultData(
         var numControls = 0
         val punchFields = StringBuilder()
         for (punch in punches) {
-            if (punch.punch.punchType == SIRecordType.CONTROL) {
+            if (punch.punch.punchType != SIRecordType.START && punch.punch.punchType != SIRecordType.FINISH) {
                 if (punchFields.isNotEmpty()) punchFields.append(";")
                 punchFields.append("${punch.punch.siCode};${punch.punch.siTime.getTimeString()}")
                 numControls++

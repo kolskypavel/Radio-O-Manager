@@ -163,7 +163,8 @@ class ReadoutDetailFragment : Fragment() {
                         CoroutineScope(Dispatchers.IO).launch {
                             dataProcessor.printFinishTicket(
                                 resultData,
-                                race
+                                race,
+                                false
                             )
                         }
                     }

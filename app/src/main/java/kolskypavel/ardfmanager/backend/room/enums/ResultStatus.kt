@@ -14,5 +14,13 @@ enum class ResultStatus(val value: Int) : Comparable<ResultStatus> {
     companion object {
         fun getByValue(value: Int) =
             ResultStatus.entries.firstOrNull { it.value == value } ?: NO_RANKING
+
+        // Whenever to display run time in results
+        fun displayRunTime(status: ResultStatus): Boolean {
+            return when (status) {
+                OK, NO_RANKING, MISPUNCHED, OVER_TIME_LIMIT, ResultStatus.UNOFFICIAL -> true
+                else -> false
+            }
+        }
     }
 }

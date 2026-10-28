@@ -301,11 +301,20 @@ object ResultsProcessor {
 
         // Add printing based on option
         if (isToPrintFinishTicket(competitor, category, context)) {
+
+            // Check if double printing is enabled
+            val doublePrint =
+                sharedPref.getBoolean(
+                    context.getString(R.string.key_prints_double_print),
+                    false
+                )
+
             dataProcessor.getRace(result.raceId)?.let { race ->
                 CoroutineScope(Dispatchers.IO).launch {
                     dataProcessor.printFinishTicket(
                         dataProcessor.getResultData(result.id),
-                        race
+                        race,
+                        doublePrint
                     )
                 }
             }
@@ -339,11 +348,11 @@ object ResultsProcessor {
         val preference =
             sharedPref.getString(
                 context.getString(R.string.key_prints_automatic_printout),
-                context.getString(R.string.print_automatic_manually)
+                context.getString(R.string.print_automatic_manually_value)
             )
 
         when (preference) {
-            context.getString(R.string.print_automatic_manually_value) -> return true
+            context.getString(R.string.print_automatic_manually_value) -> return false
             context.getString(R.string.print_automatic_competitor_matched_value) -> {
                 return competitor != null
             }
@@ -351,6 +360,8 @@ object ResultsProcessor {
             context.getString(R.string.print_automatic_category_matched_value) -> {
                 return competitor != null && category != null
             }
+
+            context.getString(R.string.print_automatic_always_value) -> return true
 
             else -> {}
         }
