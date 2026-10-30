@@ -153,6 +153,53 @@
                 android:inputType="numberSigned" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <LinearLayout
+            android:id="@+id/race_dialog_start_rounding_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true">
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/race_dialog_start_rounding_enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:buttonTint="@color/black"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/race_dialog_start_rounding_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/race_start_rounding_enabled"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:clickable="false"
+                android:focusable="false" />
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/dialog_dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/race_start_rounding_interval">
+
+            <AutoCompleteTextView
+                android:id="@+id/race_dialog_start_rounding_interval"
+                style="@style/dialog_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                app:simpleItems="@array/race_start_rounding_intervals" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/dialog_textView"
             android:layout_width="match_parent"

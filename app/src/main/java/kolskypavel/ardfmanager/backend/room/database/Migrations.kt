@@ -118,3 +118,22 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         db.execSQL("ALTER TABLE result ADD COLUMN `start_time_source` TEXT NOT NULL DEFAULT 'PUNCHED'")
     }
 }
+
+
+// Migration from version 5 -> 6: add optional start-time rounding settings to each race
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE race ADD COLUMN `start_time_rounding_enabled` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE race ADD COLUMN `start_time_rounding_interval` INTEGER NOT NULL DEFAULT 5")
+    }
+}
+
+
+// Migration from version 6 -> 7: preserve the original SportIdent START punch time separately
+val MIGRATION_6_7 = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE result ADD COLUMN `original_start_punch_time` TEXT")
+        // Existing unrounded values are the best available source for older results.
+        db.execSQL("UPDATE result SET original_start_punch_time = start_time WHERE start_time_source = 'PUNCHED'")
+    }
+}

@@ -108,15 +108,31 @@ object ResultsProcessor {
         }
     }
 
+    private fun roundStartTime(start: SITime, race: Race): SITime {
+        if (!race.startTimeRoundingEnabled) return SITime(start)
+        val intervalMinutes = race.startTimeRoundingInterval.takeIf { it == 1 || it == 2 || it == 5 } ?: 5
+        val intervalSeconds = intervalMinutes * 60L
+        val seconds = start.getSeconds()
+        val roundedSeconds = ((seconds + intervalSeconds - 1) / intervalSeconds) * intervalSeconds
+        return SITime(roundedSeconds)
+    }
+
     private fun removeStartAndFinishPunch(
         result: Result,
         punches: ArrayList<Punch>,
-        setTimes: Boolean   // Wherever to set the start and finish times to result
+        setTimes: Boolean,   // Whether to set the start and finish times to result
+        race: Race
     ) {
         if (punches.isNotEmpty()) {
             if (punches.first().punchType == SIRecordType.START) {
+                // Preserve the first/original SI START punch. Recalculation may run
+                // repeatedly with different rounding intervals; never replace this
+                // value with a previously rounded result time.
+                if (result.originalStartPunchTime == null) {
+                    result.originalStartPunchTime = SITime(punches.first().siTime)
+                }
                 if (setTimes) {
-                    result.startTime = punches.first().siTime
+                    result.startTime = roundStartTime(result.originalStartPunchTime!!, race)
                     result.startTimeSource = StartTimeSource.PUNCHED
                 }
                 punches.removeAt(0)
@@ -277,6 +293,18 @@ object ResultsProcessor {
                 startTimeSource = if (cardData.startTime != null) StartTimeSource.PUNCHED else StartTimeSource.DRAWN
             )
 
+        // Keep the unmodified START punch as the source of truth, and apply the
+        // race's rounding settings immediately on first import. Previously this
+        // import path initialized result.startTime from cardData.startTime but
+        // did not pass through removeStartAndFinishPunch(), so rounding only took
+        // effect after editing/saving the race or recalculating results.
+        val importedStartPunchTime = cardData.startTime
+        if (importedStartPunchTime != null) {
+            result.originalStartPunchTime = SITime(importedStartPunchTime)
+            result.startTime = roundStartTime(importedStartPunchTime, race)
+            result.startTimeSource = StartTimeSource.PUNCHED
+        }
+
         // Attempt to get the drawn start time
         if (result.startTime == null && competitor != null) {
             drawnTime = getStartTimeFromStartList(result, competitor, race)
@@ -422,7 +450,7 @@ object ResultsProcessor {
         }
 
         //Modify the start and finish times
-        removeStartAndFinishPunch(result, punches, true)
+        removeStartAndFinishPunch(result, punches, true, race)
 
         calculateResult(
             result,
@@ -612,11 +640,25 @@ object ResultsProcessor {
                 clearEvaluation(punches, result)
             }
 
-            // Remove start and finish punches before calculation
+            // Re-apply the race's start-punch rounding when recalculating an existing result.
+            // Only do this for unmodified results whose start time originates from a real
+            // START punch. Drawn times and manually modified readouts must be preserved.
+            val refreshPunchedStartTime =
+                !result.modified && result.startTimeSource == StartTimeSource.PUNCHED
+
+            // If the original START punch is available in the stored punches,
+            // removeStartAndFinishPunch() captures it before this result is saved.
+            // Do not seed originalStartPunchTime from result.startTime here: that value
+            // may already be rounded and would overwrite the true punch on legacy results.
+            if (refreshPunchedStartTime && result.originalStartPunchTime != null) {
+                result.startTime = roundStartTime(result.originalStartPunchTime!!, race)
+            }
+
             removeStartAndFinishPunch(
                 result,
                 punches,
-                false   // No need to overwrite the drawn values
+                refreshPunchedStartTime,
+                race
             )
 
             // In case the manual status was previously set, keep it

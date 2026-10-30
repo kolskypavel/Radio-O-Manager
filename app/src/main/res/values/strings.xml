@@ -98,6 +98,9 @@
     <string name="race_type">Race type</string>
     <string name="race_api_key">API key</string>
     <string name="race_limit_hint">Limit (min)</string>
+    <string name="race_start_rounding_enabled">Enable start punch time rounding</string>
+    <string name="race_start_rounding_description">Rounds the actual SportIdent START punch time up to the next full interval. It does not change start-list times.</string>
+    <string name="race_start_rounding_interval">Rounding interval (minutes)</string>
     <string name="race_start_time_hint">Start time (hh:mm)</string>
     <string name="race_relative_start_time_hint">Relative start time (mm:ss)</string>
     <string name="race_end_confirmation">Do you really want to close the current race?</string>
@@ -476,6 +479,12 @@
     <string name="punch_status_invalid_short" translatable="false">MP</string>
     <string name="punch_status_duplicate_short" translatable="false">DP</string>
     <string name="punch_status_unknown_short" translatable="false">AP</string>
+
+    <string-array name="race_start_rounding_intervals">
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+    </string-array>
 
     <string-array name="race_types_array">
         <item>@string/race_type_classic</item>

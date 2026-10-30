@@ -8,6 +8,8 @@ import kolskypavel.ardfmanager.backend.room.database.MIGRATION_1_2
 import kolskypavel.ardfmanager.backend.room.database.MIGRATION_2_3
 import kolskypavel.ardfmanager.backend.room.database.MIGRATION_3_4
 import kolskypavel.ardfmanager.backend.room.database.MIGRATION_4_5
+import kolskypavel.ardfmanager.backend.room.database.MIGRATION_5_6
+import kolskypavel.ardfmanager.backend.room.database.MIGRATION_6_7
 import kolskypavel.ardfmanager.backend.room.entity.Alias
 import kolskypavel.ardfmanager.backend.room.entity.Category
 import kolskypavel.ardfmanager.backend.room.entity.Competitor
@@ -29,7 +31,7 @@ class ARDFRepository private constructor(context: Context) {
             EventDatabase::class.java,
             "event-database"
         )
-        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
         .build()
 
     //-------------------Races-------------------
